@@ -9,27 +9,36 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import at.htl_leonding.roarfit.utils.Constants
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val REQUEST_CODE_CAMERA = 42
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-/*
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-        bottomNav.setOnNavigationItemReselectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_history -> {
-                    val action = DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment()
-                    findNavController(R.id.nav_host_fragment).navigate(action)
-                }
-            }
-        }
-*/
+
+        // Setup navigation
+        val navController = findNavController(this, R.id.nav_host_fragment)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        bottomNav.setupWithNavController(navController)
+
+        // Setup configuration with top-level destinations
+        val appBarConfiguration = AppBarConfiguration.Builder(
+            R.id.dashboardFragment,
+            R.id.statisticsFragment,
+            R.id.feedbackFragment,
+            R.id.historyFragment
+        ).build()
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
         fab.setOnClickListener {
             // Check if the permission to use the camera has been granted
             if (ContextCompat.checkSelfPermission(
@@ -38,7 +47,11 @@ class MainActivity : AppCompatActivity() {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 // Permission has not been granted
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CODE_CAMERA)
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.CAMERA),
+                    Constants.PERMISSION_REQUEST_CODE_CAMERA
+                )
             } else {
                 // Permission has already been granted
                 startCameraActivity()
@@ -48,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_CAMERA) {
+        if (requestCode == Constants.PERMISSION_REQUEST_CODE_CAMERA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // Permission granted
                 startCameraActivity()
@@ -56,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 // Permission denied
                 Snackbar.make(
                     findViewById(R.id.coordinator),
-                    "You have to grant camera permissions",
+                    "Please allow the needed permissions to use this feature",
                     Snackbar.LENGTH_LONG
                 ).setAction("Action", null).show()
             }

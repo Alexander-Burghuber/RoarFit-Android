@@ -10,7 +10,10 @@ class CameraViewModel : ViewModel(), QRDataListener {
 
     override fun onDetected(data: String?) {
         Log.d("QReader", "Value: $data")
-        qrResult.postValue(data)
+        when (data) {
+            "treadmill1" -> TODO()
+            else -> qrResult.postValue(data)
+        }
     }
 
 }

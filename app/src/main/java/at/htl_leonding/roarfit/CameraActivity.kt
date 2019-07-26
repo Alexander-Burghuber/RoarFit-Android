@@ -24,7 +24,8 @@ class CameraActivity : AppCompatActivity() {
         surfaceView = findViewById(R.id.camera_view)
 
         // Init QREader
-        qrEader = QREader.Builder(this, surfaceView, model).facing(QREader.BACK_CAM)
+        qrEader = QREader.Builder(this, surfaceView, model)
+            .facing(QREader.BACK_CAM)
             .enableAutofocus(true)
             .width(surfaceView.width)
             .height(surfaceView.height)

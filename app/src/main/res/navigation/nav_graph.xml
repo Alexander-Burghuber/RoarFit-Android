@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph"
-            app:startDestination="@id/dashboardFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
 
-    <fragment android:id="@+id/dashboardFragment" android:name="at.htl_leonding.roarfit.fragments.DashboardFragment"
-              android:label="fragment_dashboard" tools:layout="@layout/fragment_dashboard">
-        <action android:id="@+id/action_dashboardFragment_to_historyFragment" app:destination="@id/historyFragment"/>
-    </fragment>
-    <fragment android:id="@+id/historyFragment" android:name="at.htl_leonding.roarfit.fragments.HistoryFragment"
-              android:label="fragment_history" tools:layout="@layout/fragment_history"/>
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="at.htl_leonding.roarfit.fragments.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="at.htl_leonding.roarfit.fragments.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/feedbackFragment"
+        android:name="at.htl_leonding.roarfit.fragments.FeedbackFragment"
+        android:label="Feedback"
+        tools:layout="@layout/fragment_feedback" />
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="at.htl_leonding.roarfit.fragments.StatisticsFragment"
+        android:label="Statistics"
+        tools:layout="@layout/fragment_statistics" />
+
 </navigation>
