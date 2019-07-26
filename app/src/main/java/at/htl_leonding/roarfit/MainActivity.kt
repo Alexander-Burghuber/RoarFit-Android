@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration.Builder(
             R.id.dashboardFragment,
             R.id.statisticsFragment,
-            R.id.feedbackFragment,
-            R.id.historyFragment
+            R.id.historyFragment,
+            R.id.profileFragment
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
 

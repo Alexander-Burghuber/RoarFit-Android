@@ -11,14 +11,14 @@ import at.htl_leonding.roarfit.R
  * A simple [Fragment] subclass.
  *
  */
-class FeedbackFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_feedback, container, false)
+        return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
 }
