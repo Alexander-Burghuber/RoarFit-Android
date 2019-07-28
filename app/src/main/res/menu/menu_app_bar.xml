@@ -3,8 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/app_bar_settings"
-        android:icon="@drawable/ic_settings_white_24dp"
+        android:id="@+id/menu_app_bar_settings"
         android:title="@string/app_bar_settings"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_app_bar_logout"
+        android:title="@string/logout" />
 </menu>

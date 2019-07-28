@@ -31,11 +31,12 @@ class AuthActivity : AppCompatActivity() {
                         sharedPre.edit().putString("auth_token", response.token).apply()
                         startMainActivity()
                     }
-                    2 -> Toast.makeText(this, "Username or password is wrong", Toast.LENGTH_LONG).show()
-                    else -> Log.e("AuthActivity", "Received unknown code")
+                    2 -> displayToast("Username or password is wrong")
+                    else -> {
+                        Log.e("AuthActivity", "Received unknown code")
+                        displayToast("Error trying to log in")
+                    }
                 }
-            } else {
-                Toast.makeText(this, "Failed trying to log in", Toast.LENGTH_LONG).show()
             }
         })
 
@@ -50,6 +51,10 @@ class AuthActivity : AppCompatActivity() {
     private fun startMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun displayToast(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     private fun hideKeyboard() {

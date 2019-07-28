@@ -84,12 +84,16 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
         if (!sharedPref.contains("auth_token")) {
-            println("contains key")
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
+            startAuthActivity()
         } else {
             coordinator.visibility = View.VISIBLE
         }
+    }
+
+    private fun startAuthActivity() {
+        val intent = Intent(this, AuthActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun startCameraActivity() {
@@ -99,7 +103,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.app_bar_menu, menu)
+        menuInflater.inflate(R.menu.menu_app_bar, menu)
         return true
     }
 
@@ -108,7 +112,13 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.app_bar_settings -> true
+            R.id.menu_app_bar_settings -> true
+            R.id.menu_app_bar_logout -> {
+                val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
+                sharedPref.edit().remove("auth_token").apply()
+                startAuthActivity()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

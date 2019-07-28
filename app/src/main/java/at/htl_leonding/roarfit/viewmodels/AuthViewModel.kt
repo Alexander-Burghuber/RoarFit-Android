@@ -16,7 +16,6 @@ class AuthViewModel : ViewModel() {
     fun login(username: String, password: String) {
         repository.login(username, password, object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                Log.d("AuthViewModel", "Received body: ${response.body()}")
                 if (response.isSuccessful && response.body() is LoginResponse) {
                     loginResult.value = response.body()
                 } else {
@@ -24,7 +23,6 @@ class AuthViewModel : ViewModel() {
                     loginResult.value = null
                 }
             }
-
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.e("AuthViewModel", "Failure logging in", t)
                 loginResult.value = null
