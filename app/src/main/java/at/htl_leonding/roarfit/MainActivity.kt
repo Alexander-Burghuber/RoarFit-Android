@@ -1,11 +1,13 @@
 package at.htl_leonding.roarfit
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,6 +26,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        coordinator.visibility = View.INVISIBLE
 
         // Setup navigation
         val navController = findNavController(this, R.id.nav_host_fragment)
@@ -73,6 +77,18 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.LENGTH_LONG
                 ).setAction("Action", null).show()
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
+        if (!sharedPref.contains("auth_token")) {
+            println("contains key")
+            val intent = Intent(this, AuthActivity::class.java)
+            startActivity(intent)
+        } else {
+            coordinator.visibility = View.VISIBLE
         }
     }
 
