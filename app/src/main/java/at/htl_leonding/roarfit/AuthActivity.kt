@@ -14,7 +14,6 @@ import at.htl_leonding.roarfit.viewmodels.AuthViewModel
 import kotlinx.android.synthetic.main.activity_auth.*
 
 class AuthActivity : AppCompatActivity() {
-
     private lateinit var model: AuthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +50,7 @@ class AuthActivity : AppCompatActivity() {
     private fun startMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     private fun displayToast(text: String) {
