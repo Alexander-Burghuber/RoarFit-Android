@@ -22,42 +22,49 @@ class AuthActivity : AppCompatActivity() {
 
         model = ViewModelProviders.of(this).get(AuthViewModel::class.java)
 
-        model.loginResult.observe(this, Observer { result ->
+        model.loginResStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
-                // TODO parse token after finished
                 val sharedPre = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
+                val editor = sharedPre.edit()
+
                 val authToken = result.getOrNull()!!.token
-                sharedPre.edit().putString("auth_token", authToken).apply()
-                //startMainActivity()
-                val customerNum = input_customer_number.text.toString()
-                customerNum.removePrefix("KFC")
-                model.getCustomer(customerNum, authToken)
+                editor.putString("auth_token", authToken)
+
+                val customerNumber = input_customer_number.text.toString().toInt()
+                editor.putInt("customer_number", customerNumber)
+
+                editor.apply()
+                startMainActivity()
             } else {
                 displayToast(result.exceptionOrNull()!!.message!!)
-                button_login.isEnabled = true
-                progress_bar.visibility = View.INVISIBLE
             }
+            button_login.isEnabled = true
+            progress_bar_auth.visibility = View.INVISIBLE
         })
 
+        /*
         model.getCustomerResult.observe(this, Observer { result ->
             if (result.isSuccess) {
                 startMainActivity()
             } else {
                 displayToast(result.exceptionOrNull()!!.message!!)
             }
-            button_login.isEnabled = true
-            progress_bar.visibility = View.INVISIBLE
         })
+        */
 
         button_login.setOnClickListener {
-            button_login.isEnabled = false
-            progress_bar.visibility = View.VISIBLE
-
+            hideKeyboard()
             val username = input_username.text.toString()
             val password = input_password.text.toString()
+            val customerNumber = input_customer_number.text.toString()
 
-            model.login(username, password)
-            hideKeyboard()
+            if (username.isNullOrBlank() || password.isNullOrBlank() || customerNumber.isNullOrBlank()) {
+                displayToast("Please fill in all fields")
+            } else {
+                button_login.isEnabled = false
+                progress_bar_auth.visibility = View.VISIBLE
+                model.login(username, password)
+            }
         }
     }
 

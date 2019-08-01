@@ -1,8 +1,8 @@
 package at.htl_leonding.roarfit.services
 
-import at.htl_leonding.roarfit.data.Customer
 import at.htl_leonding.roarfit.data.LoginRequest
 import at.htl_leonding.roarfit.data.LoginResponse
+import at.htl_leonding.roarfit.data.User
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -12,9 +12,9 @@ interface WebService {
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
     @GET("customers/customer/{customerNum}")
-    suspend fun getCustomer(
-        @Path("customerNum") customerNum: String,
+    suspend fun getUser(
+        @Path("customerNum") customerNum: Int,
         @Header("Authorization") authToken: String
-    ): Response<Customer>
+    ): Response<User>
 
 }

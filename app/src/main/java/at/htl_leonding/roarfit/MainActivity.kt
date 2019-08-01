@@ -8,24 +8,31 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.htl_leonding.roarfit.utils.Constants
+import at.htl_leonding.roarfit.viewmodels.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var model: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        model = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         coordinator.visibility = View.INVISIBLE
 
@@ -42,6 +49,15 @@ class MainActivity : AppCompatActivity() {
             R.id.profileFragment
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        model.userStatus.observe(this, Observer { result ->
+            if (result.isSuccess) {
+                displayToast("Welcome ${result.getOrNull()!!.firstName}")
+            } else {
+                displayToast(result.exceptionOrNull()!!.message!!)
+            }
+            progress_bar_main.visibility = View.GONE
+        })
 
         fab.setOnClickListener {
             // Check if the permission to use the camera has been granted
@@ -82,11 +98,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // check if authToken exists
         val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-        if (!sharedPref.contains("auth_token")) {
+        val authToken = sharedPref.getString("auth_token", null)
+        val customerNum = sharedPref.getInt("customer_number", -1)
+        if (authToken == null || customerNum == -1) {
             startAuthActivity()
         } else {
             coordinator.visibility = View.VISIBLE
+            progress_bar_main.visibility = View.VISIBLE
+            model.getUser(customerNum, authToken)
         }
     }
 
@@ -101,6 +122,10 @@ class MainActivity : AppCompatActivity() {
     private fun startCameraActivity() {
         val intent = Intent(this, CameraActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun displayToast(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -124,4 +149,5 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
