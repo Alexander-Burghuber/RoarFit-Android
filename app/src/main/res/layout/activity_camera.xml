@@ -31,6 +31,7 @@
             android:layout_marginTop="144dp"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="176dp" android:layout_marginEnd="176dp"
-            app:layout_constraintEnd_toEndOf="parent" android:textColor="@color/colorLightGrey"
-            android:background="@color/colorPrimary"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/lightGrey"
+        android:background="@color/primary" />
 </androidx.constraintlayout.widget.ConstraintLayout>

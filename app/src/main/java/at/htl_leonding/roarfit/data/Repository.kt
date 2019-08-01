@@ -1,8 +1,9 @@
 package at.htl_leonding.roarfit.data
 
 import at.htl_leonding.roarfit.services.WebService
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -17,9 +18,16 @@ class Repository {
         webService = retrofit.create(WebService::class.java)
     }
 
-    fun login(username: String, password: String, callback: Callback<LoginResponse>) {
-        val call: Call<LoginResponse> = webService.login(LoginRequest(username, password))
-        call.enqueue(callback)
+    suspend fun login(username: String, password: String): Response<LoginResponse> {
+        return withContext(Dispatchers.IO) {
+            webService.login(LoginRequest(username, password))
+        }
+    }
+
+    suspend fun getCustomer(customerNum: String, authToken: String): Response<Customer> {
+        return withContext(Dispatchers.IO) {
+            webService.getCustomer(customerNum, "Bearer $authToken")
+        }
     }
 
 }
