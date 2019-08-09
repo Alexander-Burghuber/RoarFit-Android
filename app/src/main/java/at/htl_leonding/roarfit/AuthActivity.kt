@@ -66,6 +66,12 @@ class AuthActivity : AppCompatActivity() {
                 model.login(username, password)
             }
         }
+
+        // display an error msg if one was received from another activity
+        val msg = intent.getStringExtra("msg")
+        if (msg != null) {
+            displayToast(msg)
+        }
     }
 
     private fun startMainActivity() {

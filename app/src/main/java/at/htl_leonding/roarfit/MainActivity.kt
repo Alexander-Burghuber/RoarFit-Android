@@ -8,11 +8,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -34,8 +32,6 @@ class MainActivity : AppCompatActivity() {
 
         model = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        coordinator.visibility = View.INVISIBLE
-
         // Setup navigation
         val navController = findNavController(this, R.id.nav_host_fragment)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
@@ -50,14 +46,14 @@ class MainActivity : AppCompatActivity() {
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        model.userStatus.observe(this, Observer { result ->
-            if (result.isSuccess) {
-                displayToast("Welcome ${result.getOrNull()!!.firstName}")
-            } else {
-                displayToast(result.exceptionOrNull()!!.message!!)
-            }
-            progress_bar_main.visibility = View.GONE
-        })
+        // Check the authorization
+        val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
+        val authToken = sharedPref.getString("auth_token", null)
+        if (authToken == null) {
+            startAuthActivity()
+        } else {
+            main_constraint_layout.visibility = View.VISIBLE
+        }
 
         fab.setOnClickListener {
             // Check if the permission to use the camera has been granted
@@ -88,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // Permission denied
                 Snackbar.make(
-                    findViewById(R.id.coordinator),
+                    findViewById(R.id.main_constraint_layout),
                     "Please allow the needed permissions to use this feature",
                     Snackbar.LENGTH_LONG
                 ).setAction("Action", null).show()
@@ -96,25 +92,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // check if authToken exists
-        val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-        val authToken = sharedPref.getString("auth_token", null)
-        val customerNum = sharedPref.getInt("customer_number", -1)
-        if (authToken == null || customerNum == -1) {
-            startAuthActivity()
-        } else {
-            coordinator.visibility = View.VISIBLE
-            progress_bar_main.visibility = View.VISIBLE
-            model.getUser(customerNum, authToken)
-        }
-    }
-
     private fun startAuthActivity() {
         val intent = Intent(this, AuthActivity::class.java)
-        // intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()
     }
@@ -122,10 +101,6 @@ class MainActivity : AppCompatActivity() {
     private fun startCameraActivity() {
         val intent = Intent(this, CameraActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun displayToast(text: String) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
