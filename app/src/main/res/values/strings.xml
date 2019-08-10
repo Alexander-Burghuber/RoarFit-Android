@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">RoarFit</string>
+    <string name="account_type">fit.key.staging</string>
+
     <string name="action_settings">Settings</string>
 
     <string name="hint_username">Username (admin)</string>

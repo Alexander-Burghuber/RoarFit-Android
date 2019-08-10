@@ -1,7 +1,9 @@
 package at.htl_leonding.roarfit
 
 import android.Manifest
-import android.content.Context
+import android.accounts.AccountManager
+import android.accounts.AccountManagerCallback
+import android.accounts.AccountManagerFuture
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -18,7 +20,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.MainViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -34,8 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         // Setup navigation
         val navController = findNavController(this, R.id.nav_host_fragment)
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-        bottomNav.setupWithNavController(navController)
+        bottom_nav.setupWithNavController(navController)
 
         // Setup configuration with top-level destinations
         val appBarConfiguration = AppBarConfiguration.Builder(
@@ -47,12 +47,20 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Check the authorization
-        val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-        val authToken = sharedPref.getString("auth_token", null)
-        if (authToken == null) {
-            startAuthActivity()
+        val am = AccountManager.get(this)
+        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
+        if (accounts.isNotEmpty()) {
+            val account = accounts[0]
+            am.getAuthToken(
+                account,
+                "full_access",
+                null,
+                this,
+                OnTokenAcquired(),
+                null
+            )
         } else {
-            main_constraint_layout.visibility = View.VISIBLE
+            startAuthActivity()
         }
 
         fab.setOnClickListener {
@@ -92,17 +100,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startAuthActivity() {
-        val intent = Intent(this, AuthActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    private fun startCameraActivity() {
-        val intent = Intent(this, CameraActivity::class.java)
-        startActivity(intent)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_app_bar, menu)
@@ -116,12 +113,43 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.menu_app_bar_settings -> true
             R.id.menu_app_bar_logout -> {
-                val sharedPref = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-                sharedPref.edit().remove("auth_token").apply()
-                startAuthActivity()
+                val am = AccountManager.get(this)
+                val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
+                if (accounts.isNotEmpty()) {
+                    val account = accounts[0]
+                    am.removeAccount(
+                        account,
+                        this,
+                        {
+                            startAuthActivity()
+                        },
+                        null
+                    )
+                } else {
+                    startAuthActivity()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun startAuthActivity() {
+        val intent = Intent(this, AuthActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun startCameraActivity() {
+        val intent = Intent(this, CameraActivity::class.java)
+        startActivity(intent)
+    }
+
+    private inner class OnTokenAcquired : AccountManagerCallback<Bundle> {
+        override fun run(future: AccountManagerFuture<Bundle>) {
+            val bundle = future.result
+            val token = bundle.getString(AccountManager.KEY_AUTHTOKEN)
+            main_constraint_layout.visibility = View.VISIBLE
         }
     }
 

@@ -11,6 +11,9 @@ interface WebService {
     @POST("login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
+    @POST("login")
+    fun getToken(@Body request: LoginRequest): LoginResponse
+
     @GET("customers/customer/{customerNum}")
     suspend fun getUser(
         @Path("customerNum") customerNum: Int,

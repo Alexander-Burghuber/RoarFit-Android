@@ -1,6 +1,5 @@
 package at.htl_leonding.roarfit.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.AuthActivity
 import at.htl_leonding.roarfit.R
-import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.ProfileViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 
@@ -41,14 +39,14 @@ class ProfileFragment : Fragment() {
             }
         })
 
-        val sharedPref = this.requireContext().getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-        val authToken = sharedPref.getString("auth_token", null)
-        val customerNum = sharedPref.getInt("customer_number", -1)
-        if (authToken != null && customerNum != -1) {
-            model.getUser(customerNum, authToken)
-        } else {
-            startAuthActivity()
-        }
+        /* val sharedPref = this.requireContext().getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
+         val authToken = sharedPref.getString("auth_token", null)
+         val customerNum = sharedPref.getInt("customer_number", -1)
+         if (authToken != null && customerNum != -1) {
+             model.getUser(customerNum, authToken)
+         } else {
+             startAuthActivity()
+         }*/
 
         // Inflate the layout for this fragment
         return view

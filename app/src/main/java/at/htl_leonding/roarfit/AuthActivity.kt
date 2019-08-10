@@ -1,5 +1,7 @@
 package at.htl_leonding.roarfit
 
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -24,44 +26,30 @@ class AuthActivity : AppCompatActivity() {
 
         model.loginResStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
-                val sharedPre = getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-                val editor = sharedPre.edit()
-
-                val authToken = result.getOrNull()!!.token
-                editor.putString("auth_token", authToken)
-
-                val customerNumber = input_customer_number.text.toString().toInt()
-                editor.putInt("customer_number", customerNumber)
-
-                editor.apply()
+                val account = Account(input_username.text.toString(), Constants.ACCOUNT_TYPE)
+                val am = AccountManager.get(this)
+                am.addAccountExplicitly(account, input_password.text.toString(), null)
+                am.setAuthToken(account, "full_access", result.getOrNull()!!.token)
                 startMainActivity()
             } else {
                 displayToast(result.exceptionOrNull()!!.message!!)
             }
-            button_login.isEnabled = true
+            setEnabledStateOfInput(true)
             progress_bar_auth.visibility = View.INVISIBLE
         })
 
-        /*
-        model.getCustomerResult.observe(this, Observer { result ->
-            if (result.isSuccess) {
-                startMainActivity()
-            } else {
-                displayToast(result.exceptionOrNull()!!.message!!)
-            }
-        })
-        */
-
         button_login.setOnClickListener {
+            setEnabledStateOfInput(false)
             hideKeyboard()
+
             val username = input_username.text.toString()
             val password = input_password.text.toString()
             val customerNumber = input_customer_number.text.toString()
 
             if (username.isNullOrBlank() || password.isNullOrBlank() || customerNumber.isNullOrBlank()) {
                 displayToast("Please fill in all fields")
+                setEnabledStateOfInput(true)
             } else {
-                button_login.isEnabled = false
                 progress_bar_auth.visibility = View.VISIBLE
                 model.login(username, password)
             }
@@ -87,6 +75,13 @@ class AuthActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
+    private fun setEnabledStateOfInput(bool: Boolean) {
+        input_username.isEnabled = bool
+        input_password.isEnabled = bool
+        input_customer_number.isEnabled = bool
+        button_login.isEnabled = bool
     }
 
 }
