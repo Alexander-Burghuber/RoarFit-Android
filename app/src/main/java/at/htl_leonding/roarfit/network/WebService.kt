@@ -1,4 +1,4 @@
-package at.htl_leonding.roarfit.services
+package at.htl_leonding.roarfit.network
 
 import at.htl_leonding.roarfit.data.LoginRequest
 import at.htl_leonding.roarfit.data.LoginResponse

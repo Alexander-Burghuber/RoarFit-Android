@@ -1,8 +1,8 @@
 package at.htl_leonding.roarfit.repositories
 
 import at.htl_leonding.roarfit.data.User
-import at.htl_leonding.roarfit.services.WebService
-import at.htl_leonding.roarfit.services.WebServiceFactory
+import at.htl_leonding.roarfit.network.WebService
+import at.htl_leonding.roarfit.network.WebServiceFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response

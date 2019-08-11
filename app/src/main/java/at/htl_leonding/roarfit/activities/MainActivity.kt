@@ -1,15 +1,13 @@
-package at.htl_leonding.roarfit
+package at.htl_leonding.roarfit.activities
 
 import android.Manifest
 import android.accounts.AccountManager
-import android.accounts.AccountManagerCallback
-import android.accounts.AccountManagerFuture
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -18,6 +16,7 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.MainViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -27,7 +26,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var model: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
+
+        checkAuthorization()
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -45,23 +48,6 @@ class MainActivity : AppCompatActivity() {
             R.id.profileFragment
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        // Check the authorization
-        val am = AccountManager.get(this)
-        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
-        if (accounts.isNotEmpty()) {
-            val account = accounts[0]
-            am.getAuthToken(
-                account,
-                "full_access",
-                null,
-                this,
-                OnTokenAcquired(),
-                null
-            )
-        } else {
-            startAuthActivity()
-        }
 
         fab.setOnClickListener {
             // Check if the permission to use the camera has been granted
@@ -113,24 +99,38 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.menu_app_bar_settings -> true
             R.id.menu_app_bar_logout -> {
-                val am = AccountManager.get(this)
-                val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
-                if (accounts.isNotEmpty()) {
-                    val account = accounts[0]
-                    am.removeAccount(
-                        account,
-                        this,
-                        {
-                            startAuthActivity()
-                        },
-                        null
-                    )
-                } else {
-                    startAuthActivity()
-                }
+                logout()
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    /**
+     * Check if an account and an authorization token exists and redirect to the corresponding activity
+     */
+    private fun checkAuthorization() {
+        val am = AccountManager.get(this)
+        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
+        if (accounts.isNotEmpty()) {
+            val account = accounts[0]
+            am.getAuthToken(
+                account,
+                "full_access",
+                null,
+                this,
+                { future ->
+                    val bundle = future.result
+                    val authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN)
+                    if (authToken == null) {
+                        Log.wtf("LaunchActivity", "Received a authentication token that is null")
+                        startAuthActivity()
+                    }
+                },
+                null
+            )
+        } else {
+            startAuthActivity()
         }
     }
 
@@ -145,12 +145,14 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private inner class OnTokenAcquired : AccountManagerCallback<Bundle> {
-        override fun run(future: AccountManagerFuture<Bundle>) {
-            val bundle = future.result
-            val token = bundle.getString(AccountManager.KEY_AUTHTOKEN)
-            main_constraint_layout.visibility = View.VISIBLE
+    private fun logout() {
+        val am = AccountManager.get(this)
+        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
+        if (accounts.isNotEmpty()) {
+            val account = accounts[0]
+            am.removeAccount(account, this, null, null)
         }
+        startAuthActivity()
     }
 
 }

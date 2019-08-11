@@ -1,4 +1,4 @@
-package at.htl_leonding.roarfit
+package at.htl_leonding.roarfit.activities
 
 import android.accounts.Account
 import android.accounts.AccountManager
@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.AuthViewModel
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -26,10 +27,15 @@ class AuthActivity : AppCompatActivity() {
 
         model.loginResStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
-                val account = Account(input_username.text.toString(), Constants.ACCOUNT_TYPE)
                 val am = AccountManager.get(this)
-                am.addAccountExplicitly(account, input_password.text.toString(), null)
+                val account = Account(input_username.text.toString(), Constants.ACCOUNT_TYPE)
+
+                val userdata = Bundle()
+                userdata.putInt("customerNum", input_customer_number.text.toString().toInt())
+
+                am.addAccountExplicitly(account, input_password.text.toString(), userdata)
                 am.setAuthToken(account, "full_access", result.getOrNull()!!.token)
+
                 startMainActivity()
             } else {
                 displayToast(result.exceptionOrNull()!!.message!!)

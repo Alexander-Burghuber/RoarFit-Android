@@ -1,10 +1,11 @@
-package at.htl_leonding.roarfit
+package at.htl_leonding.roarfit.activities
 
 import android.os.Bundle
 import android.view.SurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.viewmodels.CameraViewModel
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.activity_camera.*

@@ -1,4 +1,4 @@
-package at.htl_leonding.roarfit.services
+package at.htl_leonding.roarfit.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

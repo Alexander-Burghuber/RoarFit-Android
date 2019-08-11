@@ -8,8 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import at.htl_leonding.roarfit.AuthActivity
+import at.htl_leonding.roarfit.activities.AuthActivity
 import at.htl_leonding.roarfit.data.LoginRequest
+import at.htl_leonding.roarfit.network.WebService
+import at.htl_leonding.roarfit.network.WebServiceFactory
 import at.htl_leonding.roarfit.utils.Constants
 
 class Authenticator(val context: Context) : AbstractAccountAuthenticator(context) {

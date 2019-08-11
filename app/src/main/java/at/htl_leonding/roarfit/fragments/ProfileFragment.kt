@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import at.htl_leonding.roarfit.AuthActivity
 import at.htl_leonding.roarfit.R
+import at.htl_leonding.roarfit.activities.AuthActivity
 import at.htl_leonding.roarfit.viewmodels.ProfileViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 
@@ -38,15 +38,6 @@ class ProfileFragment : Fragment() {
                 startAuthActivity(result.exceptionOrNull()!!.message!!)
             }
         })
-
-        /* val sharedPref = this.requireContext().getSharedPreferences(Constants.PREF_FILE, Context.MODE_PRIVATE)
-         val authToken = sharedPref.getString("auth_token", null)
-         val customerNum = sharedPref.getInt("customer_number", -1)
-         if (authToken != null && customerNum != -1) {
-             model.getUser(customerNum, authToken)
-         } else {
-             startAuthActivity()
-         }*/
 
         // Inflate the layout for this fragment
         return view
