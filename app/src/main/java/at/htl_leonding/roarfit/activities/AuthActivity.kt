@@ -30,10 +30,8 @@ class AuthActivity : AppCompatActivity() {
                 val am = AccountManager.get(this)
                 val account = Account(input_username.text.toString(), Constants.ACCOUNT_TYPE)
 
-                val userdata = Bundle()
-                userdata.putInt("customerNum", input_customer_number.text.toString().toInt())
-
-                am.addAccountExplicitly(account, input_password.text.toString(), userdata)
+                am.addAccountExplicitly(account, input_password.text.toString(), Bundle())
+                am.setUserData(account, "customerNum", input_customer_number.text.toString())
                 am.setAuthToken(account, "full_access", result.getOrNull()!!.token)
 
                 startMainActivity()

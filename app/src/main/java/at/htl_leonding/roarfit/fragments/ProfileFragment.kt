@@ -1,30 +1,39 @@
 package at.htl_leonding.roarfit.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.R
-import at.htl_leonding.roarfit.activities.AuthActivity
+import at.htl_leonding.roarfit.activities.MainActivity
 import at.htl_leonding.roarfit.viewmodels.ProfileViewModel
+import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
     private lateinit var model: ProfileViewModel
+    private lateinit var sharedModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile, container, false)
-
         model = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
 
-        // Observe the status from model.getUser()
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_profile, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        activity?.let {
+            sharedModel = ViewModelProviders.of(it).get(SharedViewModel::class.java)
+        }
+
         model.userStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
@@ -33,26 +42,24 @@ class ProfileFragment : Fragment() {
                 profile_last_name.text = user.lastName
 
                 profile_progress_bar.visibility = View.GONE
-                profile_image_view.visibility = View.VISIBLE
+                profile_content.visibility = View.VISIBLE
             } else {
-                startAuthActivity(result.exceptionOrNull()!!.message!!)
+                displayToast(result.exceptionOrNull()!!.message!!)
+                val activity = activity as MainActivity
+                activity.logout()
             }
         })
 
-        // Inflate the layout for this fragment
-        return view
-    }
-
-    private fun startAuthActivity(msg: String? = null) {
-        val activity = requireActivity()
-        val intent = Intent(activity, AuthActivity::class.java)
-
-        if (msg != null) {
-            intent.putExtra("msg", msg)
+        val customerNum = sharedModel.customerNum.value
+        val authToken = sharedModel.authToken.value
+        if (customerNum != null && authToken != null) {
+            profile_progress_bar.visibility = View.VISIBLE
+            model.getUser(customerNum, authToken)
         }
 
-        startActivity(intent)
-        activity.finish()
     }
 
+    private fun displayToast(text: String) {
+        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+    }
 }

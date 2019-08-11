@@ -27,7 +27,7 @@ class ProfileViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 val msg = "An unknown error occurred"
-                Log.e("MainViewModel", msg, e)
+                Log.e("SharedViewModel", msg, e)
                 userStatus.value = Result.failure(Exception(msg))
             }
         }

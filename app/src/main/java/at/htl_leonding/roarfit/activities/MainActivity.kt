@@ -18,23 +18,24 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.utils.Constants
-import at.htl_leonding.roarfit.viewmodels.MainViewModel
+import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var model: MainViewModel
+    private lateinit var sharedModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 
-        checkAuthorization()
+        sharedModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+
+        // check the authorization using the loadAccountData() function
+        loadAccountData()
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        model = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         // Setup navigation
         val navController = findNavController(this, R.id.nav_host_fragment)
@@ -106,10 +107,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun logout() {
+        val am = AccountManager.get(this)
+        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
+        if (accounts.isNotEmpty()) {
+            val account = accounts[0]
+            am.removeAccount(account, this, null, null)
+        }
+        startAuthActivity()
+    }
+
     /**
-     * Check if an account and an authorization token exists and redirect to the corresponding activity
+     * Load the auth token & the customer number into the view model and route to the AuthActivity if an error occurs
      */
-    private fun checkAuthorization() {
+    private fun loadAccountData() {
         val am = AccountManager.get(this)
         val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
         if (accounts.isNotEmpty()) {
@@ -120,15 +131,17 @@ class MainActivity : AppCompatActivity() {
                 null,
                 this,
                 { future ->
-                    val bundle = future.result
-                    val authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN)
-                    if (authToken == null) {
-                        Log.wtf("LaunchActivity", "Received a authentication token that is null")
+                    try {
+                        val bundle = future.result
+                        val authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN)
+                        sharedModel.authToken.value = authToken
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "An exception occurred receiving the auth token", e)
                         startAuthActivity()
                     }
-                },
-                null
+                }, null
             )
+            sharedModel.customerNum.value = am.getUserData(account, "customerNum").toInt()
         } else {
             startAuthActivity()
         }
@@ -143,16 +156,6 @@ class MainActivity : AppCompatActivity() {
     private fun startCameraActivity() {
         val intent = Intent(this, CameraActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun logout() {
-        val am = AccountManager.get(this)
-        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
-        if (accounts.isNotEmpty()) {
-            val account = accounts[0]
-            am.removeAccount(account, this, null, null)
-        }
-        startAuthActivity()
     }
 
 }
