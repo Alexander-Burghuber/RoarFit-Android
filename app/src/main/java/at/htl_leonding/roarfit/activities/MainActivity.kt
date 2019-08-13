@@ -1,11 +1,10 @@
 package at.htl_leonding.roarfit.activities
 
 import android.Manifest
-import android.accounts.AccountManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -31,8 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         sharedModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
 
-        // check the authorization using the loadAccountData() function
-        loadAccountData()
+        checkAuthorization()
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -108,41 +106,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun logout() {
-        val am = AccountManager.get(this)
-        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
-        if (accounts.isNotEmpty()) {
-            val account = accounts[0]
-            am.removeAccount(account, this, null, null)
-        }
+        val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
+        spEditor.remove("jwt")
+        spEditor.remove("customerNum")
+        spEditor.apply()
         startAuthActivity()
     }
 
-    /**
-     * Load the auth token & the customer number into the view model and route to the AuthActivity if an error occurs
-     */
-    fun loadAccountData() {
-        val am = AccountManager.get(this)
-        val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
-        if (accounts.isNotEmpty()) {
-            val account = accounts[0]
-            am.getAuthToken(
-                account,
-                "full_access",
-                null,
-                this,
-                { future ->
-                    try {
-                        val bundle = future.result
-                        val authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN)
-                        sharedModel.authToken.value = authToken
-                    } catch (e: Exception) {
-                        Log.e("MainActivity", "An exception occurred receiving the auth token", e)
-                        startAuthActivity()
-                    }
-                }, null
-            )
-            sharedModel.customerNum.value = am.getUserData(account, "customerNum").toInt()
-        } else {
+    fun checkAuthorization() {
+        val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
+        if (!sp.contains("jwt") || !sp.contains("customerNum")) {
             startAuthActivity()
         }
     }

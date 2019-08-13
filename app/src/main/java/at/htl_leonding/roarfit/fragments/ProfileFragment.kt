@@ -1,6 +1,6 @@
 package at.htl_leonding.roarfit.fragments
 
-import android.accounts.AccountManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,10 +49,7 @@ class ProfileFragment : Fragment() {
                 var msg: String? = null
                 when (result.exceptionOrNull()!!.message!!) {
                     "401" -> {
-                        val am = AccountManager.get(requireContext())
-                        am.invalidateAuthToken(Constants.ACCOUNT_TYPE, sharedModel.authToken.value)
-                        activity.loadAccountData()
-                        loadUser()
+                        TODO()
                     }
                     "404" -> {
                         msg = "The entered customer number is not associated with an user."
@@ -73,11 +70,12 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadUser() {
-        val customerNum = sharedModel.customerNum.value
-        val authToken = sharedModel.authToken.value
-        if (customerNum != null && authToken != null) {
+        val sp = requireContext().getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
+        val jwt = sp.getString("jwt", null)
+        val customerNum = sp.getInt("customerNum", -1)
+        if (jwt != null && customerNum != -1) {
             profile_progress_bar.visibility = View.VISIBLE
-            model.getUser(customerNum, authToken)
+            model.getUser(jwt, customerNum)
         }
     }
 

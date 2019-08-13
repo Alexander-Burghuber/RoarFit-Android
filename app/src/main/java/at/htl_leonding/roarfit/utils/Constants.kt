@@ -3,6 +3,6 @@ package at.htl_leonding.roarfit.utils
 object Constants {
     // Permissions
     const val PERMISSION_REQUEST_CODE_CAMERA = 42
-    // AccountManager
-    const val ACCOUNT_TYPE = "fit.key.staging"
+    // Shared Preferences
+    const val PREFERENCE_FILE = "at.htl_leonding.roarfit.PREFERENCE_FILE"
 }

@@ -1,7 +1,5 @@
 package at.htl_leonding.roarfit.activities
 
-import android.accounts.Account
-import android.accounts.AccountManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -27,13 +25,10 @@ class AuthActivity : AppCompatActivity() {
 
         model.loginResStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
-                val am = AccountManager.get(this)
-                val account = Account(input_username.text.toString(), Constants.ACCOUNT_TYPE)
-
-                am.addAccountExplicitly(account, input_password.text.toString(), Bundle())
-                am.setUserData(account, "customerNum", input_customer_number.text.toString())
-                am.setAuthToken(account, "full_access", result.getOrNull()!!.token)
-
+                val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
+                spEditor.putString("jwt", result.getOrNull()!!.token)
+                spEditor.putInt("customerNum", input_customer_number.text.toString().toInt())
+                spEditor.apply()
                 startMainActivity()
             } else {
                 displayToast(result.exceptionOrNull()!!.message!!)

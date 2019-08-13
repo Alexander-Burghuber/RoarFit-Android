@@ -1,10 +1,5 @@
 package at.htl_leonding.roarfit.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 
-class SharedViewModel(context: Application) : AndroidViewModel(context) {
-    var authToken = MutableLiveData<String>()
-    var customerNum = MutableLiveData<Int>()
-}
+class SharedViewModel : ViewModel()

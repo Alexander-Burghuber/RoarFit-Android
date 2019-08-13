@@ -10,9 +10,9 @@ import retrofit2.Response
 class UserRepository {
     private val webService: WebService = WebServiceFactory.create()
 
-    suspend fun getUser(customerNum: Int, authToken: String): Response<User> {
+    suspend fun getUser(jwt: String, customerNum: Int): Response<User> {
         return withContext(Dispatchers.IO) {
-            webService.getUser(customerNum, "Bearer $authToken")
+            webService.getUser(customerNum, "Bearer $jwt")
         }
     }
 

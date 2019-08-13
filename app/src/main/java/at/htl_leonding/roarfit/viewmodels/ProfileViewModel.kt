@@ -12,10 +12,10 @@ class ProfileViewModel : ViewModel() {
     private val repository = UserRepository()
     val userStatus = MutableLiveData<Result<User>>()
 
-    fun getUser(customerNum: Int, authToken: String) {
+    fun getUser(jwt: String, customerNum: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.getUser(customerNum, authToken)
+                val response = repository.getUser(jwt, customerNum)
                 if (response.isSuccessful) {
                     userStatus.value = Result.success(response.body()!!)
                 } else {
