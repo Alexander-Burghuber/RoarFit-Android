@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Load the auth token & the customer number into the view model and route to the AuthActivity if an error occurs
      */
-    private fun loadAccountData() {
+    fun loadAccountData() {
         val am = AccountManager.get(this)
         val accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE)
         if (accounts.isNotEmpty()) {

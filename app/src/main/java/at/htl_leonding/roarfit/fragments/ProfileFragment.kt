@@ -1,5 +1,6 @@
 package at.htl_leonding.roarfit.fragments
 
+import android.accounts.AccountManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.activities.MainActivity
+import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.ProfileViewModel
 import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -23,17 +25,16 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         model = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
+        activity?.let {
+            sharedModel = ViewModelProviders.of(it).get(SharedViewModel::class.java)
+        }
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity?.let {
-            sharedModel = ViewModelProviders.of(it).get(SharedViewModel::class.java)
-        }
-
+    override fun onStart() {
+        super.onStart()
         model.userStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
@@ -44,22 +45,44 @@ class ProfileFragment : Fragment() {
                 profile_progress_bar.visibility = View.GONE
                 profile_content.visibility = View.VISIBLE
             } else {
-                displayToast(result.exceptionOrNull()!!.message!!)
                 val activity = activity as MainActivity
-                activity.logout()
+                var msg: String? = null
+                when (result.exceptionOrNull()!!.message!!) {
+                    "401" -> {
+                        val am = AccountManager.get(requireContext())
+                        am.invalidateAuthToken(Constants.ACCOUNT_TYPE, sharedModel.authToken.value)
+                        activity.loadAccountData()
+                        loadUser()
+                    }
+                    "404" -> {
+                        msg = "The entered customer number is not associated with an user."
+                    }
+                    else -> {
+                        msg = "An unexpected error occurred. Please re-login."
+                    }
+                }
+
+                if (msg != null) {
+                    displayToast(msg)
+                    activity.logout()
+                }
             }
         })
 
+        loadUser()
+    }
+
+    private fun loadUser() {
         val customerNum = sharedModel.customerNum.value
         val authToken = sharedModel.authToken.value
         if (customerNum != null && authToken != null) {
             profile_progress_bar.visibility = View.VISIBLE
             model.getUser(customerNum, authToken)
         }
-
     }
 
     private fun displayToast(text: String) {
         Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
     }
+
 }

@@ -1,7 +1,9 @@
 package at.htl_leonding.roarfit.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.view.SurfaceView
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -13,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_camera.*
 class CameraActivity : AppCompatActivity() {
     private lateinit var model: CameraViewModel
     private lateinit var qrEader: QREader
-    private lateinit var surfaceView: SurfaceView
+    private lateinit var cameraView: SurfaceView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,24 +24,29 @@ class CameraActivity : AppCompatActivity() {
         model = ViewModelProviders.of(this).get(CameraViewModel::class.java)
 
         // Setup SurfaceView
-        surfaceView = findViewById(R.id.camera_view)
+        cameraView = findViewById(R.id.camera_view)
 
         // Init QREader
-        qrEader = QREader.Builder(this, surfaceView, model)
+        qrEader = QREader.Builder(this, cameraView, model)
             .facing(QREader.BACK_CAM)
             .enableAutofocus(true)
-            .width(surfaceView.width)
-            .height(surfaceView.height)
+            .width(cameraView.width)
+            .height(cameraView.height)
             .build()
 
         model.qrResult.observe(this, Observer { qrResult ->
-            textData.text = qrResult
+            camera_text.setText(qrResult)
         })
+
+        cameraView.setOnClickListener {
+            hideKeyboard()
+            camera_text.clearFocus()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        qrEader.initAndStart(surfaceView)
+        qrEader.initAndStart(cameraView)
     }
 
     override fun onPause() {
@@ -47,4 +54,8 @@ class CameraActivity : AppCompatActivity() {
         qrEader.releaseAndCleanup()
     }
 
+    private fun hideKeyboard() {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
 }

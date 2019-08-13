@@ -31,7 +31,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.CameraActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:fitsSystemWindows="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme.Camera" />
 
         <service
             android:name=".services.AuthenticatorService"

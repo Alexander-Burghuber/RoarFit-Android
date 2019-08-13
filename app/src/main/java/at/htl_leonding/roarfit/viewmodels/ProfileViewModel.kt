@@ -19,16 +19,11 @@ class ProfileViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     userStatus.value = Result.success(response.body()!!)
                 } else {
-                    when (response.code()) {
-                        401 -> userStatus.value = Result.failure(Exception("Invalid Authorization Token"))
-                        404 -> userStatus.value = Result.failure(Exception("User does not exist"))
-                        else -> userStatus.value = Result.failure(Exception("An unexpected error occurred"))
-                    }
+                    userStatus.value = Result.failure(Exception(response.code().toString()))
                 }
             } catch (e: Exception) {
-                val msg = "An unknown error occurred"
-                Log.e("SharedViewModel", msg, e)
-                userStatus.value = Result.failure(Exception(msg))
+                Log.e("SharedViewModel", "An unknown error occurred", e)
+                userStatus.value = Result.failure(Exception())
             }
         }
     }

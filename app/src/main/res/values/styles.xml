@@ -12,6 +12,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.Camera" parent="AppTheme.NoActionBar">
+        <item name="android:navigationBarColor">@color/dark</item>
+        <!--<item name="android:navigationBarColor">@android:color/transparent</item>-->
+        <!--<item name="android:windowTranslucentNavigation">true</item>-->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
         <item name="android:navigationBarColor">@color/primaryDarker</item>
