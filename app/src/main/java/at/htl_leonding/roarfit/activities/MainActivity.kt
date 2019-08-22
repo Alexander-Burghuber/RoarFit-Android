@@ -25,12 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sharedModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 
         sharedModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
-
-        checkAuthorization()
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -107,17 +104,12 @@ class MainActivity : AppCompatActivity() {
 
     fun logout() {
         val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
-        spEditor.remove("jwt")
-        spEditor.remove("customerNum")
-        spEditor.apply()
+        spEditor.remove("username")
+            .remove("jwt")
+            .remove("customer_num")
+            .remove("encrypted_pwd")
+            .apply()
         startAuthActivity()
-    }
-
-    fun checkAuthorization() {
-        val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
-        if (!sp.contains("jwt") || !sp.contains("customerNum")) {
-            startAuthActivity()
-        }
     }
 
     private fun startAuthActivity() {

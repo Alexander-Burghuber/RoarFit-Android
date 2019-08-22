@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import at.htl_leonding.roarfit.data.User
+import at.htl_leonding.roarfit.model.User
 import at.htl_leonding.roarfit.repositories.UserRepository
 import kotlinx.coroutines.launch
 
@@ -19,11 +19,17 @@ class ProfileViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     userStatus.value = Result.success(response.body()!!)
                 } else {
-                    userStatus.value = Result.failure(Exception(response.code().toString()))
+                    val msg = when (response.code()) {
+                        401 -> "The authorization token has expired."
+                        404 -> "The entered customer number is not associated with an user."
+                        else -> "An unexpected error occurred."
+                    }
+                    userStatus.value = Result.failure(Exception(msg))
                 }
             } catch (e: Exception) {
-                Log.e("SharedViewModel", "An unknown error occurred", e)
-                userStatus.value = Result.failure(Exception())
+                val msg = "An unknown error occurred"
+                Log.e("SharedViewModel", msg, e)
+                userStatus.value = Result.failure(Exception(msg))
             }
         }
     }

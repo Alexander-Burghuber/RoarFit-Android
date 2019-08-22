@@ -4,15 +4,22 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import at.htl_leonding.roarfit.data.LoginResponse
+import at.htl_leonding.roarfit.model.LoginResponse
 import at.htl_leonding.roarfit.repositories.AuthRepository
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
-    private val repository = AuthRepository()
-    val loginResStatus = MutableLiveData<Result<LoginResponse>>()
+    var username: String? = null
+    var password: String? = null
+    var customerNum: Int? = null
 
-    fun login(username: String, password: String) {
+    val loginResStatus = MutableLiveData<Result<LoginResponse>>()
+    private val repository = AuthRepository()
+
+    fun login(username: String, password: String, customerNum: Int) {
+        this.username = username
+        this.password = password
+        this.customerNum = customerNum
         viewModelScope.launch {
             try {
                 val response = repository.login(username, password)

@@ -35,6 +35,7 @@ class ProfileFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         model.userStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
@@ -45,24 +46,8 @@ class ProfileFragment : Fragment() {
                 profile_progress_bar.visibility = View.GONE
                 profile_content.visibility = View.VISIBLE
             } else {
-                val activity = activity as MainActivity
-                var msg: String? = null
-                when (result.exceptionOrNull()!!.message!!) {
-                    "401" -> {
-                        TODO()
-                    }
-                    "404" -> {
-                        msg = "The entered customer number is not associated with an user."
-                    }
-                    else -> {
-                        msg = "An unexpected error occurred. Please re-login."
-                    }
-                }
-
-                if (msg != null) {
-                    displayToast(msg)
-                    activity.logout()
-                }
+                displayToast("${result.exceptionOrNull()!!.message} Please re-login.")
+                (activity as MainActivity).logout()
             }
         })
 
@@ -72,7 +57,7 @@ class ProfileFragment : Fragment() {
     private fun loadUser() {
         val sp = requireContext().getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
         val jwt = sp.getString("jwt", null)
-        val customerNum = sp.getInt("customerNum", -1)
+        val customerNum = sp.getInt("customer_num", -1)
         if (jwt != null && customerNum != -1) {
             profile_progress_bar.visibility = View.VISIBLE
             model.getUser(jwt, customerNum)

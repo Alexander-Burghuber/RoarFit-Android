@@ -3,18 +3,18 @@ package at.htl_leonding.roarfit.network
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class WebServiceFactory {
+class KeyFitApiFactory {
     companion object {
-        private var webService: WebService? = null
-        fun create(): WebService {
-            if (webService == null) {
+        private var keyFitApi: KeyFitApi? = null
+        fun create(): KeyFitApi {
+            if (keyFitApi == null) {
                 val retrofit = Retrofit.Builder()
                     .baseUrl("https://staging.key.fit/lionsoft/app/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-                webService = retrofit.create(WebService::class.java)
+                keyFitApi = retrofit.create(KeyFitApi::class.java)
             }
-            return webService!!
+            return keyFitApi!!
         }
     }
 }

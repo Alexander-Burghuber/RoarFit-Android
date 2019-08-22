@@ -1,18 +1,15 @@
 package at.htl_leonding.roarfit.network
 
-import at.htl_leonding.roarfit.data.LoginRequest
-import at.htl_leonding.roarfit.data.LoginResponse
-import at.htl_leonding.roarfit.data.User
+import at.htl_leonding.roarfit.model.LoginRequest
+import at.htl_leonding.roarfit.model.LoginResponse
+import at.htl_leonding.roarfit.model.User
 import retrofit2.Response
 import retrofit2.http.*
 
-interface WebService {
+interface KeyFitApi {
 
     @POST("login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
-
-    @POST("login")
-    fun getToken(@Body request: LoginRequest): LoginResponse
 
     @GET("customers/customer/{customerNum}")
     suspend fun getUser(
