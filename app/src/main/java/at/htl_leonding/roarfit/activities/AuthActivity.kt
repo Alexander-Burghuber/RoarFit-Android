@@ -26,13 +26,16 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var goldfinger: Goldfinger
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // replaces the launcher theme with the normal one
         setTheme(R.style.AppTheme_NoActionBar)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
         model = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
+        // observe the status of the login network request
         model.loginResStatus.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val username = model.username
@@ -42,8 +45,9 @@ class AuthActivity : AppCompatActivity() {
                 if (username != null && password != null && customerNum != null) {
                     val jwt = result.getOrNull()!!.token
                     if (input_checkbox.isChecked) {
+                        // activate fingerprint authentication for future logins and finish the login process
                         if (goldfinger.hasEnrolledFingerprint()) {
-
+                            // display a dialog to inform the user
                             val dialog = MaterialAlertDialogBuilder(this)
                                 .setTitle("Confirm Fingerprint")
                                 .setMessage("Please put your finger on the scanner...\n")
@@ -54,6 +58,7 @@ class AuthActivity : AppCompatActivity() {
                                 }
                                 .show()
 
+                            // encrypt the password using the fingerprint
                             goldfinger.encrypt(
                                 "password",
                                 password,
@@ -61,6 +66,7 @@ class AuthActivity : AppCompatActivity() {
                                     override fun onResult(result: Goldfinger.Result) {
                                         when (result.type()) {
                                             Goldfinger.Type.SUCCESS -> {
+                                                // successfully encrypted the password
                                                 dialog.dismiss()
                                                 finishLogin(username, jwt, customerNum, result.value())
                                             }
@@ -92,10 +98,13 @@ class AuthActivity : AppCompatActivity() {
                             setLoading(false)
                         }
                     } else {
+                        // finish the login process normally
                         finishLogin(username, jwt, customerNum)
                     }
                 } else {
-                    displayToast("An unexpected error occurred while logging in. Please try again.")
+                    displayToast("An unknown error occurred. Please try again.")
+                    setEnabledStateOfInput(true)
+                    setLoading(false)
                 }
             } else {
                 displayToast(result.exceptionOrNull()!!.message!!)
@@ -104,7 +113,8 @@ class AuthActivity : AppCompatActivity() {
             }
         })
 
-        if (goldfinger.hasFingerprintHardware()) input_checkbox.isEnabled = true
+        // show the fingerprint authentication option when the device has the needed hardware
+        if (goldfinger.hasFingerprintHardware()) input_checkbox.visibility = View.VISIBLE
 
         button_login.setOnClickListener {
             setEnabledStateOfInput(false)
@@ -126,6 +136,7 @@ class AuthActivity : AppCompatActivity() {
         val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
         input_username.setText(sp.getString("username", ""))
 
+        // activate fingerprint authentication if the requirements are met
         val username = sp.getString("username", null)
         val encryptedPwd = sp.getString("encrypted_pwd", null)
         val customerNum = sp.getInt("customer_num", -1)
@@ -139,6 +150,7 @@ class AuthActivity : AppCompatActivity() {
         spEditor.putString("username", username)
         spEditor.putString("jwt", jwt)
         spEditor.putInt("customer_num", customerNum)
+        // if the password has been encrypted (using the fingerprint), store it for the next login
         if (encryptedPwd != null) spEditor.putString("encrypted_pwd", encryptedPwd)
         spEditor.apply()
 
@@ -148,11 +160,15 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun loginWithFingerprint(username: String, encryptedPwd: String, customerNum: Int) {
+        // show the user that fingerprint authentication is possible
         fingerprint_icon.visibility = View.VISIBLE
+
+        // decrypt the stored password for login using the fingerprint
         goldfinger.decrypt("password", encryptedPwd, object : Goldfinger.Callback {
             override fun onResult(result: Goldfinger.Result) {
                 when (result.type()) {
                     Goldfinger.Type.SUCCESS -> {
+                        // login with the decrypted password
                         setEnabledStateOfInput(false)
                         setLoading(true)
                         val password = result.value()!!
@@ -160,6 +176,7 @@ class AuthActivity : AppCompatActivity() {
                     }
                     Goldfinger.Type.INFO -> {
                         if (result.reason() == Goldfinger.Reason.AUTHENTICATION_FAIL) {
+                            // makes the fingerprint icon red for a small time to display the authentication failure
                             ImageViewCompat.setImageTintList(
                                 fingerprint_icon,
                                 ColorStateList.valueOf(ContextCompat.getColor(this@AuthActivity, R.color.error))
