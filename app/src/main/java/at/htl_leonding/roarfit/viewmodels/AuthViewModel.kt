@@ -4,17 +4,18 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import at.htl_leonding.roarfit.model.LoginRequest
 import at.htl_leonding.roarfit.model.LoginResponse
-import at.htl_leonding.roarfit.repositories.AuthRepository
+import at.htl_leonding.roarfit.network.KeyFitApi
+import at.htl_leonding.roarfit.network.KeyFitApiFactory
 import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()) : ViewModel() {
     var username: String? = null
     var password: String? = null
     var customerNum: Int? = null
 
     val loginResStatus = MutableLiveData<Result<LoginResponse>>()
-    private val repository = AuthRepository()
 
     fun login(username: String, password: String, customerNum: Int) {
         this.username = username
@@ -22,7 +23,7 @@ class AuthViewModel : ViewModel() {
         this.customerNum = customerNum
         viewModelScope.launch {
             try {
-                val response = repository.login(username, password)
+                val response = keyFitApi.login(LoginRequest(username, password))
                 if (response.isSuccessful) {
                     val loginRes = response.body()!!
                     when (loginRes.code) {

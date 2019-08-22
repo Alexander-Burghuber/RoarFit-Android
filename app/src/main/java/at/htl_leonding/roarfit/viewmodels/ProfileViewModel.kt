@@ -5,17 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.htl_leonding.roarfit.model.User
-import at.htl_leonding.roarfit.repositories.UserRepository
+import at.htl_leonding.roarfit.network.KeyFitApi
+import at.htl_leonding.roarfit.network.KeyFitApiFactory
 import kotlinx.coroutines.launch
 
-class ProfileViewModel : ViewModel() {
-    private val repository = UserRepository()
+class ProfileViewModel(private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()) : ViewModel() {
     val userStatus = MutableLiveData<Result<User>>()
 
     fun getUser(jwt: String, customerNum: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.getUser(jwt, customerNum)
+                val response = keyFitApi.getUser(customerNum, "Bearer $jwt")
                 if (response.isSuccessful) {
                     userStatus.value = Result.success(response.body()!!)
                 } else {
