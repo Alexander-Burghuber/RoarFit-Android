@@ -15,7 +15,7 @@ class AuthViewModel(private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
     var password: String? = null
     var customerNum: Int? = null
 
-    val loginResStatus = MutableLiveData<Result<LoginResponse>>()
+    val loginLiveData = MutableLiveData<Result<LoginResponse>>()
 
     fun login(username: String, password: String, customerNum: Int) {
         this.username = username
@@ -27,18 +27,18 @@ class AuthViewModel(private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
                 if (response.isSuccessful) {
                     val loginRes = response.body()!!
                     when (loginRes.code) {
-                        0 -> loginResStatus.value = Result.success(loginRes)
-                        2 -> loginResStatus.value = Result.failure(Exception("Username or password is wrong"))
-                        else -> loginResStatus.value =
+                        0 -> loginLiveData.value = Result.success(loginRes)
+                        2 -> loginLiveData.value = Result.failure(Exception("Username or password is wrong"))
+                        else -> loginLiveData.value =
                             Result.failure(Exception("Received unknown code from the server"))
                     }
                 } else {
-                    loginResStatus.value = Result.failure(Exception("Received invalid body"))
+                    loginLiveData.value = Result.failure(Exception("Received invalid body"))
                 }
             } catch (e: Exception) {
                 val msg = "No connection could be established"
                 Log.e("AuthViewModel", msg, e)
-                loginResStatus.value = Result.failure(Exception(msg))
+                loginLiveData.value = Result.failure(Exception(msg))
             }
         }
     }

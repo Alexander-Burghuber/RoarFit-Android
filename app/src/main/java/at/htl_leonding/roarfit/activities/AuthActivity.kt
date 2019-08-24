@@ -36,7 +36,7 @@ class AuthActivity : AppCompatActivity() {
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
         // observe the status of the login network request
-        model.loginResStatus.observe(this, Observer { result ->
+        model.loginLiveData.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val username = model.username
                 val password = model.password

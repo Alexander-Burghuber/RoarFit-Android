@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        model.userStatus.observe(this, Observer { result ->
+        model.userLiveData.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
                 profile_customer_number.text = user.id.toString()
