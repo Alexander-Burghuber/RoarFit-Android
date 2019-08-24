@@ -78,14 +78,14 @@ class AuthActivity : AppCompatActivity() {
                                                 } else {
                                                     "An unknown error occurred during fingerprint scanning. Please login manually."
                                                 }
-                                                handleFingerprintDisabled(msg)
+                                                handleDisabledFingerprint(msg)
                                                 dialog.cancel()
                                             }
                                         }
                                     }
 
                                     override fun onError(e: Exception) {
-                                        handleFingerprintDisabled(
+                                        handleDisabledFingerprint(
                                             "An unknown error occurred during fingerprint authentication setup.",
                                             e
                                         )
@@ -132,7 +132,10 @@ class AuthActivity : AppCompatActivity() {
                 setEnabledStateOfInput(true)
             }
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
         val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
         input_username.setText(sp.getString("username", ""))
 
@@ -145,23 +148,10 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private fun finishLogin(username: String, jwt: String, customerNum: Int, encryptedPwd: String? = null) {
-        val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
-        spEditor.putString("username", username)
-        spEditor.putString("jwt", jwt)
-        spEditor.putInt("customer_num", customerNum)
-        // if the password has been encrypted (using the fingerprint), store it for the next login
-        if (encryptedPwd != null) spEditor.putString("encrypted_pwd", encryptedPwd)
-        spEditor.apply()
-
-        setEnabledStateOfInput(true)
-        setLoading(false)
-        startMainActivity()
-    }
-
     private fun loginWithFingerprint(username: String, encryptedPwd: String, customerNum: Int) {
         // show the user that fingerprint authentication is possible
         fingerprint_icon.visibility = View.VISIBLE
+        input_checkbox.visibility = View.VISIBLE
 
         // decrypt the stored password for login using the fingerprint
         goldfinger.decrypt("password", encryptedPwd, object : Goldfinger.Callback {
@@ -192,23 +182,37 @@ class AuthActivity : AppCompatActivity() {
                         }
                     }
                     Goldfinger.Type.ERROR -> {
-                        val msg = if (result.reason() == Goldfinger.Reason.LOCKOUT) {
-                            "Too many attempts, please login manually."
-                        } else {
-                            "An unknown error occurred during fingerprint scanning. Please login manually."
+                        val msg = when (result.reason()) {
+                            Goldfinger.Reason.LOCKOUT -> "Too many attempts, please login manually."
+                            Goldfinger.Reason.CANCELED -> null
+                            else -> "An unknown error occurred during fingerprint scanning. Please login manually."
                         }
-                        handleFingerprintDisabled(msg)
+                        handleDisabledFingerprint(msg)
                     }
                 }
             }
 
             override fun onError(e: Exception) {
-                handleFingerprintDisabled(
+                handleDisabledFingerprint(
                     "An unknown error occurred during fingerprint scanning. Please login manually.",
                     e
                 )
             }
         })
+    }
+
+    private fun finishLogin(username: String, jwt: String, customerNum: Int, encryptedPwd: String? = null) {
+        val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
+        spEditor.putString("username", username)
+        spEditor.putString("jwt", jwt)
+        spEditor.putInt("customer_num", customerNum)
+        // if the password has been encrypted (using the fingerprint), store it for the next login
+        if (encryptedPwd != null) spEditor.putString("encrypted_pwd", encryptedPwd)
+        spEditor.apply()
+
+        setEnabledStateOfInput(true)
+        setLoading(false)
+        startMainActivity()
     }
 
     private fun startMainActivity() {
@@ -244,13 +248,15 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleFingerprintDisabled(msg: String, e: Exception? = null) {
+    private fun handleDisabledFingerprint(msg: String?, e: Exception? = null) {
         goldfinger.cancel()
         input_checkbox.isChecked = false
         input_checkbox.visibility = View.INVISIBLE
         fingerprint_icon.visibility = View.INVISIBLE
-        displayToast(msg)
-        if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
+        if (msg != null) {
+            displayToast(msg)
+            if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
+        }
     }
 
 }
