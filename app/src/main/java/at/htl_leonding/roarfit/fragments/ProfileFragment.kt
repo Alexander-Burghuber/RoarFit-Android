@@ -1,6 +1,5 @@
 package at.htl_leonding.roarfit.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.activities.MainActivity
-import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.ProfileViewModel
 import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -35,8 +33,7 @@ class ProfileFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
-        model.userLiveData.observe(this, Observer { result ->
+        sharedModel.userLiveData.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
                 profile_customer_number.text = user.id.toString()
@@ -50,18 +47,6 @@ class ProfileFragment : Fragment() {
                 (activity as MainActivity).logout()
             }
         })
-
-        loadUser()
-    }
-
-    private fun loadUser() {
-        val sp = requireContext().getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
-        val jwt = sp.getString("jwt", null)
-        val customerNum = sp.getInt("customer_num", -1)
-        if (jwt != null && customerNum != -1) {
-            profile_progress_bar.visibility = View.VISIBLE
-            model.getUser(jwt, customerNum)
-        }
     }
 
     private fun displayToast(text: String) {

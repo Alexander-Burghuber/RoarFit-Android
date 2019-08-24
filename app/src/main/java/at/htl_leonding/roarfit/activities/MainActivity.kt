@@ -63,6 +63,8 @@ class MainActivity : AppCompatActivity() {
                 startCameraActivity()
             }
         }
+
+        loadUser()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -110,6 +112,15 @@ class MainActivity : AppCompatActivity() {
             .remove("encrypted_pwd")
             .apply()
         startAuthActivity()
+    }
+
+    private fun loadUser() {
+        val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
+        val jwt = sp.getString("jwt", null)
+        val customerNum = sp.getInt("customer_num", -1)
+        if (jwt != null && customerNum != -1) {
+            sharedModel.getUser(jwt, customerNum)
+        }
     }
 
     private fun startAuthActivity() {
