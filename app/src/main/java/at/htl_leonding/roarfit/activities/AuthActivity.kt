@@ -137,10 +137,10 @@ class AuthActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
-        input_username.setText(sp.getString("username", ""))
 
         // activate fingerprint authentication if the requirements are met
         val username = sp.getString("username", null)
+        input_username.setText(username ?: "")
         val encryptedPwd = sp.getString("encrypted_pwd", null)
         val customerNum = sp.getInt("customer_num", -1)
         if (username != null && encryptedPwd != null && customerNum != -1) {

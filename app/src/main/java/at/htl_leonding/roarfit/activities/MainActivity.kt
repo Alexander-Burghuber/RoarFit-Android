@@ -120,6 +120,8 @@ class MainActivity : AppCompatActivity() {
         val customerNum = sp.getInt("customer_num", -1)
         if (jwt != null && customerNum != -1) {
             sharedModel.getUser(jwt, customerNum)
+        } else {
+            logout()
         }
     }
 
