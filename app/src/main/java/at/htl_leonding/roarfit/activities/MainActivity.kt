@@ -30,10 +30,10 @@ class MainActivity : AppCompatActivity() {
         sharedModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
 
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar_main)
 
         // Setup navigation
-        val navController = findNavController(this, R.id.nav_host_fragment)
+        val navController = findNavController(this, R.id.nav_host_fragment_main)
         bottom_nav.setupWithNavController(navController)
 
         // Setup configuration with top-level destinations
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCameraActivity() {
-        val intent = Intent(this, CameraActivity::class.java)
+        val intent = Intent(this, WorkoutActivity::class.java)
         startActivity(intent)
     }
 

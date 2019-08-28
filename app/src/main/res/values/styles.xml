@@ -13,10 +13,18 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--
     <style name="AppTheme.Camera" parent="AppTheme.NoActionBar">
-        <item name="android:navigationBarColor">@color/dark</item>
-        <!--<item name="android:navigationBarColor">@android:color/transparent</item>-->
-        <!--<item name="android:windowTranslucentNavigation">true</item>-->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    -->
+
+    <style name="AppTheme.NoActionBar.Workout" parent="AppTheme.NoActionBar">
+        <!--<item name="android:navigationBarColor">@color/dark</item>-->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 

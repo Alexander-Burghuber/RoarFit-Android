@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="at.htl_leonding.roarfit">
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name="at.htl_leonding.roarfit.activities.AuthActivity"
             android:label="@string/app_name"
@@ -31,15 +32,17 @@
             android:name="at.htl_leonding.roarfit.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
-            android:name="at.htl_leonding.roarfit.activities.CameraActivity"
+            android:name="at.htl_leonding.roarfit.activities.WorkoutActivity"
             android:fitsSystemWindows="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Camera"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/AppTheme.NoActionBar.Workout" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
+
     </application>
+
 </manifest>
