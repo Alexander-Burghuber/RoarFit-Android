@@ -18,9 +18,6 @@ import at.htl_leonding.roarfit.viewmodels.CameraViewModel
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
 
-/**
- * A simple [Fragment] subclass.
- */
 class CameraFragment : Fragment() {
     private lateinit var model: CameraViewModel
     private lateinit var qrEader: QREader
@@ -61,7 +58,8 @@ class CameraFragment : Fragment() {
 
         model.equipmentLiveData.observe(this, Observer { equipment ->
             hideKeyboard()
-            val action = CameraFragmentDirections.actionCameraFragmentToExerciseFragment(equipment)
+            val action =
+                CameraFragmentDirections.actionCameraFragmentToExerciseInfoFragment(equipment)
             findNavController().navigate(action)
         })
 
@@ -99,5 +97,4 @@ class CameraFragment : Fragment() {
             InputMethodManager.HIDE_NOT_ALWAYS
         )
     }
-
 }

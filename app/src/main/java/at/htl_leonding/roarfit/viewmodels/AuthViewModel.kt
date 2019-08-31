@@ -42,5 +42,4 @@ class AuthViewModel(private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
             }
         }
     }
-
 }

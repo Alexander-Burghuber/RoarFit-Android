@@ -11,18 +11,34 @@
         android:label="Camera"
         tools:layout="@layout/fragment_camera">
         <action
-            android:id="@+id/action_cameraFragment_to_exerciseFragment"
-            app:destination="@id/exerciseFragment"
+            android:id="@+id/action_cameraFragment_to_exerciseInfoFragment"
+            app:destination="@id/exerciseInfoFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@+id/exerciseFragment"
-        android:name="at.htl_leonding.roarfit.fragments.ExerciseFragment"
+        android:id="@+id/exerciseInfoFragment"
+        android:name="at.htl_leonding.roarfit.fragments.ExerciseInfoFragment"
         android:label="Exercise"
-        tools:layout="@layout/fragment_exercise">
+        tools:layout="@layout/fragment_exercise_info">
+        <argument
+            android:name="equipment"
+            app:argType="at.htl_leonding.roarfit.model.Equipment" />
+        <action
+            android:id="@+id/action_exerciseInfoFragment_to_ongoingExerciseFragment"
+            app:destination="@id/ongoingExerciseFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/ongoingExerciseFragment"
+        android:name="at.htl_leonding.roarfit.fragments.OngoingExerciseFragment"
+        android:label="fragment_ongoing_exercise"
+        tools:layout="@layout/fragment_ongoing_exercise">
         <argument
             android:name="equipment"
             app:argType="at.htl_leonding.roarfit.model.Equipment" />

@@ -258,5 +258,4 @@ class AuthActivity : AppCompatActivity() {
             if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
         }
     }
-
 }

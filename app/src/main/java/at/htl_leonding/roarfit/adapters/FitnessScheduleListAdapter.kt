@@ -39,5 +39,4 @@ class FitnessScheduleListAdapter(context: Context) :
         this.fitnessSchedules = fitnessSchedules
         notifyDataSetChanged()
     }
-
 }

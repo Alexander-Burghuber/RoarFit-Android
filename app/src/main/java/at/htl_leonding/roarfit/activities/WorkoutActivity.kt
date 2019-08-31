@@ -8,7 +8,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import at.htl_leonding.roarfit.R
-import kotlinx.android.synthetic.main.fragment_exercise.*
+import kotlinx.android.synthetic.main.fragment_exercise_info.*
 
 class WorkoutActivity : AppCompatActivity() {
 
@@ -22,6 +22,7 @@ class WorkoutActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+
         finish()
         return super.onSupportNavigateUp()
     }
@@ -37,5 +38,4 @@ class WorkoutActivity : AppCompatActivity() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.navigationBarColor = resources.getColor(R.color.lightGrey, null)
     }
-
 }

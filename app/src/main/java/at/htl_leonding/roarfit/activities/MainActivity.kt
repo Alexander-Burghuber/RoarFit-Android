@@ -135,5 +135,4 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, WorkoutActivity::class.java)
         startActivity(intent)
     }
-
 }

@@ -47,5 +47,4 @@ class ProfileFragment : Fragment() {
     private fun displayToast(text: String) {
         Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
     }
-
 }

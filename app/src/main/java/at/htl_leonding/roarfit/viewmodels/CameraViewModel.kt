@@ -29,5 +29,4 @@ class CameraViewModel : ViewModel(), QRDataListener {
             equipmentLiveData.postValue(equipment)
         }
     }
-
 }
