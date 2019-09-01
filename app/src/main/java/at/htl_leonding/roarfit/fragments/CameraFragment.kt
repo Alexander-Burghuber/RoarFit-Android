@@ -19,7 +19,7 @@ import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
 
 class CameraFragment : Fragment() {
-    private lateinit var model: CameraViewModel
+    private lateinit var viewModel: CameraViewModel
     private lateinit var qrEader: QREader
     private lateinit var cameraView: SurfaceView
 
@@ -40,23 +40,23 @@ class CameraFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        model = ViewModelProviders.of(this).get(CameraViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
 
         cameraView = requireView().findViewById(R.id.camera_view)
 
         // Init QREader
-        qrEader = QREader.Builder(requireContext(), cameraView, model)
+        qrEader = QREader.Builder(requireContext(), cameraView, viewModel)
             .facing(QREader.BACK_CAM)
             .enableAutofocus(true)
             .width(cameraView.width)
             .height(cameraView.height)
             .build()
 
-        model.qrLiveData.observe(this, Observer { qrResult ->
+        viewModel.qrLiveData.observe(this, Observer { qrResult ->
             camera_text.setText(qrResult)
         })
 
-        model.equipmentLiveData.observe(this, Observer { equipment ->
+        viewModel.equipmentLiveData.observe(this, Observer { equipment ->
             hideKeyboard()
             val action =
                 CameraFragmentDirections.actionCameraFragmentToExerciseInfoFragment(equipment)
@@ -70,7 +70,7 @@ class CameraFragment : Fragment() {
 
         camera_text.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null) model.handleTextChange(s.toString())
+                if (s != null) viewModel.handleTextChange(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}

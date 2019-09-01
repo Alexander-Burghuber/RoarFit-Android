@@ -13,7 +13,6 @@ class CameraViewModel : ViewModel(), QRDataListener {
 
     override fun onDetected(data: String) {
         Log.d("QReader", "Value: $data")
-        Equipment.CROSS_TRAINER.toString()
         qrLiveData.postValue(data)
         handleTextChange(data)
     }

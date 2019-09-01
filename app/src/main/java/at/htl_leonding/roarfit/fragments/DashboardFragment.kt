@@ -18,13 +18,13 @@ import kotlinx.android.synthetic.main.fragment_dashboard.*
  *
  */
 class DashboardFragment : Fragment() {
-    private lateinit var sharedModel: SharedViewModel
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sharedModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_dashboard, container, false)
     }

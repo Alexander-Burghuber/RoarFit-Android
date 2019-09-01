@@ -22,12 +22,12 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var sharedModel: SharedViewModel
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar_main)
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         val jwt = sp.getString("jwt", null)
         val customerNum = sp.getInt("customer_num", -1)
         if (jwt != null && customerNum != -1) {
-            sharedModel.getUser(jwt, customerNum)
+            sharedViewModel.getUser(jwt, customerNum)
         } else {
             logout()
         }

@@ -22,7 +22,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_auth.*
 
 class AuthActivity : AppCompatActivity() {
-    private lateinit var model: AuthViewModel
+    private lateinit var viewModel: AuthViewModel
     private lateinit var goldfinger: Goldfinger
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,15 +32,15 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        model = ViewModelProviders.of(this).get(AuthViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
         // observe the status of the login network request
-        model.loginLiveData.observe(this, Observer { result ->
+        viewModel.loginLiveData.observe(this, Observer { result ->
             if (result.isSuccess) {
-                val username = model.username
-                val password = model.password
-                val customerNum = model.customerNum
+                val username = viewModel.username
+                val password = viewModel.password
+                val customerNum = viewModel.customerNum
 
                 if (username != null && password != null && customerNum != null) {
                     val jwt = result.getOrNull()!!.token
@@ -126,7 +126,7 @@ class AuthActivity : AppCompatActivity() {
 
             if (!username.isBlank() && !password.isBlank() && !customerNumber.isBlank()) {
                 setLoading(true)
-                model.login(username, password, customerNumber.toInt())
+                viewModel.login(username, password, customerNumber.toInt())
             } else {
                 displayToast("Please fill in all fields")
                 setEnabledStateOfInput(true)
@@ -162,7 +162,7 @@ class AuthActivity : AppCompatActivity() {
                         setEnabledStateOfInput(false)
                         setLoading(true)
                         val password = result.value()!!
-                        model.login(username, password, customerNum)
+                        viewModel.login(username, password, customerNum)
                     }
                     Goldfinger.Type.INFO -> {
                         if (result.reason() == Goldfinger.Reason.AUTHENTICATION_FAIL) {

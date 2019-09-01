@@ -5,17 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.R
+import at.htl_leonding.roarfit.viewmodels.OngoingExerciseViewModel
 import kotlinx.android.synthetic.main.fragment_ongoing_exercise.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class OngoingExerciseFragment : Fragment() {
+    private lateinit var viewModel: OngoingExerciseViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProviders.of(this).get(OngoingExerciseViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_ongoing_exercise, container, false)
     }
@@ -26,14 +29,14 @@ class OngoingExerciseFragment : Fragment() {
         val equipment = args.equipment
         ongoing_exercise_title.text = equipment.toString()
 
-        Timer().scheduleAtFixedRate(object : TimerTask() {
-            val startTime = System.currentTimeMillis()
-            val formatter = SimpleDateFormat("mm:ss", Locale.ENGLISH)
-            override fun run() {
-                ongoing_exercise_timer.post {
-                    ongoing_exercise_timer.text = formatter.format(Date().time - startTime)
-                }
-            }
-        }, 0, 1000)
+        viewModel.timerLiveData.observe(this, Observer { time ->
+            ongoing_exercise_timer.text = time
+        })
+
+        viewModel.startTimer()
+
+        ongoing_exercise_button_stop.setOnClickListener {
+            viewModel.stopTimer()
+        }
     }
 }

@@ -14,21 +14,20 @@ import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
-    private lateinit var sharedModel: SharedViewModel
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sharedModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel::class.java)
-
+        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
     override fun onStart() {
         super.onStart()
-        sharedModel.userLiveData.observe(this, Observer { result ->
+        sharedViewModel.userLiveData.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
                 profile_customer_number.text = user.id.toString()
