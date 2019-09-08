@@ -1,8 +1,8 @@
 package at.htl_leonding.roarfit.network
 
-import at.htl_leonding.roarfit.model.LoginRequest
-import at.htl_leonding.roarfit.model.LoginResponse
-import at.htl_leonding.roarfit.model.User
+import at.htl_leonding.roarfit.data.LoginRequest
+import at.htl_leonding.roarfit.data.LoginResponse
+import at.htl_leonding.roarfit.data.User
 import retrofit2.Response
 import retrofit2.http.*
 

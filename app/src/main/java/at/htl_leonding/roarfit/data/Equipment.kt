@@ -1,9 +1,9 @@
-package at.htl_leonding.roarfit.model
+package at.htl_leonding.roarfit.data
 
 import java.util.*
 
 enum class Equipment {
-    TREADMILL,
+    TREADMILL, // ah, yes. enslaved road
     CROSS_TRAINER,
     EXERCYCLE;
 

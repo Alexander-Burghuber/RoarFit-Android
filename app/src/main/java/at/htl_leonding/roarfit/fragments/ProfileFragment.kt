@@ -27,7 +27,7 @@ class ProfileFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        sharedViewModel.userLiveData.observe(this, Observer { result ->
+        sharedViewModel.userLD.observe(this, Observer { result ->
             if (result.isSuccess) {
                 val user = result.getOrNull()!!
                 profile_customer_number.text = user.id.toString()

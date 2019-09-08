@@ -1,36 +1,73 @@
 package at.htl_leonding.roarfit.viewmodels
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import at.htl_leonding.roarfit.model.User
+import at.htl_leonding.roarfit.data.*
 import at.htl_leonding.roarfit.network.KeyFitApi
 import at.htl_leonding.roarfit.network.KeyFitApiFactory
+import com.google.gson.Gson
+import com.google.gson.stream.JsonReader
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SharedViewModel(private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()) : ViewModel() {
-    val userLiveData = MutableLiveData<Result<User>>()
+class SharedViewModel(application: Application) : AndroidViewModel(application) {
+    val userLD = MutableLiveData<Result<User>>()
+    val exerciseHistoryLD = MutableLiveData<List<UserExercise>>()
 
-    fun getUser(jwt: String, customerNum: Int) {
+    private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
+    private val exerciseDao: ExerciseDao =
+        AppDatabase.getDatabase(application).exerciseDao()
+
+    fun loadUser(jwt: String, customerNum: Int) {
         viewModelScope.launch {
             try {
                 val response = keyFitApi.getUser(customerNum, "Bearer $jwt")
                 if (response.isSuccessful) {
-                    userLiveData.value = Result.success(response.body()!!)
+                    userLD.value = Result.success(response.body()!!)
                 } else {
                     val msg = when (response.code()) {
                         401 -> "The authorization token has expired."
                         404 -> "The entered customer number is not associated with an user."
                         else -> "An unexpected error occurred."
                     }
-                    userLiveData.value = Result.failure(Exception(msg))
+                    userLD.value = Result.failure(Exception(msg))
                 }
             } catch (e: Exception) {
                 val msg = "An unknown error occurred"
                 Log.e("SharedViewModel", msg, e)
-                userLiveData.value = Result.failure(Exception(msg))
+                userLD.value = Result.failure(Exception(msg))
             }
         }
+    }
+
+    fun addUserExercise() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val userExercise = UserExercise(templateId = 1, sets = 5, reps = 10, groupId = 0)
+            exerciseDao.insertUserExercise(userExercise)
+        }
+    }
+
+    fun loadExerciseHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            exerciseHistoryLD.postValue(exerciseDao.getAllUserExercises())
+        }
+    }
+
+    fun initDatabase(): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val inputStream = getApplication<Application>().assets.open("exercises.json")
+            val reader = JsonReader(inputStream.reader())
+            val exerciseTemplates: Array<ExerciseTemplate> =
+                Gson().fromJson(reader, Array<ExerciseTemplate>::class.java)
+            exerciseDao.insertAllTemplates(exerciseTemplates.toList())
+            // Inform the LiveData that the inserting has completed
+            liveData.postValue(true)
+        }
+        return liveData
     }
 }

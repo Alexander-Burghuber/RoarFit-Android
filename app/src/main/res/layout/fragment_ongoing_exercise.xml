@@ -40,12 +40,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="161dp"
-        android:layout_marginTop="388dp"
+        android:layout_marginTop="339dp"
         android:layout_marginEnd="162dp"
-        android:layout_marginBottom="70dp"
-        android:text="@string/ongoing_exercise_button_stop"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:backgroundTint="@color/primaryLight"
+        android:text="@string/ongoing_exercise_button_pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ongoing_exercise_timer" />
+
+    <Button
+        android:id="@+id/ongoing_exercise_button_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="162dp"
+        android:layout_marginBottom="60dp"
+        android:backgroundTint="@color/grey"
+        android:text="@string/ongoing_exercise_button_finish"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ongoing_exercise_button_stop"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,13 +3,16 @@ package at.htl_leonding.roarfit.activities
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -64,10 +67,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        loadUser()
+        val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
+        val appVersion = packageManager.getPackageInfo(packageName, 0).versionCode
+
+        // Check if the db has been initialised on this app version before
+        if (sp.getInt("db_initialised_version", 0) < appVersion) {
+            // If not, then create the db with the needed content before continuing the data loading
+            sharedViewModel.initDatabase().observe(this, Observer {
+                sp.edit().putInt("db_initialised_version", appVersion).apply()
+                loadData(sp)
+            })
+        } else {
+            loadData(sp)
+        }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.PERMISSION_REQUEST_CODE_CAMERA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
@@ -114,12 +133,22 @@ class MainActivity : AppCompatActivity() {
         startAuthActivity()
     }
 
-    private fun loadUser() {
-        val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
+    private fun loadData(sp: SharedPreferences) {
+        sharedViewModel.addUserExercise()
+        loadUser(sp)
+        sharedViewModel.loadExerciseHistory()
+        sharedViewModel.exerciseHistoryLD.observe(this, Observer { exercises ->
+            exercises.forEach { exercise ->
+                Log.d("MainActivity", exercise.toString())
+            }
+        })
+    }
+
+    private fun loadUser(sp: SharedPreferences) {
         val jwt = sp.getString("jwt", null)
         val customerNum = sp.getInt("customer_num", -1)
         if (jwt != null && customerNum != -1) {
-            sharedViewModel.getUser(jwt, customerNum)
+            sharedViewModel.loadUser(jwt, customerNum)
         } else {
             logout()
         }

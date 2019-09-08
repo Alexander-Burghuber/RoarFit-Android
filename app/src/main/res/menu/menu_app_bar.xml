@@ -8,5 +8,5 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_app_bar_logout"
-        android:title="@string/logout" />
+        android:title="@string/app_bar_logout" />
 </menu>

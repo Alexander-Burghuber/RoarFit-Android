@@ -3,17 +3,17 @@ package at.htl_leonding.roarfit.viewmodels
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import at.htl_leonding.roarfit.model.Equipment
+import at.htl_leonding.roarfit.data.Equipment
 import github.nisrulz.qreader.QRDataListener
 import java.util.*
 
 class CameraViewModel : ViewModel(), QRDataListener {
-    val qrLiveData = MutableLiveData<String>()
-    val equipmentLiveData = MutableLiveData<Equipment>()
+    val qrLD = MutableLiveData<String>()
+    val equipmentLD = MutableLiveData<Equipment>()
 
     override fun onDetected(data: String) {
         Log.d("QReader", "Value: $data")
-        qrLiveData.postValue(data)
+        qrLD.postValue(data)
         handleTextChange(data)
     }
 
@@ -25,7 +25,7 @@ class CameraViewModel : ViewModel(), QRDataListener {
             else -> null
         }
         if (equipment != null) {
-            equipmentLiveData.postValue(equipment)
+            equipmentLD.postValue(equipment)
         }
     }
 }

@@ -52,11 +52,11 @@ class CameraFragment : Fragment() {
             .height(cameraView.height)
             .build()
 
-        viewModel.qrLiveData.observe(this, Observer { qrResult ->
+        viewModel.qrLD.observe(this, Observer { qrResult ->
             camera_text.setText(qrResult)
         })
 
-        viewModel.equipmentLiveData.observe(this, Observer { equipment ->
+        viewModel.equipmentLD.observe(this, Observer { equipment ->
             hideKeyboard()
             val action =
                 CameraFragmentDirections.actionCameraFragmentToExerciseInfoFragment(equipment)

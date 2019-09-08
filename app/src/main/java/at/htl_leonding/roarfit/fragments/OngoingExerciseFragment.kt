@@ -29,7 +29,7 @@ class OngoingExerciseFragment : Fragment() {
         val equipment = args.equipment
         ongoing_exercise_title.text = equipment.toString()
 
-        viewModel.timerLiveData.observe(this, Observer { time ->
+        viewModel.timerLD.observe(this, Observer { time ->
             ongoing_exercise_timer.text = time
         })
 
@@ -37,6 +37,11 @@ class OngoingExerciseFragment : Fragment() {
 
         ongoing_exercise_button_stop.setOnClickListener {
             viewModel.stopTimer()
+            ongoing_exercise_button_finish.visibility = View.VISIBLE
+        }
+
+        ongoing_exercise_button_finish.setOnClickListener {
+            requireActivity().finish()
         }
     }
 }

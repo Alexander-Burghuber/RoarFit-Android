@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Kniebeuge",
+    "equipment": "Hex-Bar",
+    "bodyPart": "Beine"
+  },
+  {
+    "name": "Leg Extension",
+    "equipment": "Beinstrecker",
+    "bodyPart": "Beine"
+  },
+  {
+    "name": "Leg Curl",
+    "equipment": "Beinstrecker",
+    "bodyPart": "Beine"
+  },
+  {
+    "name": "Kurzhanteln - Bankdrücken",
+    "equipment": "Kurzhanteln",
+    "bodyPart": "Rücken"
+  },
+  {
+    "name": "T-Hantelrudern",
+    "equipment": "T-Hantel",
+    "bodyPart": "Rücken"
+  },
+  {
+    "name": "Butterfly",
+    "equipment": null,
+    "bodyPart": "Brust"
+  },
+  {
+    "name": "Upper Back",
+    "equipment": null,
+    "bodyPart": "Oberer Rücken"
+  }
+]

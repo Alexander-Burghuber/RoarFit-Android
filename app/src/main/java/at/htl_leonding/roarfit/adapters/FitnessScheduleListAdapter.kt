@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.htl_leonding.roarfit.R
-import at.htl_leonding.roarfit.model.FitnessSchedule
+import at.htl_leonding.roarfit.data.FitnessSchedule
 
 class FitnessScheduleListAdapter(context: Context) :
     RecyclerView.Adapter<FitnessScheduleListAdapter.FitnessScheduleViewHolder>() {

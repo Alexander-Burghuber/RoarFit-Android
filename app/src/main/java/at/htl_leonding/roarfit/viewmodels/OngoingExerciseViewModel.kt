@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class OngoingExerciseViewModel : ViewModel() {
-    val timerLiveData = MutableLiveData<String>()
+    val timerLD = MutableLiveData<String>()
     private val timer = Timer()
     private var isTimerRunning = false
 
@@ -18,7 +18,7 @@ class OngoingExerciseViewModel : ViewModel() {
                 val startTime = System.currentTimeMillis()
                 val formatter = SimpleDateFormat("mm:ss", Locale.ENGLISH)
                 override fun run() {
-                    timerLiveData.postValue(formatter.format(Date().time - startTime))
+                    timerLD.postValue(formatter.format(Date().time - startTime))
                 }
             }, 0, 1000)
         }

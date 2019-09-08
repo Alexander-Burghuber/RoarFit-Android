@@ -1,4 +1,4 @@
-package at.htl_leonding.roarfit.model
+package at.htl_leonding.roarfit.data
 
 /**
  * Class which provides a model for user
