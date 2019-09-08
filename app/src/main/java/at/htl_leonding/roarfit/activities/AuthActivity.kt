@@ -47,51 +47,12 @@ class AuthActivity : AppCompatActivity() {
                     if (input_checkbox.isChecked) {
                         // activate fingerprint authentication for future logins and finish the login process
                         if (goldfinger.hasEnrolledFingerprint()) {
-                            // display a dialog to inform the user
-                            val dialog = MaterialAlertDialogBuilder(this)
-                                .setTitle("Confirm Fingerprint")
-                                .setMessage("Please put your finger on the scanner...\n")
-                                .setCancelable(true)
-                                .setOnCancelListener {
-                                    setEnabledStateOfInput(true)
-                                    setLoading(false)
-                                }
-                                .show()
-
                             // encrypt the password using the fingerprint
                             goldfinger.encrypt(
                                 "password",
                                 password,
-                                object : Goldfinger.Callback {
-                                    override fun onResult(result: Goldfinger.Result) {
-                                        when (result.type()) {
-                                            Goldfinger.Type.SUCCESS -> {
-                                                // successfully encrypted the password
-                                                dialog.dismiss()
-                                                finishLogin(username, jwt, customerNum, result.value())
-                                            }
-                                            Goldfinger.Type.INFO -> {
-                                            }
-                                            Goldfinger.Type.ERROR -> {
-                                                val msg = if (result.reason() == Goldfinger.Reason.LOCKOUT) {
-                                                    "Too many attempts, please login manually."
-                                                } else {
-                                                    "An unknown error occurred during fingerprint scanning. Please login manually."
-                                                }
-                                                handleDisabledFingerprint(msg)
-                                                dialog.cancel()
-                                            }
-                                        }
-                                    }
-
-                                    override fun onError(e: Exception) {
-                                        handleDisabledFingerprint(
-                                            "An unknown error occurred during fingerprint authentication setup.",
-                                            e
-                                        )
-                                        dialog.cancel()
-                                    }
-                                })
+                                EncryptCallback(username, jwt, customerNum)
+                            )
                         } else {
                             displayToast("No fingerprint has been set on this device.\nPlease add one in the device settings.")
                             setEnabledStateOfInput(true)
@@ -154,54 +115,15 @@ class AuthActivity : AppCompatActivity() {
         input_checkbox.visibility = View.VISIBLE
 
         // decrypt the stored password for login using the fingerprint
-        goldfinger.decrypt("password", encryptedPwd, object : Goldfinger.Callback {
-            override fun onResult(result: Goldfinger.Result) {
-                when (result.type()) {
-                    Goldfinger.Type.SUCCESS -> {
-                        // login with the decrypted password
-                        setEnabledStateOfInput(false)
-                        setLoading(true)
-                        val password = result.value()!!
-                        viewModel.login(username, password, customerNum)
-                    }
-                    Goldfinger.Type.INFO -> {
-                        if (result.reason() == Goldfinger.Reason.AUTHENTICATION_FAIL) {
-                            // makes the fingerprint icon red for a small time to display the authentication failure
-                            ImageViewCompat.setImageTintList(
-                                fingerprint_icon,
-                                ColorStateList.valueOf(ContextCompat.getColor(this@AuthActivity, R.color.error))
-                            )
-                            Handler().postDelayed(
-                                {
-                                    ImageViewCompat.setImageTintList(
-                                        fingerprint_icon,
-                                        ColorStateList.valueOf(ContextCompat.getColor(this@AuthActivity, R.color.grey))
-                                    )
-                                }, 250
-                            )
-                        }
-                    }
-                    Goldfinger.Type.ERROR -> {
-                        val msg = when (result.reason()) {
-                            Goldfinger.Reason.LOCKOUT -> "Too many attempts, please login manually."
-                            Goldfinger.Reason.CANCELED -> null
-                            else -> "An unknown error occurred during fingerprint scanning. Please login manually."
-                        }
-                        handleDisabledFingerprint(msg)
-                    }
-                }
-            }
-
-            override fun onError(e: Exception) {
-                handleDisabledFingerprint(
-                    "An unknown error occurred during fingerprint scanning. Please login manually.",
-                    e
-                )
-            }
-        })
+        goldfinger.decrypt("password", encryptedPwd, DecryptCallback(username, customerNum))
     }
 
-    private fun finishLogin(username: String, jwt: String, customerNum: Int, encryptedPwd: String? = null) {
+    private fun finishLogin(
+        username: String,
+        jwt: String,
+        customerNum: Int,
+        encryptedPwd: String? = null
+    ) {
         val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
         spEditor.putString("username", username)
         spEditor.putString("jwt", jwt)
@@ -227,7 +149,10 @@ class AuthActivity : AppCompatActivity() {
 
     private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        inputManager.hideSoftInputFromWindow(
+            currentFocus?.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
     }
 
     private fun setEnabledStateOfInput(bool: Boolean) {
@@ -256,6 +181,116 @@ class AuthActivity : AppCompatActivity() {
         if (msg != null) {
             displayToast(msg)
             if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
+        }
+    }
+
+    private inner class EncryptCallback(
+        private val username: String,
+        private val jwt: String,
+        private val customerNum: Int
+    ) : Goldfinger.Callback {
+        // display a dialog to inform the user
+        private val dialog = MaterialAlertDialogBuilder(this@AuthActivity)
+            .setTitle("Confirm Fingerprint")
+            .setMessage("Please put your finger on the scanner...\n")
+            .setCancelable(true)
+            .setOnCancelListener {
+                setEnabledStateOfInput(true)
+                setLoading(false)
+            }.show()
+
+        override fun onResult(result: Goldfinger.Result) {
+            when (result.type()) {
+                Goldfinger.Type.SUCCESS -> {
+                    // successfully encrypted the password
+                    dialog.dismiss()
+                    finishLogin(
+                        username,
+                        jwt,
+                        customerNum,
+                        result.value()
+                    )
+                }
+                Goldfinger.Type.INFO -> {
+                }
+                Goldfinger.Type.ERROR -> {
+                    val msg =
+                        if (result.reason() == Goldfinger.Reason.LOCKOUT) {
+                            "Too many attempts, please login manually."
+                        } else {
+                            "An unknown error occurred during fingerprint scanning. Please login manually."
+                        }
+                    handleDisabledFingerprint(msg)
+                    dialog.cancel()
+                }
+            }
+        }
+
+        override fun onError(e: Exception) {
+            handleDisabledFingerprint(
+                "An unknown error occurred during fingerprint authentication setup.",
+                e
+            )
+            dialog.cancel()
+        }
+    }
+
+    private inner class DecryptCallback(
+        private val username: String,
+        private val customerNum: Int
+    ) : Goldfinger.Callback {
+        override fun onResult(result: Goldfinger.Result) {
+            when (result.type()) {
+                Goldfinger.Type.SUCCESS -> {
+                    // login with the decrypted password
+                    setEnabledStateOfInput(false)
+                    setLoading(true)
+                    val password = result.value()!!
+                    viewModel.login(username, password, customerNum)
+                }
+                Goldfinger.Type.INFO -> {
+                    if (result.reason() == Goldfinger.Reason.AUTHENTICATION_FAIL) {
+                        // makes the fingerprint icon red for a small time to display the authentication failure
+                        ImageViewCompat.setImageTintList(
+                            fingerprint_icon,
+                            ColorStateList.valueOf(
+                                ContextCompat.getColor(
+                                    this@AuthActivity,
+                                    R.color.error
+                                )
+                            )
+                        )
+                        Handler().postDelayed(
+                            {
+                                ImageViewCompat.setImageTintList(
+                                    fingerprint_icon,
+                                    ColorStateList.valueOf(
+                                        ContextCompat.getColor(
+                                            this@AuthActivity,
+                                            R.color.grey
+                                        )
+                                    )
+                                )
+                            }, 250
+                        )
+                    }
+                }
+                Goldfinger.Type.ERROR -> {
+                    val msg = when (result.reason()) {
+                        Goldfinger.Reason.LOCKOUT -> "Too many attempts, please login manually."
+                        Goldfinger.Reason.CANCELED -> null
+                        else -> "An unknown error occurred during fingerprint scanning. Please login manually."
+                    }
+                    handleDisabledFingerprint(msg)
+                }
+            }
+        }
+
+        override fun onError(e: Exception) {
+            handleDisabledFingerprint(
+                "An unknown error occurred during fingerprint scanning. Please login manually.",
+                e
+            )
         }
     }
 }

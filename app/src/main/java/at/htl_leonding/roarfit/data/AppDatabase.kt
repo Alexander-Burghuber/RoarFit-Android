@@ -4,8 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import at.htl_leonding.roarfit.data.entities.ExerciseTemplate
+import at.htl_leonding.roarfit.data.entities.UserExercise
 
 @Database(entities = [UserExercise::class, ExerciseTemplate::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun exerciseDao(): ExerciseDao

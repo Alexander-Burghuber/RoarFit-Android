@@ -6,13 +6,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import at.htl_leonding.roarfit.data.*
+import at.htl_leonding.roarfit.data.AppDatabase
+import at.htl_leonding.roarfit.data.ExerciseDao
+import at.htl_leonding.roarfit.data.entities.ExerciseTemplate
+import at.htl_leonding.roarfit.data.entities.User
+import at.htl_leonding.roarfit.data.entities.UserExercise
 import at.htl_leonding.roarfit.network.KeyFitApi
 import at.htl_leonding.roarfit.network.KeyFitApiFactory
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
     val userLD = MutableLiveData<Result<User>>()
@@ -25,7 +30,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     fun loadUser(jwt: String, customerNum: Int) {
         viewModelScope.launch {
             try {
-                val response = keyFitApi.getUser(customerNum, "Bearer $jwt")
+                val response: Response<User> = keyFitApi.getUser(customerNum, "Bearer $jwt")
                 if (response.isSuccessful) {
                     userLD.value = Result.success(response.body()!!)
                 } else {
@@ -46,7 +51,12 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun addUserExercise() {
         viewModelScope.launch(Dispatchers.IO) {
-            val userExercise = UserExercise(templateId = 1, sets = 5, reps = 10, groupId = 0)
+            val userExercise = UserExercise(
+                templateId = 1,
+                sets = 5,
+                reps = 10,
+                groupId = 0
+            )
             exerciseDao.insertUserExercise(userExercise)
         }
     }

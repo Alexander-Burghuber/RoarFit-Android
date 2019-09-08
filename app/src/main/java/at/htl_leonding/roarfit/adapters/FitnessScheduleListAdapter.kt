@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.htl_leonding.roarfit.R
-import at.htl_leonding.roarfit.data.FitnessSchedule
+import at.htl_leonding.roarfit.data.entities.WorkoutPlan
 
 class FitnessScheduleListAdapter(context: Context) :
     RecyclerView.Adapter<FitnessScheduleListAdapter.FitnessScheduleViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var fitnessSchedules: List<FitnessSchedule> = emptyList()
+    private var workoutPlans: List<WorkoutPlan> = emptyList()
 
     inner class FitnessScheduleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.fitness_schedule_list_item_name)
@@ -27,16 +27,16 @@ class FitnessScheduleListAdapter(context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return fitnessSchedules.size
+        return workoutPlans.size
     }
 
     override fun onBindViewHolder(holder: FitnessScheduleViewHolder, position: Int) {
-        val fitnessSchedule = fitnessSchedules[position]
+        val fitnessSchedule = workoutPlans[position]
         holder.name.text = fitnessSchedule.name
     }
 
-    fun setFitnessSchedules(fitnessSchedules: List<FitnessSchedule>) {
-        this.fitnessSchedules = fitnessSchedules
+    fun setFitnessSchedules(workoutPlans: List<WorkoutPlan>) {
+        this.workoutPlans = workoutPlans
         notifyDataSetChanged()
     }
 }

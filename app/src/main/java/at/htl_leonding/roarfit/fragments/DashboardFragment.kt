@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.htl_leonding.roarfit.R
 import at.htl_leonding.roarfit.adapters.FitnessScheduleListAdapter
-import at.htl_leonding.roarfit.data.FitnessSchedule
 import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
@@ -35,11 +34,12 @@ class DashboardFragment : Fragment() {
         fitness_schedule_list.adapter = adapter
         fitness_schedule_list.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter.setFitnessSchedules(
+        // TODO
+        /*adapter.setFitnessSchedules(
             listOf(
-                FitnessSchedule("Fitness schedule example 1"),
-                FitnessSchedule("Fitness schedule example 2")
+                WorkoutPlan("Fitness schedule example 1"),
+                WorkoutPlan("Fitness schedule example 2")
             )
-        )
+        )*/
     }
 }

@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import at.htl_leonding.roarfit.data.entities.ExerciseTemplate
+import at.htl_leonding.roarfit.data.entities.UserExercise
 
 @Dao
 interface ExerciseDao {
