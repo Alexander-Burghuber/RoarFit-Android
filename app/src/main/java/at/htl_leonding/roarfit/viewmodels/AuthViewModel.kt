@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.htl_leonding.roarfit.data.LoginRequest
 import at.htl_leonding.roarfit.data.LoginResponse
+import at.htl_leonding.roarfit.data.Resource
 import at.htl_leonding.roarfit.network.KeyFitApi
 import at.htl_leonding.roarfit.network.KeyFitApiFactory
 import kotlinx.coroutines.launch
@@ -14,7 +15,7 @@ class AuthViewModel : ViewModel() {
     var username: String? = null
     var password: String? = null
     var customerNum: Int? = null
-    val loginLD = MutableLiveData<Result<LoginResponse>>()
+    val loginLD = MutableLiveData<Resource<LoginResponse>>()
 
     private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
 
@@ -27,20 +28,18 @@ class AuthViewModel : ViewModel() {
                 val response = keyFitApi.login(LoginRequest(username, password))
                 if (response.isSuccessful) {
                     val loginRes = response.body()!!
-                    when (loginRes.code) {
-                        0 -> loginLD.value = Result.success(loginRes)
-                        2 -> loginLD.value =
-                            Result.failure(Exception("Username or password is wrong"))
-                        else -> loginLD.value =
-                            Result.failure(Exception("Received unknown code from the server"))
+                    loginLD.value = when (loginRes.code) {
+                        0 -> Resource.Success(loginRes)
+                        2 -> Resource.Error("Username or password is wrong")
+                        else -> Resource.Error("Received unknown code from the server")
                     }
                 } else {
-                    loginLD.value = Result.failure(Exception("Received invalid body"))
+                    loginLD.value = Resource.Error("Received invalid body")
                 }
             } catch (e: Exception) {
                 val msg = "No connection could be established"
                 Log.e("AuthViewModel", msg, e)
-                loginLD.value = Result.failure(Exception(msg))
+                loginLD.value = Resource.Error(msg)
             }
         }
     }

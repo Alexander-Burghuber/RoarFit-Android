@@ -28,7 +28,6 @@ class ProfileFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         sharedViewModel.userLD.observe(this, Observer { resource ->
-            Log.d(TAG, "observe resource: data: ${resource.data} message: ${resource.message}")
             when (resource) {
                 is Resource.Success -> {
                     val user = resource.data!!
@@ -39,11 +38,11 @@ class ProfileFragment : Fragment() {
                     profile_progress_bar.visibility = View.GONE
                     profile_layout.visibility = View.VISIBLE
                 }
+                is Resource.Loading -> {
+                    profile_progress_bar.visibility = View.VISIBLE
+                    profile_layout.visibility = View.INVISIBLE
+                }
             }
         })
-    }
-
-    companion object {
-        private val TAG = ProfileFragment::class.java.simpleName
     }
 }

@@ -15,6 +15,7 @@ import androidx.core.widget.ImageViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.R
+import at.htl_leonding.roarfit.data.Resource
 import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.AuthViewModel
 import co.infinum.goldfinger.Goldfinger
@@ -36,41 +37,46 @@ class AuthActivity : AppCompatActivity() {
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
         // observe the status of the login network request
-        viewModel.loginLD.observe(this, Observer { result ->
-            if (result.isSuccess) {
-                val username = viewModel.username
-                val password = viewModel.password
-                val customerNum = viewModel.customerNum
-
-                if (username != null && password != null && customerNum != null) {
-                    val jwt = result.getOrNull()!!.token
-                    if (input_checkbox.isChecked) {
-                        // activate fingerprint authentication for future logins and finish the login process
-                        if (goldfinger.hasEnrolledFingerprint()) {
-                            // encrypt the password using the fingerprint
-                            goldfinger.encrypt(
-                                "password",
-                                password,
-                                EncryptCallback(username, jwt, customerNum)
-                            )
+        viewModel.loginLD.observe(this, Observer { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    val username = viewModel.username
+                    val password = viewModel.password
+                    val customerNum = viewModel.customerNum
+                    if (username != null && password != null && customerNum != null) {
+                        val jwt = resource.data!!.token
+                        if (input_checkbox.isChecked) {
+                            // activate fingerprint authentication for future logins and finish the login process
+                            if (goldfinger.hasEnrolledFingerprint()) {
+                                // encrypt the password using the fingerprint
+                                goldfinger.encrypt(
+                                    "password",
+                                    password,
+                                    EncryptCallback(username, jwt, customerNum)
+                                )
+                            } else {
+                                displayToast(
+                                    "No fingerprint has been set on this device.\n" +
+                                            "Please add one in the device settings."
+                                )
+                                setEnabledStateOfInput(true)
+                                setLoading(false)
+                            }
                         } else {
-                            displayToast("No fingerprint has been set on this device.\nPlease add one in the device settings.")
-                            setEnabledStateOfInput(true)
-                            setLoading(false)
+                            // finish the login process normally
+                            finishLogin(username, jwt, customerNum)
                         }
                     } else {
-                        // finish the login process normally
-                        finishLogin(username, jwt, customerNum)
+                        displayToast("An unknown error occurred. Please try again.")
+                        setEnabledStateOfInput(true)
+                        setLoading(false)
                     }
-                } else {
-                    displayToast("An unknown error occurred. Please try again.")
+                }
+                is Resource.Error -> {
+                    displayToast(resource.message!!)
                     setEnabledStateOfInput(true)
                     setLoading(false)
                 }
-            } else {
-                displayToast(result.exceptionOrNull()!!.message!!)
-                setEnabledStateOfInput(true)
-                setLoading(false)
             }
         })
 
@@ -204,22 +210,16 @@ class AuthActivity : AppCompatActivity() {
                 Goldfinger.Type.SUCCESS -> {
                     // successfully encrypted the password
                     dialog.dismiss()
-                    finishLogin(
-                        username,
-                        jwt,
-                        customerNum,
-                        result.value()
-                    )
+                    finishLogin(username, jwt, customerNum, result.value())
                 }
                 Goldfinger.Type.INFO -> {
                 }
                 Goldfinger.Type.ERROR -> {
-                    val msg =
-                        if (result.reason() == Goldfinger.Reason.LOCKOUT) {
-                            "Too many attempts, please login manually."
-                        } else {
-                            "An unknown error occurred during fingerprint scanning. Please login manually."
-                        }
+                    val msg = if (result.reason() == Goldfinger.Reason.LOCKOUT) {
+                        "Too many attempts, please login manually."
+                    } else {
+                        "An unknown error occurred during fingerprint scanning. Please login manually."
+                    }
                     handleDisabledFingerprint(msg)
                     dialog.cancel()
                 }
@@ -260,19 +260,17 @@ class AuthActivity : AppCompatActivity() {
                                 )
                             )
                         )
-                        Handler().postDelayed(
-                            {
-                                ImageViewCompat.setImageTintList(
-                                    fingerprint_icon,
-                                    ColorStateList.valueOf(
-                                        ContextCompat.getColor(
-                                            this@AuthActivity,
-                                            R.color.grey
-                                        )
+                        Handler().postDelayed({
+                            ImageViewCompat.setImageTintList(
+                                fingerprint_icon,
+                                ColorStateList.valueOf(
+                                    ContextCompat.getColor(
+                                        this@AuthActivity,
+                                        R.color.grey
                                     )
                                 )
-                            }, 250
-                        )
+                            )
+                        }, 250)
                     }
                 }
                 Goldfinger.Type.ERROR -> {

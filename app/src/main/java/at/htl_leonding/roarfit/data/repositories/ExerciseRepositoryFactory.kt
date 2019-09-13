@@ -1,7 +1,7 @@
 package at.htl_leonding.roarfit.data.repositories
 
 import android.content.Context
-import at.htl_leonding.roarfit.data.AppDatabase
+import at.htl_leonding.roarfit.data.db.AppDatabase
 import at.htl_leonding.roarfit.network.KeyFitApiFactory
 
 class ExerciseRepositoryFactory {

@@ -1,4 +1,4 @@
-package at.htl_leonding.roarfit.data
+package at.htl_leonding.roarfit.data.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

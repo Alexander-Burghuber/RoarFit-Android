@@ -1,6 +1,7 @@
-package at.htl_leonding.roarfit.data
+package at.htl_leonding.roarfit.data.db
 
 import androidx.room.TypeConverter
+import at.htl_leonding.roarfit.data.Period
 
 class Converters {
     @TypeConverter

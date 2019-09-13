@@ -1,7 +1,7 @@
 package at.htl_leonding.roarfit.data.repositories
 
 import at.htl_leonding.roarfit.data.Resource
-import at.htl_leonding.roarfit.data.UserDao
+import at.htl_leonding.roarfit.data.db.UserDao
 import at.htl_leonding.roarfit.data.entities.User
 import at.htl_leonding.roarfit.network.KeyFitApi
 import retrofit2.Response

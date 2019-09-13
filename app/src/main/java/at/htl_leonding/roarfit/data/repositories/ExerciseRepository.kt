@@ -1,7 +1,7 @@
 package at.htl_leonding.roarfit.data.repositories
 
 import androidx.annotation.WorkerThread
-import at.htl_leonding.roarfit.data.ExerciseDao
+import at.htl_leonding.roarfit.data.db.ExerciseDao
 import at.htl_leonding.roarfit.data.entities.ExerciseTemplate
 import at.htl_leonding.roarfit.network.KeyFitApi
 

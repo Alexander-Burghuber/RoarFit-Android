@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
-    var userLD = MutableLiveData<Resource<User>>()
+    var userLD = MutableLiveData<Resource<User>>(Resource.Loading())
     val exerciseHistoryLD = MutableLiveData<List<UserExercise>>()
 
     private val userRepo: UserRepository = UserRepositoryFactory.create(application)
