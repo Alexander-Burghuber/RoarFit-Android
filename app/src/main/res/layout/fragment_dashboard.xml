@@ -6,10 +6,10 @@
              tools:context=".fragments.DashboardFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fitness_schedule_list"
+        android:id="@+id/workout_plan_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         tools:itemCount="3"
-        tools:listitem="@layout/fitness_schedule_list_item" />
+        tools:listitem="@layout/workout_plan_list_item" />
 </FrameLayout>

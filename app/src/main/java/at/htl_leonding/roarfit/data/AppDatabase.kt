@@ -5,14 +5,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import at.htl_leonding.roarfit.data.entities.ExerciseTemplate
-import at.htl_leonding.roarfit.data.entities.UserExercise
+import at.htl_leonding.roarfit.data.entities.*
 
-@Database(entities = [UserExercise::class, ExerciseTemplate::class], version = 1)
+@Database(
+    entities = [User::class, WorkoutPlan::class, Workout::class, UserExercise::class, ExerciseTemplate::class],
+    version = 1
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun exerciseDao(): ExerciseDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

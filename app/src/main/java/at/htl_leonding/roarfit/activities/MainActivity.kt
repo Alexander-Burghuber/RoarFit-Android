@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.htl_leonding.roarfit.R
+import at.htl_leonding.roarfit.data.Resource
 import at.htl_leonding.roarfit.utils.Constants
 import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -80,6 +82,22 @@ class MainActivity : AppCompatActivity() {
         } else {
             loadData(sp)
         }
+
+        sharedViewModel.userLD.observe(this, Observer { resource ->
+            Log.d(TAG, "observe resource: data: ${resource.data} message: ${resource.message}")
+            when (resource) {
+                is Resource.Error -> {
+                    displayToast("${resource.message} Please re-login.")
+                    logout()
+                }
+            }
+        })
+
+        sharedViewModel.exerciseHistoryLD.observe(this, Observer { exercises ->
+            exercises.forEach { exercise ->
+                Log.d("MainActivity", exercise.toString())
+            }
+        })
     }
 
     override fun onRequestPermissionsResult(
@@ -110,9 +128,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.menu_app_bar_settings -> true
             R.id.menu_app_bar_logout -> {
@@ -123,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun logout() {
+    private fun logout() {
         val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
         spEditor.remove("username")
             .remove("jwt")
@@ -134,24 +149,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadData(sp: SharedPreferences) {
-        sharedViewModel.addUserExercise()
-        loadUser(sp)
-        sharedViewModel.loadExerciseHistory()
-        sharedViewModel.exerciseHistoryLD.observe(this, Observer { exercises ->
-            exercises.forEach { exercise ->
-                Log.d("MainActivity", exercise.toString())
-            }
-        })
-    }
-
-    private fun loadUser(sp: SharedPreferences) {
         val jwt = sp.getString("jwt", null)
         val customerNum = sp.getInt("customer_num", -1)
         if (jwt != null && customerNum != -1) {
-            sharedViewModel.loadUser(jwt, customerNum)
+            sharedViewModel.getUser(customerNum, jwt)
         } else {
             logout()
         }
+        sharedViewModel.addUserExercise()
+        sharedViewModel.loadExerciseHistory()
+
     }
 
     private fun startAuthActivity() {
@@ -163,5 +170,13 @@ class MainActivity : AppCompatActivity() {
     private fun startCameraActivity() {
         val intent = Intent(this, WorkoutActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun displayToast(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+    }
+
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
     }
 }

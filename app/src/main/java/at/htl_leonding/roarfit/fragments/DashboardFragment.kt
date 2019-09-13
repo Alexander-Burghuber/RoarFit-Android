@@ -8,14 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.htl_leonding.roarfit.R
-import at.htl_leonding.roarfit.adapters.FitnessScheduleListAdapter
+import at.htl_leonding.roarfit.adapters.WorkoutPlanListAdapter
 import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
-/**
- * A simple [Fragment] subclass.
- *
- */
 class DashboardFragment : Fragment() {
     private lateinit var sharedViewModel: SharedViewModel
 
@@ -30,16 +26,10 @@ class DashboardFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val adapter = FitnessScheduleListAdapter(requireContext())
-        fitness_schedule_list.adapter = adapter
-        fitness_schedule_list.layoutManager = LinearLayoutManager(requireContext())
+        val adapter = WorkoutPlanListAdapter(requireContext())
+        workout_plan_list.adapter = adapter
+        workout_plan_list.layoutManager = LinearLayoutManager(requireContext())
 
-        // TODO
-        /*adapter.setFitnessSchedules(
-            listOf(
-                WorkoutPlan("Fitness schedule example 1"),
-                WorkoutPlan("Fitness schedule example 2")
-            )
-        )*/
+        // adapter.setWorkoutPlans()
     }
 }

@@ -1,15 +1,15 @@
 package at.htl_leonding.roarfit.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.htl_leonding.roarfit.R
-import at.htl_leonding.roarfit.activities.MainActivity
+import at.htl_leonding.roarfit.data.Resource
 import at.htl_leonding.roarfit.viewmodels.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 
@@ -27,23 +27,23 @@ class ProfileFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        sharedViewModel.userLD.observe(this, Observer { result ->
-            if (result.isSuccess) {
-                val user = result.getOrNull()!!
-                profile_customer_number.text = user.id.toString()
-                profile_first_name.text = user.firstName
-                profile_last_name.text = user.lastName
+        sharedViewModel.userLD.observe(this, Observer { resource ->
+            Log.d(TAG, "observe resource: data: ${resource.data} message: ${resource.message}")
+            when (resource) {
+                is Resource.Success -> {
+                    val user = resource.data!!
+                    profile_customer_number.text = user.id.toString()
+                    profile_first_name.text = user.firstName
+                    profile_last_name.text = user.lastName
 
-                profile_progress_bar.visibility = View.GONE
-                profile_layout.visibility = View.VISIBLE
-            } else {
-                displayToast("${result.exceptionOrNull()!!.message} Please re-login.")
-                (activity as MainActivity).logout()
+                    profile_progress_bar.visibility = View.GONE
+                    profile_layout.visibility = View.VISIBLE
+                }
             }
         })
     }
 
-    private fun displayToast(text: String) {
-        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+    companion object {
+        private val TAG = ProfileFragment::class.java.simpleName
     }
 }
