@@ -1,5 +1,6 @@
 package at.htlleonding.roarfit.data.repositories
 
+import android.util.Log
 import at.htlleonding.roarfit.data.Resource
 import at.htlleonding.roarfit.data.db.UserDao
 import at.htlleonding.roarfit.data.entities.User
@@ -8,16 +9,11 @@ import retrofit2.Response
 
 class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: UserDao) {
 
-    suspend fun getUser(userId: Int, jwt: String): Resource<User> {
-        val user = userDao.getUser(userId)
-        return if (user != null) {
-            Resource.Success(user)
-        } else {
-            refreshUser(userId, jwt)
-        }
+    suspend fun getUser(userId: Int): User? {
+        return userDao.getUser(userId)
     }
 
-    private suspend fun refreshUser(userId: Int, jwt: String): Resource<User> {
+    suspend fun refreshUser(userId: Int, jwt: String): Resource<User> {
         try {
             val response: Response<User> = keyFitApi.getUser(userId, "Bearer $jwt")
             return if (response.isSuccessful) {
@@ -33,7 +29,8 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
                 Resource.Error(msg)
             }
         } catch (e: Exception) {
-            val msg = "An unknown error occurred"
+            val msg = "An unknown error occurred."
+            Log.e(TAG, msg, e)
             return Resource.Error(msg)
         }
     }

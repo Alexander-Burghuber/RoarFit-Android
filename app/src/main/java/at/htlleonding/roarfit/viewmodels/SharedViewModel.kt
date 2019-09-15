@@ -19,14 +19,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
-    var userLD = MutableLiveData<Resource<User>>(Resource.Loading())
+    var userLD = MutableLiveData<Resource<User>>()
     val exerciseHistoryLD = MutableLiveData<List<UserExercise>>()
 
     private val userRepo: UserRepository = UserRepositoryFactory.create(application)
     private val exerciseRepo: ExerciseRepository = ExerciseRepositoryFactory.create(application)
 
     fun getUser(userId: Int, jwt: String) {
-        viewModelScope.launch(Dispatchers.IO) { userLD.postValue(userRepo.getUser(userId, jwt)) }
+        viewModelScope.launch(Dispatchers.IO) {
+            userLD.postValue(Resource.Loading(userRepo.getUser(userId)))
+            userLD.postValue(userRepo.refreshUser(userId, jwt))
+        }
     }
 
     fun addUserExercise() {
@@ -54,7 +57,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             val reader = JsonReader(inputStream.reader())
             val exerciseTemplates: Array<ExerciseTemplate> =
                 Gson().fromJson(reader, Array<ExerciseTemplate>::class.java)
-            exerciseRepo.insetAllTemplates(exerciseTemplates.toList())
+            exerciseRepo.insertAllTemplates(exerciseTemplates.toList())
             // Inform the LiveData that the inserting has completed
             liveData.postValue(true)
         }

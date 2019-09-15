@@ -2,13 +2,14 @@ package at.htlleonding.roarfit.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import at.htlleonding.roarfit.data.entities.User
 
 @Dao
 interface UserDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User)
 
     @Query("select * from user where id = :userId")

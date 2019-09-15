@@ -158,7 +158,6 @@ class MainActivity : AppCompatActivity() {
         }
         sharedViewModel.addUserExercise()
         sharedViewModel.loadExerciseHistory()
-
     }
 
     private fun startAuthActivity() {

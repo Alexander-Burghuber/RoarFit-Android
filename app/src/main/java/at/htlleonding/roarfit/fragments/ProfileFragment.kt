@@ -29,13 +29,14 @@ class ProfileFragment : Fragment() {
         sharedViewModel.userLD.observe(this, Observer { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    val user = resource.data!!
-                    profile_customer_number.text = user.id.toString()
-                    profile_first_name.text = user.firstName
-                    profile_last_name.text = user.lastName
+                    resource.data?.let { user ->
+                        profile_customer_number.text = user.id.toString()
+                        profile_first_name.text = user.firstName
+                        profile_last_name.text = user.lastName
 
-                    profile_progress_bar.visibility = View.GONE
-                    profile_layout.visibility = View.VISIBLE
+                        profile_progress_bar.visibility = View.GONE
+                        profile_layout.visibility = View.VISIBLE
+                    }
                 }
                 is Resource.Loading -> {
                     profile_progress_bar.visibility = View.VISIBLE

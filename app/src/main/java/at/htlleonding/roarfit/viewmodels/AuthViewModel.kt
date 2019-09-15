@@ -25,17 +25,16 @@ class AuthViewModel : ViewModel() {
                     loginRes.username = username
                     loginRes.password = password
                     loginRes.customerNum = customerNum
-
                     loginLD.value = when (loginRes.code) {
                         0 -> Resource.Success(loginRes)
-                        2 -> Resource.Error("Username or password is wrong")
-                        else -> Resource.Error("Received unknown code from the server")
+                        2 -> Resource.Error("Username or password is wrong.")
+                        else -> Resource.Error("An unknown error occurred.")
                     }
                 } else {
-                    loginLD.value = Resource.Error("Received invalid body")
+                    loginLD.value = Resource.Error("An unknown error occurred.")
                 }
             } catch (e: Exception) {
-                val msg = "No connection could be established"
+                val msg = "Server not reachable. Please ensure you are connected to the internet."
                 Log.e("AuthViewModel", msg, e)
                 loginLD.value = Resource.Error(msg)
             }

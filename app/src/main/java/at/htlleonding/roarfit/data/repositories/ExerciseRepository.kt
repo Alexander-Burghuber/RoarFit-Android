@@ -8,7 +8,7 @@ import at.htlleonding.roarfit.network.KeyFitApi
 class ExerciseRepository(private val keyFitApi: KeyFitApi, private val exerciseDao: ExerciseDao) {
 
     @WorkerThread
-    suspend fun insetAllTemplates(templates: List<ExerciseTemplate>) {
+    suspend fun insertAllTemplates(templates: List<ExerciseTemplate>) {
         exerciseDao.insertAllTemplates(templates)
     }
 }

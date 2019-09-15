@@ -102,11 +102,11 @@ class AuthActivity : AppCompatActivity() {
         val encryptedPwd = sp.getString("encrypted_pwd", null)
         val customerNum = sp.getInt("customer_num", -1)
         if (username != null && encryptedPwd != null && customerNum != -1) {
-            loginWithFingerprint(username, encryptedPwd, customerNum)
+            startFingerprintLogin(username, encryptedPwd, customerNum)
         }
     }
 
-    private fun loginWithFingerprint(username: String, encryptedPwd: String, customerNum: Int) {
+    private fun startFingerprintLogin(username: String, encryptedPwd: String, customerNum: Int) {
         // show the user that fingerprint authentication is possible
         fingerprint_icon.visibility = View.VISIBLE
         input_checkbox.visibility = View.VISIBLE
