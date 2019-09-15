@@ -41,16 +41,27 @@ class AuthActivity : AppCompatActivity() {
             when (resource) {
                 is Resource.Success -> {
                     val data = resource.data!!
-                    if (input_checkbox.isChecked) {
-                        // activate fingerprint authentication for future logins and finish the login process
+                    if (goldfinger.hasFingerprintHardware()) {
+                        val dialog = MaterialAlertDialogBuilder(this)
+                            .setTitle("Fingerprint Authentication")
+                            .setMessage("Activate fingerprint authentication to quickly login the next time you open the app.")
+                            //.setView(R.layout.dialog_fingerprint)
+                            .setNeutralButton("Nah") { _, _ ->
+                                finishLogin(data.username!!, data.token, data.customerNum!!)
+                            }.show()
                         if (goldfinger.hasEnrolledFingerprint()) {
                             // encrypt the password using the fingerprint
                             goldfinger.encrypt(
                                 "password",
                                 data.password!!,
-                                EncryptCallback(data.username!!, data.token, data.customerNum!!)
+                                EncryptCallback(
+                                    data.username!!,
+                                    data.token,
+                                    data.customerNum!!
+                                )
                             )
                         } else {
+                            dialog.cancel()
                             displayToast(
                                 "No fingerprint has been set on this device.\n" +
                                         "Please add one in the device settings."
@@ -58,6 +69,7 @@ class AuthActivity : AppCompatActivity() {
                             setEnabledStateOfInput(true)
                             setLoading(false)
                         }
+
                     } else {
                         // finish the login process normally
                         finishLogin(data.username!!, data.token, data.customerNum!!)
@@ -70,9 +82,6 @@ class AuthActivity : AppCompatActivity() {
                 }
             }
         })
-
-        // show the fingerprint authentication option when the device has the needed hardware
-        if (goldfinger.hasFingerprintHardware()) input_checkbox.visibility = View.VISIBLE
 
         button_login.setOnClickListener {
             setEnabledStateOfInput(false)
@@ -109,7 +118,6 @@ class AuthActivity : AppCompatActivity() {
     private fun startFingerprintLogin(username: String, encryptedPwd: String, customerNum: Int) {
         // show the user that fingerprint authentication is possible
         fingerprint_icon.visibility = View.VISIBLE
-        input_checkbox.visibility = View.VISIBLE
 
         // decrypt the stored password for login using the fingerprint
         goldfinger.decrypt("password", encryptedPwd, DecryptCallback(username, customerNum))
@@ -157,7 +165,6 @@ class AuthActivity : AppCompatActivity() {
         input_password.isEnabled = bool
         input_customer_number.isEnabled = bool
         button_login.isEnabled = bool
-        if (goldfinger.hasFingerprintHardware()) input_checkbox.isEnabled = bool
     }
 
     private fun setLoading(isLoading: Boolean) {
@@ -172,8 +179,6 @@ class AuthActivity : AppCompatActivity() {
 
     private fun handleDisabledFingerprint(msg: String?, e: Exception? = null) {
         goldfinger.cancel()
-        input_checkbox.isChecked = false
-        input_checkbox.visibility = View.INVISIBLE
         fingerprint_icon.visibility = View.INVISIBLE
         if (msg != null) {
             displayToast(msg)
