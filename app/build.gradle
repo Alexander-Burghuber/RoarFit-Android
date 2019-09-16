@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId 'at.htlleonding.roarfit'
+        applicationId 'at.spiceburg.roarfit'
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1

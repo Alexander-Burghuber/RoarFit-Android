@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="at.htlleonding.roarfit.fragments.CameraFragment"
+        android:name="at.spiceburg.roarfit.fragments.CameraFragment"
         android:label="Camera"
         tools:layout="@layout/fragment_camera">
         <action
@@ -20,12 +20,12 @@
     </fragment>
     <fragment
         android:id="@+id/exerciseInfoFragment"
-        android:name="at.htlleonding.roarfit.fragments.ExerciseInfoFragment"
+        android:name="at.spiceburg.roarfit.fragments.ExerciseInfoFragment"
         android:label="Exercise"
         tools:layout="@layout/fragment_exercise_info">
         <argument
             android:name="equipment"
-            app:argType="at.htlleonding.roarfit.data.Equipment" />
+            app:argType="at.spiceburg.roarfit.data.Equipment" />
         <action
             android:id="@+id/action_exerciseInfoFragment_to_ongoingExerciseFragment"
             app:destination="@id/ongoingExerciseFragment"
@@ -36,11 +36,11 @@
     </fragment>
     <fragment
         android:id="@+id/ongoingExerciseFragment"
-        android:name="at.htlleonding.roarfit.fragments.OngoingExerciseFragment"
+        android:name="at.spiceburg.roarfit.fragments.OngoingExerciseFragment"
         android:label="fragment_ongoing_exercise"
         tools:layout="@layout/fragment_ongoing_exercise">
         <argument
             android:name="equipment"
-            app:argType="at.htlleonding.roarfit.data.Equipment" />
+            app:argType="at.spiceburg.roarfit.data.Equipment" />
     </fragment>
 </navigation>
