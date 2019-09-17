@@ -2,10 +2,11 @@ package at.spiceburg.roarfit.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OngoingExerciseViewModel : ViewModel() {
+class ExerciseViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() {
     val timerLD = MutableLiveData<String>()
     private val timer = Timer()
     private var isTimerRunning = false

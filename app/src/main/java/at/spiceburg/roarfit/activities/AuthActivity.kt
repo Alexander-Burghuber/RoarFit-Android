@@ -65,13 +65,13 @@ class AuthActivity : AppCompatActivity() {
             }
         })
 
-        button_login.setOnClickListener {
+        button_auth_login.setOnClickListener {
             setEnabledStateOfInput(false)
             hideKeyboard()
 
             val username = input_username.text.toString()
             val password = input_password.text.toString()
-            val customerNumber = input_customer_number.text.toString()
+            val customerNumber = input_customernumber.text.toString()
 
             if (!username.isBlank() && !password.isBlank() && !customerNumber.isBlank()) {
                 setLoading(true)
@@ -94,7 +94,7 @@ class AuthActivity : AppCompatActivity() {
 
         // activate fingerprint authentication if the requirements are met
         if (username != null && encryptedPwd != null && customerNum != -1) {
-            fingerprint_icon.visibility = View.VISIBLE
+            image_auth_fingerprint.visibility = View.VISIBLE
             // decrypt the stored password for login using the fingerprint
             goldfinger.decrypt("password", encryptedPwd, DecryptCallback(username, customerNum))
         }
@@ -164,7 +164,7 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun displaySnackbar(text: String) {
-        Snackbar.make(auth_constraint_layout, text, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(constraintlayout_auth, text, Snackbar.LENGTH_LONG).show()
     }
 
     private fun hideKeyboard() {
@@ -178,23 +178,23 @@ class AuthActivity : AppCompatActivity() {
     private fun setEnabledStateOfInput(bool: Boolean) {
         input_username.isEnabled = bool
         input_password.isEnabled = bool
-        input_customer_number.isEnabled = bool
-        button_login.isEnabled = bool
+        input_customernumber.isEnabled = bool
+        button_auth_login.isEnabled = bool
     }
 
     private fun setLoading(isLoading: Boolean) {
         if (isLoading) {
-            button_login.visibility = View.INVISIBLE
-            progress_bar_auth.visibility = View.VISIBLE
+            button_auth_login.visibility = View.INVISIBLE
+            progressbar_auth.visibility = View.VISIBLE
         } else {
-            button_login.visibility = View.VISIBLE
-            progress_bar_auth.visibility = View.INVISIBLE
+            button_auth_login.visibility = View.VISIBLE
+            progressbar_auth.visibility = View.INVISIBLE
         }
     }
 
     private fun handleDisabledFingerprint(msg: String?, e: Exception? = null) {
         goldfinger.cancel()
-        fingerprint_icon.visibility = View.INVISIBLE
+        image_auth_fingerprint.visibility = View.INVISIBLE
         if (msg != null) {
             displaySnackbar(msg)
             if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
@@ -261,7 +261,7 @@ class AuthActivity : AppCompatActivity() {
                     if (result.reason() == Goldfinger.Reason.AUTHENTICATION_FAIL) {
                         // makes the fingerprint icon red for a small time to display the authentication failure
                         ImageViewCompat.setImageTintList(
-                            fingerprint_icon,
+                            image_auth_fingerprint,
                             ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     this@AuthActivity,
@@ -271,7 +271,7 @@ class AuthActivity : AppCompatActivity() {
                         )
                         Handler().postDelayed({
                             ImageViewCompat.setImageTintList(
-                                fingerprint_icon,
+                                image_auth_fingerprint,
                                 ColorStateList.valueOf(
                                     ContextCompat.getColor(
                                         this@AuthActivity,

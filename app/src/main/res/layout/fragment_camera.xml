@@ -10,7 +10,7 @@
     tools:context=".fragments.CameraFragment">
 
     <SurfaceView
-        android:id="@+id/camera_view"
+        android:id="@+id/surfaceview_camera"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/camera_card"
+        android:id="@+id/cardview_camera"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
@@ -38,7 +38,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/camera_text"
+                android:id="@+id/text_camera_equipment"
                 style="@android:style/Widget.Material.Light.EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -55,11 +55,11 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toEndOf="@+id/image_camera_cardicon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/image_camera_cardicon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

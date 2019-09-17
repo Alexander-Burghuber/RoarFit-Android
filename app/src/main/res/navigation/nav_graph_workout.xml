@@ -27,18 +27,18 @@
             android:name="equipment"
             app:argType="at.spiceburg.roarfit.data.Equipment" />
         <action
-            android:id="@+id/action_exerciseInfoFragment_to_ongoingExerciseFragment"
-            app:destination="@id/ongoingExerciseFragment"
+            android:id="@+id/action_exerciseInfoFragment_to_exerciseFragment"
+            app:destination="@id/exerciseFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@+id/ongoingExerciseFragment"
-        android:name="at.spiceburg.roarfit.fragments.OngoingExerciseFragment"
-        android:label="fragment_ongoing_exercise"
-        tools:layout="@layout/fragment_ongoing_exercise">
+        android:id="@+id/exerciseFragment"
+        android:name="at.spiceburg.roarfit.fragments.ExerciseFragment"
+        android:label="Exercise"
+        tools:layout="@layout/fragment_exercise">
         <argument
             android:name="equipment"
             app:argType="at.spiceburg.roarfit.data.Equipment" />

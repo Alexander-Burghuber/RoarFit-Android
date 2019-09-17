@@ -30,17 +30,17 @@ class ProfileFragment : Fragment() {
             when (resource) {
                 is Resource.Success -> {
                     resource.data?.let { user ->
-                        profile_customer_number.text = user.id.toString()
-                        profile_first_name.text = user.firstName
-                        profile_last_name.text = user.lastName
+                        text_profile_customernumber.text = user.id.toString()
+                        text_profile_firstname.text = user.firstName
+                        text_profile_lastname.text = user.lastName
 
-                        profile_progress_bar.visibility = View.GONE
-                        profile_layout.visibility = View.VISIBLE
+                        progressbar_profile.visibility = View.GONE
+                        constraintlayout_profile.visibility = View.VISIBLE
                     }
                 }
                 is Resource.Loading -> {
-                    profile_progress_bar.visibility = View.VISIBLE
-                    profile_layout.visibility = View.INVISIBLE
+                    progressbar_profile.visibility = View.VISIBLE
+                    constraintlayout_profile.visibility = View.INVISIBLE
                 }
             }
         })

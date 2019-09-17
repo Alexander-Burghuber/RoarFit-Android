@@ -27,8 +27,8 @@ class WorkoutActivity : AppCompatActivity() {
     }
 
     fun setupExerciseFragment() {
-        setSupportActionBar(toolbar_workout)
-        val navController = findNavController(R.id.nav_host_fragment_workout)
+        setSupportActionBar(toolbar_exerciseinfo)
+        val navController = findNavController(R.id.navhostfragment_workout)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp)

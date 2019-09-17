@@ -27,8 +27,8 @@ class DashboardFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         val adapter = WorkoutPlanListAdapter(requireContext())
-        workout_plan_list.adapter = adapter
-        workout_plan_list.layoutManager = LinearLayoutManager(requireContext())
+        list_dashboard_workoutplans.adapter = adapter
+        list_dashboard_workoutplans.layoutManager = LinearLayoutManager(requireContext())
 
         // adapter.setWorkoutPlans()
     }

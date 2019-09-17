@@ -42,7 +42,7 @@ class CameraFragment : Fragment() {
         super.onStart()
         viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
 
-        cameraView = requireView().findViewById(R.id.camera_view)
+        cameraView = requireView().findViewById(R.id.surfaceview_camera)
 
         // Init QREader
         qrEader = QREader.Builder(requireContext(), cameraView, viewModel)
@@ -53,7 +53,7 @@ class CameraFragment : Fragment() {
             .build()
 
         viewModel.qrLD.observe(this, Observer { qrResult ->
-            camera_text.setText(qrResult)
+            text_camera_equipment.setText(qrResult)
         })
 
         viewModel.equipmentLD.observe(this, Observer { equipment ->
@@ -65,10 +65,10 @@ class CameraFragment : Fragment() {
 
         cameraView.setOnClickListener {
             hideKeyboard()
-            camera_text.clearFocus()
+            text_camera_equipment.clearFocus()
         }
 
-        camera_text.addTextChangedListener(object : TextWatcher {
+        text_camera_equipment.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s != null) viewModel.handleTextChange(s.toString())
             }

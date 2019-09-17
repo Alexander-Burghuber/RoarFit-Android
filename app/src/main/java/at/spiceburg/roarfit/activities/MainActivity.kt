@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar_main)
 
         // Setup navigation
-        val navController = findNavController(this, R.id.nav_host_fragment_main)
-        bottom_nav.setupWithNavController(navController)
+        val navController = findNavController(this, R.id.navhostfragment_main)
+        bottomnav_main.setupWithNavController(navController)
 
         // Setup configuration with top-level destinations
         val appBarConfiguration = AppBarConfiguration.Builder(
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        fab.setOnClickListener {
+        fab_main.setOnClickListener {
             // Check if the permission to use the camera has been granted
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // Permission denied
                 Snackbar.make(
-                    findViewById(R.id.main_constraint_layout),
+                    findViewById(R.id.constraintlayout_main),
                     "Please allow the needed permissions to use this feature",
                     Snackbar.LENGTH_LONG
                 ).setAction("Action", null).show()

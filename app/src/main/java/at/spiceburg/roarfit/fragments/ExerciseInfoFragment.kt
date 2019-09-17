@@ -29,11 +29,11 @@ class ExerciseInfoFragment : Fragment() {
         super.onStart()
         val args = ExerciseInfoFragmentArgs.fromBundle(requireArguments())
         val equipment = args.equipment
-        exercise_info_title.text = equipment.toString()
+        text_exerciseinfo_title.text = equipment.toString()
 
-        exercise_info_button_start.setOnClickListener {
+        button_exerciseinfo_start.setOnClickListener {
             val action =
-                ExerciseInfoFragmentDirections.actionExerciseInfoFragmentToOngoingExerciseFragment(
+                ExerciseInfoFragmentDirections.actionExerciseInfoFragmentToExerciseFragment(
                     equipment
                 )
             findNavController().navigate(action)

@@ -15,7 +15,7 @@ class WorkoutPlanListAdapter(context: Context) :
     private var workoutPlans: List<WorkoutPlan> = emptyList()
 
     inner class WorkoutPlanViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.workout_plan_list_item_name)
+        val name: TextView = itemView.findViewById(R.id.text_workoutlistitem_name)
     }
 
     override fun onCreateViewHolder(
