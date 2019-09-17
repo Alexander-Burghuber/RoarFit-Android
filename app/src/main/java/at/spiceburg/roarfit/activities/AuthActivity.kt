@@ -95,6 +95,7 @@ class AuthActivity : AppCompatActivity() {
         // activate fingerprint authentication if the requirements are met
         if (username != null && encryptedPwd != null && customerNum != -1) {
             image_auth_fingerprint.visibility = View.VISIBLE
+            text_auth_fingerprint.visibility = View.VISIBLE
             // decrypt the stored password for login using the fingerprint
             goldfinger.decrypt("password", encryptedPwd, DecryptCallback(username, customerNum))
         }
@@ -195,6 +196,7 @@ class AuthActivity : AppCompatActivity() {
     private fun handleDisabledFingerprint(msg: String?, e: Exception? = null) {
         goldfinger.cancel()
         image_auth_fingerprint.visibility = View.INVISIBLE
+        text_auth_fingerprint.visibility = View.INVISIBLE
         if (msg != null) {
             displaySnackbar(msg)
             if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
