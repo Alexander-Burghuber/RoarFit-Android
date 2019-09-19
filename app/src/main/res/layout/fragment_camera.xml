@@ -65,10 +65,11 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="13dp"
+                android:tint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_center_focus_strong_white_24dp" />
+                app:srcCompat="@drawable/ic_center_focus_strong_black_24dp" />
 
             <!--
             <TextView
@@ -103,6 +104,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_center_focus_strong_white_24dp" />
+        app:srcCompat="@drawable/ic_center_focus_strong_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

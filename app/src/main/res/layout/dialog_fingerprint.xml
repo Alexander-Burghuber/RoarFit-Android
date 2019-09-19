@@ -11,5 +11,5 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:tint="@color/grey"
-        app:srcCompat="@drawable/ic_fingerprint_white_24dp" />
+        app:srcCompat="@drawable/ic_fingerprint_black_24dp" />
 </LinearLayout>

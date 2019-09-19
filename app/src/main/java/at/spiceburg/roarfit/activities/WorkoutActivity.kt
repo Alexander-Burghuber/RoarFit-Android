@@ -31,7 +31,7 @@ class WorkoutActivity : AppCompatActivity() {
         val navController = findNavController(R.id.navhostfragment_workout)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_black_24dp)
 
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)

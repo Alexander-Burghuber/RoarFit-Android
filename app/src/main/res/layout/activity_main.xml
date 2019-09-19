@@ -58,7 +58,7 @@
         app:backgroundTint="@color/accent"
         app:layout_constraintBottom_toTopOf="@+id/bottomnav_main"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_camera_white_24dp"
+        app:srcCompat="@drawable/ic_camera_black_24dp"
         app:tint="@color/white"
         tools:layout_conversion_absoluteHeight="56dp"
         tools:layout_conversion_absoluteWidth="56dp"
