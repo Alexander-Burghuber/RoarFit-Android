@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
     val loginLD = MutableLiveData<Resource<LoginResponse>>()
-
     private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
 
     fun login(username: String, password: String, customerNum: Int) {
