@@ -37,11 +37,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar_main)
 
-        // Setup navigation
+        // setup navigation
         val navController = findNavController(this, R.id.navhostfragment_main)
         bottomnav_main.setupWithNavController(navController)
 
-        // Setup configuration with top-level destinations
+        // setup configuration with top-level destinations
         val appBarConfiguration = AppBarConfiguration.Builder(
             R.id.dashboardFragment,
             R.id.statisticsFragment,
@@ -51,20 +51,20 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         fab_main.setOnClickListener {
-            // Check if the permission to use the camera has been granted
+            // check if the permission to use the camera has been granted
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.CAMERA
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                // Permission has not been granted
+                // permission has not been granted
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(Manifest.permission.CAMERA),
                     Constants.PERMISSION_REQUEST_CODE_CAMERA
                 )
             } else {
-                // Permission has already been granted
+                // permission has already been granted
                 startCameraActivity()
             }
         }
@@ -72,9 +72,9 @@ class MainActivity : AppCompatActivity() {
         val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
         val appVersion = packageManager.getPackageInfo(packageName, 0).versionCode
 
-        // Check if the db has been initialised on this app version before
+        // check if the db has been initialised on this app version before
         if (sp.getInt("db_initialised_version", 0) < appVersion) {
-            // If not, then create the db with the needed content before continuing the data loading
+            // if not, then create the db with the needed content before continuing the data loading
             sharedViewModel.initDatabase().observe(this, Observer {
                 sp.edit().putInt("db_initialised_version", appVersion).apply()
                 loadData(sp)
@@ -108,10 +108,10 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.PERMISSION_REQUEST_CODE_CAMERA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // Permission granted
+                // permission granted
                 startCameraActivity()
             } else {
-                // Permission denied
+                // permission denied
                 Snackbar.make(
                     findViewById(R.id.constraintlayout_main),
                     "Please allow the needed permissions to use this feature",
@@ -122,7 +122,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_app_bar, menu)
         return true
     }

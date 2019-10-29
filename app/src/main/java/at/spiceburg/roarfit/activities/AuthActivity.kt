@@ -48,14 +48,18 @@ class AuthActivity : AppCompatActivity() {
                         ) && !sp.contains("encrypted_pwd") && goldfinger.hasFingerprintHardware()
                     ) {
                         setupFingerprintAuth(
-                            data.username!!,
-                            data.password!!,
-                            data.customerNum!!,
+                            data.username,
+                            data.password,
+                            data.customerNum,
                             data.token
                         )
                     } else {
-                        finishLogin(data.username!!, data.token, data.customerNum!!)
+                        finishLogin(data.username, data.token, data.customerNum)
                     }
+                    setLoading(false)
+                }
+                is Resource.Loading -> {
+                    setLoading(true)
                 }
                 is Resource.Error -> {
                     displaySnackbar(resource.message!!)
@@ -74,7 +78,6 @@ class AuthActivity : AppCompatActivity() {
             val customerNumber = input_customernumber.text.toString()
 
             if (!username.isBlank() && !password.isBlank() && !customerNumber.isBlank()) {
-                setLoading(true)
                 viewModel.login(username, password, customerNumber.toInt())
             } else {
                 displaySnackbar("Please fill in all fields.")
@@ -126,7 +129,6 @@ class AuthActivity : AppCompatActivity() {
                                 " Please add one in the device settings."
                     )
                     setEnabledStateOfInput(true)
-                    setLoading(false)
                 }
             }
             .setNeutralButton("Don't remind me again") { dialogInterface, _ ->
@@ -154,7 +156,6 @@ class AuthActivity : AppCompatActivity() {
         spEditor.apply()
 
         setEnabledStateOfInput(true)
-        setLoading(false)
         startMainActivity()
     }
 
@@ -214,7 +215,6 @@ class AuthActivity : AppCompatActivity() {
             .setView(R.layout.dialog_fingerprint)
             .setOnCancelListener {
                 setEnabledStateOfInput(true)
-                setLoading(false)
             }.show()
 
         override fun onResult(result: Goldfinger.Result) {
@@ -254,8 +254,6 @@ class AuthActivity : AppCompatActivity() {
             when (result.type()) {
                 Goldfinger.Type.SUCCESS -> {
                     // login with the decrypted password
-                    setEnabledStateOfInput(false)
-                    setLoading(true)
                     val password = result.value()!!
                     viewModel.login(username, password, customerNum)
                 }

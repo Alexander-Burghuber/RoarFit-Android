@@ -3,40 +3,55 @@ package at.spiceburg.roarfit.viewmodels
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import at.spiceburg.roarfit.data.LoginRequest
 import at.spiceburg.roarfit.data.LoginResponse
 import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.network.KeyFitApi
 import at.spiceburg.roarfit.network.KeyFitApiFactory
-import kotlinx.coroutines.launch
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class AuthViewModel : ViewModel() {
     val loginLD = MutableLiveData<Resource<LoginResponse>>()
     private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
+    private val disposables = CompositeDisposable()
 
     fun login(username: String, password: String, customerNum: Int) {
-        viewModelScope.launch {
-            try {
-                val response = keyFitApi.login(LoginRequest(username, password))
-                if (response.isSuccessful) {
-                    val loginRes = response.body()!!
-                    loginRes.username = username
-                    loginRes.password = password
-                    loginRes.customerNum = customerNum
+        disposables.add(keyFitApi.login(LoginRequest(username, password))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { loginLD.value = Resource.Loading() }
+            .subscribeBy(
+                onSuccess = { loginRes ->
                     loginLD.value = when (loginRes.code) {
-                        0 -> Resource.Success(loginRes)
+                        0 -> {
+                            loginRes.apply {
+                                this.username = username
+                                this.password = password
+                                this.customerNum = customerNum
+                            }
+                            Resource.Success(loginRes)
+                        }
                         2 -> Resource.Error("Username or password is wrong.")
                         else -> Resource.Error("An unknown error occurred.")
                     }
-                } else {
-                    loginLD.value = Resource.Error("An unknown error occurred.")
+                },
+                onError = { e ->
+                    loginLD.value = Resource.Error("Server not reachable.")
+                    Log.e(TAG, e.message, e)
                 }
-            } catch (e: Exception) {
-                val msg = "Server not reachable. Please ensure you are connected to the internet."
-                Log.e("AuthViewModel", msg, e)
-                loginLD.value = Resource.Error(msg)
-            }
-        }
+            )
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
+    }
+
+    companion object {
+        private val TAG = AuthViewModel::class.java.simpleName
     }
 }
