@@ -5,13 +5,15 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import at.spiceburg.roarfit.data.entities.User
+import io.reactivex.Completable
+import io.reactivex.Maybe
 
 @Dao
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: User)
+    fun insertUser(user: User): Completable
 
     @Query("select * from user where id = :userId")
-    suspend fun getUser(userId: Int): User?
+    fun getUser(userId: Int): Maybe<User>
 }

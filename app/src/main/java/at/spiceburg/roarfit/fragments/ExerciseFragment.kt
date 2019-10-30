@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.viewmodels.ExerciseViewModel
-import at.spiceburg.roarfit.viewmodels.ExerciseViewModelFactory
 import kotlinx.android.synthetic.main.fragment_exercise.*
 
 class ExerciseFragment : Fragment() {
@@ -19,7 +18,10 @@ class ExerciseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this, ExerciseViewModelFactory(requireContext()))
+        viewModel = ViewModelProviders.of(
+            this,
+            ExerciseViewModel.ExerciseViewModelFactory(requireContext())
+        )
             .get(ExerciseViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_exercise, container, false)

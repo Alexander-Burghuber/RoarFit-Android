@@ -3,10 +3,8 @@ package at.spiceburg.roarfit.activities
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -20,19 +18,18 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.utils.Constants
-import at.spiceburg.roarfit.viewmodels.SharedViewModel
+import at.spiceburg.roarfit.viewmodels.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar_main)
@@ -50,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        // fab button click listener
         fab_main.setOnClickListener {
             // check if the permission to use the camera has been granted
             if (ContextCompat.checkSelfPermission(
@@ -75,29 +73,10 @@ class MainActivity : AppCompatActivity() {
         // check if the db has been initialised on this app version before
         if (sp.getInt("db_initialised_version", 0) < appVersion) {
             // if not, then create the db with the needed content before continuing the data loading
-            sharedViewModel.initDatabase().observe(this, Observer {
+            viewModel.initDatabase().observe(this, Observer {
                 sp.edit().putInt("db_initialised_version", appVersion).apply()
-                loadData(sp)
             })
-        } else {
-            loadData(sp)
         }
-
-        sharedViewModel.userLD.observe(this, Observer { resource ->
-            Log.d(TAG, "observe resource: data: ${resource.data} message: ${resource.message}")
-            when (resource) {
-                is Resource.Error -> {
-                    displayToast("${resource.message} Please re-login.")
-                    logout()
-                }
-            }
-        })
-
-        sharedViewModel.exerciseHistoryLD.observe(this, Observer { exercises ->
-            exercises.forEach { exercise ->
-                Log.d("MainActivity", exercise.toString())
-            }
-        })
     }
 
     override fun onRequestPermissionsResult(
@@ -137,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun logout() {
+    fun logout() {
         val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
         spEditor.remove("username")
             .remove("jwt")
@@ -147,16 +126,8 @@ class MainActivity : AppCompatActivity() {
         startAuthActivity()
     }
 
-    private fun loadData(sp: SharedPreferences) {
-        val jwt = sp.getString("jwt", null)
-        val customerNum = sp.getInt("customer_num", -1)
-        if (jwt != null && customerNum != -1) {
-            sharedViewModel.getUser(customerNum, jwt)
-        } else {
-            logout()
-        }
-        sharedViewModel.addUserExercise()
-        sharedViewModel.loadExerciseHistory()
+    fun displayToast(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     private fun startAuthActivity() {
@@ -168,10 +139,6 @@ class MainActivity : AppCompatActivity() {
     private fun startCameraActivity() {
         val intent = Intent(this, WorkoutActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun displayToast(text: String) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     companion object {
