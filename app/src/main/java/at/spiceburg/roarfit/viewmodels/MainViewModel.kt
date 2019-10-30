@@ -5,12 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
-import at.spiceburg.roarfit.data.repositories.ExerciseRepositoryFactory
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val exerciseRepo: ExerciseRepository = ExerciseRepositoryFactory.create(application)
+    private val exerciseRepo: ExerciseRepository = ExerciseRepository.Factory.create(application)
 
     override fun onCleared() {
         super.onCleared()

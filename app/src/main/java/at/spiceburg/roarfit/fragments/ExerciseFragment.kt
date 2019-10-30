@@ -20,7 +20,7 @@ class ExerciseFragment : Fragment() {
     ): View? {
         viewModel = ViewModelProviders.of(
             this,
-            ExerciseViewModel.ExerciseViewModelFactory(requireContext())
+            ExerciseViewModel.Factory(requireContext())
         )
             .get(ExerciseViewModel::class.java)
         // Inflate the layout for this fragment

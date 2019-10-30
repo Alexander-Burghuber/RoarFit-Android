@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
-import at.spiceburg.roarfit.data.repositories.ExerciseRepositoryFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,9 +31,9 @@ class ExerciseViewModel(private val exerciseRepo: ExerciseRepository) : ViewMode
         timer.cancel()
     }
 
-    class ExerciseViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ExerciseViewModel(ExerciseRepositoryFactory.create(context)) as T
+            return ExerciseViewModel(ExerciseRepository.Factory.create(context)) as T
         }
     }
 }

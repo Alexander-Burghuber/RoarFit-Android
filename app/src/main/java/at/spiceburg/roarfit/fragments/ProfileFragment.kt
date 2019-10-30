@@ -25,7 +25,7 @@ class ProfileFragment : Fragment() {
     ): View? {
         viewModel = ViewModelProviders.of(
             this,
-            ProfileViewModel.ProfileViewModelFactory(requireContext())
+            ProfileViewModel.Factory(requireContext())
         ).get(ProfileViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false)

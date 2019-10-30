@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.data.repositories.UserRepository
-import at.spiceburg.roarfit.data.repositories.UserRepositoryFactory
 
 class ProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
 
@@ -20,9 +19,9 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
         return userRepository.getUser(userId, jwt)
     }
 
-    class ProfileViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ProfileViewModel(UserRepositoryFactory.create(context)) as T
+            return ProfileViewModel(UserRepository.Factory.create(context)) as T
         }
     }
 }
