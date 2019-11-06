@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.fragments
+package at.spiceburg.roarfit.ui.main.dashboard
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.adapters.WorkoutPlanListAdapter
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : Fragment() {
@@ -22,7 +21,7 @@ class DashboardFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val adapter = WorkoutPlanListAdapter(requireContext())
+        val adapter = WorkoutPlansAdapter(requireContext())
         list_dashboard_workoutplans.adapter = adapter
         list_dashboard_workoutplans.layoutManager = LinearLayoutManager(requireContext())
 

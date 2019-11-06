@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.viewmodels
+package at.spiceburg.roarfit.ui.main.profile
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -21,7 +21,11 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
 
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ProfileViewModel(UserRepository.Factory.create(context)) as T
+            return ProfileViewModel(
+                UserRepository.Factory.create(
+                    context
+                )
+            ) as T
         }
     }
 }

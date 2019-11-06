@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.adapters
+package at.spiceburg.roarfit.ui.main.dashboard
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 
-class WorkoutPlanListAdapter(context: Context) :
-    RecyclerView.Adapter<WorkoutPlanListAdapter.WorkoutPlanViewHolder>() {
+class WorkoutPlansAdapter(context: Context) :
+    RecyclerView.Adapter<WorkoutPlansAdapter.WorkoutPlanViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var workoutPlans: List<WorkoutPlan> = emptyList()
 
@@ -22,7 +22,7 @@ class WorkoutPlanListAdapter(context: Context) :
         parent: ViewGroup,
         viewType: Int
     ): WorkoutPlanViewHolder {
-        val itemView = inflater.inflate(R.layout.workout_plan_list_item, parent, false)
+        val itemView = inflater.inflate(R.layout.item_dashboard, parent, false)
         return WorkoutPlanViewHolder(itemView)
     }
 

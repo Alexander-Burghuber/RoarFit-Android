@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.activities
+package at.spiceburg.roarfit.ui.auth
 
 import android.content.Context
 import android.content.Intent
@@ -15,8 +15,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Resource
+import at.spiceburg.roarfit.ui.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
-import at.spiceburg.roarfit.viewmodels.AuthViewModel
 import co.infinum.goldfinger.Goldfinger
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -28,7 +28,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // replaces the launcher theme with the normal one
-        setTheme(R.style.AppTheme_NoActionBar)
+        setTheme(R.style.AppTheme)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)

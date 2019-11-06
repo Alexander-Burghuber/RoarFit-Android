@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.viewmodels
+package at.spiceburg.roarfit.ui.workout.camera
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -22,6 +22,7 @@ class CameraViewModel : ViewModel(), QRDataListener {
             "treadmill" -> Equipment.TREADMILL
             "cross_trainer" -> Equipment.CROSS_TRAINER
             "exercycle" -> Equipment.EXERCYCLE
+            "leg_extension" -> Equipment.LEG_EXTENSION
             else -> null
         }
         if (equipment != null) {

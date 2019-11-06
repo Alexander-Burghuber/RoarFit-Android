@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.fragments
+package at.spiceburg.roarfit.ui.main.profile
 
 import android.content.Context
 import android.os.Bundle
@@ -9,11 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.activities.MainActivity
 import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.data.entities.User
+import at.spiceburg.roarfit.ui.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
-import at.spiceburg.roarfit.viewmodels.ProfileViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {

@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/dashboardFragment"
-        android:icon="@drawable/ic_fitness_center_black_24dp"
+        android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/bottom_nav_dashboard" />
     <item
         android:id="@+id/statisticsFragment"

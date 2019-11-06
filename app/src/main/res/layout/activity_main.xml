@@ -5,7 +5,7 @@
     android:id="@+id/constraintlayout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+    tools:context=".ui.main.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout_main"
@@ -25,7 +25,7 @@
             android:id="@+id/toolbar_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="@color/primary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             tools:layout_conversion_absoluteHeight="56dp"
             tools:layout_conversion_absoluteWidth="411dp"
@@ -55,10 +55,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:elevation="1dp"
-        app:backgroundTint="@color/primaryDark"
+        app:backgroundTint="@color/primary"
         app:layout_constraintBottom_toTopOf="@+id/bottomnav_main"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_camera_black_24dp"
+        app:srcCompat="@drawable/ic_fitness_center_black_24dp"
         app:tint="@color/white"
         tools:layout_conversion_absoluteHeight="56dp"
         tools:layout_conversion_absoluteWidth="56dp"

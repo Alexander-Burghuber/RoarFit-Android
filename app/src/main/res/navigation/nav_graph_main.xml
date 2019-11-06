@@ -7,23 +7,23 @@
 
     <fragment
         android:id="@+id/dashboardFragment"
-        android:name="at.spiceburg.roarfit.fragments.DashboardFragment"
+        android:name="at.spiceburg.roarfit.ui.main.dashboard.DashboardFragment"
         android:label="Dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/historyFragment"
-        android:name="at.spiceburg.roarfit.fragments.HistoryFragment"
+        android:name="at.spiceburg.roarfit.ui.main.history.HistoryFragment"
         android:label="History"
         tools:layout="@layout/fragment_history" />
     <fragment
         android:id="@+id/statisticsFragment"
-        android:name="at.spiceburg.roarfit.fragments.StatisticsFragment"
+        android:name="at.spiceburg.roarfit.ui.main.statistics.StatisticsFragment"
         android:label="Statistics"
         tools:layout="@layout/fragment_statistics" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="at.spiceburg.roarfit.fragments.ProfileFragment"
+        android:name="at.spiceburg.roarfit.ui.main.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 

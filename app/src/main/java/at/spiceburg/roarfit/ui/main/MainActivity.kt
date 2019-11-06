@@ -1,10 +1,11 @@
-package at.spiceburg.roarfit.activities
+package at.spiceburg.roarfit.ui.main
 
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -18,12 +19,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.ui.auth.AuthActivity
+import at.spiceburg.roarfit.ui.workout.WorkoutActivity
 import at.spiceburg.roarfit.utils.Constants
-import at.spiceburg.roarfit.viewmodels.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,15 +71,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
-        val appVersion = packageManager.getPackageInfo(packageName, 0).versionCode
+
+        // reset the database if the build is for debug and not for production
+        /*if (BuildConfig.DEBUG) {
+            this.deleteDatabase("roarfit_database")
+            sp.edit().putInt("db_initialised_version", 0).apply()
+        }*/
 
         // check if the db has been initialised on this app version before
+        val appVersion = packageManager.getPackageInfo(packageName, 0).versionCode
         if (sp.getInt("db_initialised_version", 0) < appVersion) {
             // if not, then create the db with the needed content before continuing the data loading
             viewModel.initDatabase().observe(this, Observer {
+                Log.d(TAG, "Initialised database")
                 sp.edit().putInt("db_initialised_version", appVersion).apply()
             })
         }
+
+        viewModel.getAllExerciseTemplates().observe(this, Observer { exerciseTemplates ->
+            var output = ""
+            exerciseTemplates.forEach {
+                output += "\nname: ${it.name} equipment: ${it.equipment} bodyPart: ${it.bodyPart}"
+            }
+            Log.d(TAG, "Found ${exerciseTemplates.size} exercise templates: $output")
+        })
     }
 
     override fun onRequestPermissionsResult(

@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.viewmodels
+package at.spiceburg.roarfit.ui.auth
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

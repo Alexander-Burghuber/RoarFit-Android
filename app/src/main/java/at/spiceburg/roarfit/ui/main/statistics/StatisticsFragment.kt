@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.fragments
+package at.spiceburg.roarfit.ui.main.statistics
 
 import android.os.Bundle
 import android.view.LayoutInflater

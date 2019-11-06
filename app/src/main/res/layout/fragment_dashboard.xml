@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".fragments.DashboardFragment">
+    tools:context=".ui.main.dashboard.DashboardFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_dashboard_workoutplans"
@@ -11,5 +11,5 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         tools:itemCount="3"
-        tools:listitem="@layout/workout_plan_list_item" />
+        tools:listitem="@layout/item_dashboard" />
 </FrameLayout>

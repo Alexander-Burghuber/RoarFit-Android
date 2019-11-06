@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="at.spiceburg.roarfit.fragments.CameraFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.camera.CameraFragment"
         android:label="Camera"
         tools:layout="@layout/fragment_camera">
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/exerciseInfoFragment"
-        android:name="at.spiceburg.roarfit.fragments.ExerciseInfoFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.exerciseinfo.ExerciseInfoFragment"
         android:label="Exercise"
         tools:layout="@layout/fragment_exercise_info">
         <argument
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/exerciseFragment"
-        android:name="at.spiceburg.roarfit.fragments.ExerciseFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.exercise.ExerciseFragment"
         android:label="Exercise"
         tools:layout="@layout/fragment_exercise">
         <argument

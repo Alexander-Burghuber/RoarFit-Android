@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.activities
+package at.spiceburg.roarfit.ui.workout
 
 import android.os.Bundle
 import android.view.WindowManager

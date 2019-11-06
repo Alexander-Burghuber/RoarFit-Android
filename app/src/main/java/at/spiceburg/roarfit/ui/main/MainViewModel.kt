@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.viewmodels
+package at.spiceburg.roarfit.ui.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -9,11 +9,16 @@ import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+
     private val exerciseRepo: ExerciseRepository = ExerciseRepository.Factory.create(application)
 
     override fun onCleared() {
         super.onCleared()
         exerciseRepo.clear()
+    }
+
+    fun getAllExerciseTemplates(): LiveData<List<ExerciseTemplate>> {
+        return exerciseRepo.getAllTemplates()
     }
 
     /* fun addUserExercise() {

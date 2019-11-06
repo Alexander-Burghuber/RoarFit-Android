@@ -2,6 +2,7 @@ package at.spiceburg.roarfit.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import at.spiceburg.roarfit.data.Equipment
 
 /**
  * Class which provides a model for a exercise template
@@ -14,6 +15,6 @@ import androidx.room.PrimaryKey
 data class ExerciseTemplate(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val equipment: String?,
+    val equipment: Equipment?,
     val bodyPart: String
 )

@@ -5,7 +5,7 @@
     android:id="@+id/constraintlayout_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ProfileFragment">
+    tools:context=".ui.main.profile.ProfileFragment">
 
     <ImageView
         android:id="@+id/image_profile_icon"

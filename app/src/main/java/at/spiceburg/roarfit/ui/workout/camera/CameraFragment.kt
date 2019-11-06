@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.fragments
+package at.spiceburg.roarfit.ui.workout.camera
 
 import android.content.Context
 import android.os.Bundle
@@ -14,11 +14,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.viewmodels.CameraViewModel
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
 
 class CameraFragment : Fragment() {
+
     private lateinit var viewModel: CameraViewModel
     private lateinit var qrEader: QREader
     private lateinit var cameraView: SurfaceView
@@ -27,20 +27,13 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        // val window = requireActivity().window
-        // window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        // window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-    }
-
     override fun onStart() {
         super.onStart()
-        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
 
         cameraView = requireView().findViewById(R.id.surfaceview_camera)
 
@@ -59,7 +52,9 @@ class CameraFragment : Fragment() {
         viewModel.equipmentLD.observe(this, Observer { equipment ->
             hideKeyboard()
             val action =
-                CameraFragmentDirections.actionCameraFragmentToExerciseInfoFragment(equipment)
+                CameraFragmentDirections.actionCameraFragmentToExerciseInfoFragment(
+                    equipment
+                )
             findNavController().navigate(action)
         })
 
@@ -70,7 +65,9 @@ class CameraFragment : Fragment() {
 
         text_camera_equipment.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null) viewModel.handleTextChange(s.toString())
+                if (s != null) {
+                    viewModel.handleTextChange(s.toString())
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}

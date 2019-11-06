@@ -7,7 +7,7 @@
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".fragments.CameraFragment">
+    tools:context=".ui.workout.camera.CameraFragment">
 
     <SurfaceView
         android:id="@+id/surfaceview_camera"
@@ -23,11 +23,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="665dp"
         android:minHeight="200dp"
-        app:cardBackgroundColor="@color/primary"
+        app:cardBackgroundColor="@color/greyDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,11 +64,11 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="13dp"
-                android:tint="@color/white"
+                android:tint="@color/lightGrey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_center_focus_strong_black_24dp" />
+                app:srcCompat="@drawable/ic_camera_black_24dp" />
 
             <!--
             <TextView
@@ -92,18 +91,18 @@
     </com.google.android.material.card.MaterialCardView>
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="106dp"
-        android:layout_marginTop="265dp"
-        android:layout_marginEnd="106dp"
-        android:layout_marginBottom="266dp"
-        android:alpha="0.3"
+        android:layout_width="235dp"
+        android:layout_height="235dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="248dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginBottom="248dp"
+        android:alpha="0.4"
         android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_center_focus_strong_black_24dp" />
+        app:srcCompat="@drawable/ic_crop_free_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
