@@ -31,9 +31,8 @@ class ExerciseFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val args =
-            ExerciseFragmentArgs.fromBundle(requireArguments())
-        text_exercise_title.text = args.equipment.string
+        // val args = ExerciseFragmentArgs.fromBundle(requireArguments())
+        // text_exercise_title.text = args.equipment.string
 
         viewModel.stopWatch.observe(this, Observer { time ->
             text_exercise_timer.text = formatter.format(time)

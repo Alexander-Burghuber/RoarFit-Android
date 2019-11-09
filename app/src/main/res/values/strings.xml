@@ -22,4 +22,7 @@
     <string name="exercise_info_button_start">Start</string>
     <string name="ongoing_exercise_button_pause">Pause</string>
     <string name="ongoing_exercise_button_finish">Finish</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

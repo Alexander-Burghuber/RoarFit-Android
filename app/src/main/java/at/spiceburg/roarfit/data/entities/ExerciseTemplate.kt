@@ -3,6 +3,7 @@ package at.spiceburg.roarfit.data.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import at.spiceburg.roarfit.data.Equipment
+import java.io.Serializable
 
 /**
  * Class which provides a model for a exercise template
@@ -17,4 +18,4 @@ data class ExerciseTemplate(
     val name: String,
     val equipment: Equipment?,
     val bodyPart: String
-)
+) : Serializable

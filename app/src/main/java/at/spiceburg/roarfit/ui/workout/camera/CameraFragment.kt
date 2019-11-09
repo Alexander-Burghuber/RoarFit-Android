@@ -52,9 +52,7 @@ class CameraFragment : Fragment() {
         viewModel.equipmentLD.observe(this, Observer { equipment ->
             hideKeyboard()
             val action =
-                CameraFragmentDirections.actionCameraFragmentToExerciseInfoFragment(
-                    equipment
-                )
+                CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
             findNavController().navigate(action)
         })
 
@@ -70,9 +68,11 @@ class CameraFragment : Fragment() {
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+            }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
         })
     }
 

@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.ui.workout.exerciseinfo
+package at.spiceburg.roarfit.ui.workout.exerciselist
 
 import android.content.Context
 import android.view.LayoutInflater

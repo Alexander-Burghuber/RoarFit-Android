@@ -27,7 +27,7 @@ class WorkoutActivity : AppCompatActivity() {
     }
 
     fun setupExerciseFragment() {
-        setSupportActionBar(toolbar_exerciseinfo)
+        setSupportActionBar(toolbar_exerciselist)
         val navController = findNavController(R.id.navhostfragment_workout)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
