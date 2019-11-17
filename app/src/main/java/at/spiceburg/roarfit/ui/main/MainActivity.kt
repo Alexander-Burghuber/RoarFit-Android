@@ -31,26 +31,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar_main)
-
         // setup navigation
         val navController = findNavController(this, R.id.navhostfragment_main)
-        bottomnav_main.setupWithNavController(navController)
-
-        // setup configuration with top-level destinations
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            // TODO: hide bottom nav
+        }
         val appBarConfiguration = AppBarConfiguration.Builder(
             R.id.dashboardFragment,
             R.id.statisticsFragment,
             R.id.historyFragment,
             R.id.profileFragment
         ).build()
+        setSupportActionBar(toolbar_main)
+        bottomnav_main.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        // fab button click listener
         fab_main.setOnClickListener {
             // check if the permission to use the camera has been granted
             if (ContextCompat.checkSelfPermission(
