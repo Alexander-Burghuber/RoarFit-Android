@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_workout"
-    app:startDestination="@id/cameraFragment">
+    app:startDestination="@id/equipmentListFragment">
 
     <fragment
-        android:id="@+id/cameraFragment"
-        android:name="at.spiceburg.roarfit.ui.workout.camera.CameraFragment"
-        android:label="Camera"
-        tools:layout="@layout/fragment_camera">
+        android:id="@+id/equipmentListFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.equipmentlist.EquipmentListFragment"
+        android:label="Equipment"
+        tools:layout="@layout/fragment_equipment_list">
         <action
-            android:id="@+id/action_cameraFragment_to_exerciseListFragment"
+            android:id="@+id/action_equipmentListFragment_to_exerciseListFragment"
             app:destination="@id/exerciseListFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -19,23 +19,9 @@
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@+id/exerciseInfoFragment"
-        android:name="at.spiceburg.roarfit.ui.workout.exerciseinfo.ExerciseInfoFragment"
-        android:label="Exercise"
-        tools:layout="@layout/fragment_exercise_info">
-        <argument
-            android:name="exerciseTemplate"
-            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
-    </fragment>
-    <fragment
-        android:id="@+id/exerciseFragment"
-        android:name="at.spiceburg.roarfit.ui.workout.exercise.ExerciseFragment"
-        android:label="Exercise"
-        tools:layout="@layout/fragment_exercise" />
-    <fragment
         android:id="@+id/exerciseListFragment"
         android:name="at.spiceburg.roarfit.ui.workout.exerciselist.ExerciseListFragment"
-        android:label="fragment_exercise_list"
+        android:label="Exercises"
         tools:layout="@layout/fragment_exercise_list">
         <argument
             android:name="equipment"
@@ -48,4 +34,19 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+    <fragment
+        android:id="@+id/exerciseInfoFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.exerciseinfo.ExerciseInfoFragment"
+        android:label="Exercise Info"
+        tools:layout="@layout/fragment_exercise_info">
+        <argument
+            android:name="exerciseTemplate"
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
+    </fragment>
+    <fragment
+        android:id="@+id/exerciseFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.exercise.ExerciseFragment"
+        android:label="Exercise"
+        tools:layout="@layout/fragment_exercise" />
+
 </navigation>

@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.ui.workout.camera
+package at.spiceburg.roarfit.ui.camera
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
-import at.spiceburg.roarfit.ui.workout.WorkoutActivity
 import at.spiceburg.roarfit.ui.workout.exerciseinfo.ExerciseInfoFragment
 import kotlinx.android.synthetic.main.fragment_exercise_list.*
 
@@ -29,11 +28,6 @@ class ExerciseListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_exercise_list, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        (requireActivity() as WorkoutActivity).setupExerciseFragment()
-    }
-
     override fun onStart() {
         super.onStart()
         val args = ExerciseListFragmentArgs.fromBundle(requireArguments())
@@ -48,7 +42,7 @@ class ExerciseListFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        val adapter = ExercisesAdapter(requireContext(), onExerciseClicked)
+        val adapter = ExerciseListAdapter(requireContext(), onExerciseClicked)
         recyclerview_exerciselist_exercises.adapter = adapter
         recyclerview_exerciselist_exercises.layoutManager = LinearLayoutManager(requireContext())
 

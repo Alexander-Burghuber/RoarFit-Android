@@ -7,26 +7,6 @@
     android:background="@color/white"
     tools:context=".ui.workout.exerciseinfo.ExerciseInfoFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbarlayout_exerciselist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_exerciselist"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintlayout_exerciselist_inner"
         android:layout_width="0dp"
@@ -34,7 +14,7 @@
         android:background="@color/lightGrey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbarlayout_exerciselist">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/image_exerciselist_icon"

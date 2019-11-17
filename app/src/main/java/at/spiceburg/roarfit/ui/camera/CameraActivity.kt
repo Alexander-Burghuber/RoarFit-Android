@@ -1,44 +1,35 @@
-package at.spiceburg.roarfit.ui.workout.camera
+package at.spiceburg.roarfit.ui.camera
 
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.SurfaceView
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
 import github.nisrulz.qreader.QREader
-import kotlinx.android.synthetic.main.fragment_camera.*
+import kotlinx.android.synthetic.main.activity_camera.*
 
-class CameraFragment : Fragment() {
+class CameraActivity : AppCompatActivity() {
 
     private lateinit var viewModel: CameraViewModel
-    private lateinit var qrEader: QREader
+    private lateinit var qrReader: QREader
     private lateinit var cameraView: SurfaceView
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_camera)
     }
 
     override fun onStart() {
         super.onStart()
 
-        cameraView = requireView().findViewById(R.id.surfaceview_camera)
+        cameraView = findViewById(R.id.surfaceview_camera)
 
-        // Init QREader
-        qrEader = QREader.Builder(requireContext(), cameraView, viewModel)
+        // Init QR-Reader
+        qrReader = QREader.Builder(this, cameraView, viewModel)
             .facing(QREader.BACK_CAM)
             .enableAutofocus(true)
             .width(cameraView.width)
@@ -51,9 +42,8 @@ class CameraFragment : Fragment() {
 
         viewModel.equipmentLD.observe(this, Observer { equipment ->
             hideKeyboard()
-            val action =
-                CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
-            findNavController().navigate(action)
+            // val action = CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
+            // findNavController().navigate(action)
         })
 
         cameraView.setOnClickListener {
@@ -78,19 +68,23 @@ class CameraFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        qrEader.initAndStart(cameraView)
+        qrReader.initAndStart(cameraView)
     }
 
     override fun onPause() {
         super.onPause()
-        qrEader.releaseAndCleanup()
+        qrReader.releaseAndCleanup()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        qrReader.stop()
     }
 
     private fun hideKeyboard() {
-        val inputManager =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(
-            requireActivity().currentFocus?.windowToken,
+            currentFocus?.windowToken,
             InputMethodManager.HIDE_NOT_ALWAYS
         )
     }

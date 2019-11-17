@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                 )
             } else {
                 // permission has already been granted
-                startCameraActivity()
+                startWorkoutActivity()
             }
         }
 
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == Constants.PERMISSION_REQUEST_CODE_CAMERA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // permission granted
-                startCameraActivity()
+                startWorkoutActivity()
             } else {
                 // permission denied
                 Snackbar.make(
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun startCameraActivity() {
+    private fun startWorkoutActivity() {
         val intent = Intent(this, WorkoutActivity::class.java)
         startActivity(intent)
     }

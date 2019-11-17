@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 
-class ExercisesAdapter(context: Context, val onExerciseClicked: (ExerciseTemplate) -> Unit) :
-    RecyclerView.Adapter<ExercisesAdapter.ExerciseViewHolder>() {
+class ExerciseListAdapter(context: Context, val onExerciseClicked: (ExerciseTemplate) -> Unit) :
+    RecyclerView.Adapter<ExerciseListAdapter.ExerciseViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var exerciseTemplates: List<ExerciseTemplate> = emptyList()
 

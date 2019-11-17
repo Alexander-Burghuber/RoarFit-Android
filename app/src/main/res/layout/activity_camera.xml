@@ -7,7 +7,7 @@
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".ui.workout.camera.CameraFragment">
+    tools:context=".ui.camera.CameraActivity">
 
     <SurfaceView
         android:id="@+id/surfaceview_camera"
