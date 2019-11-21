@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import at.spiceburg.roarfit.R
-import kotlinx.android.synthetic.main.fragment_exercise_info.*
 
 class ExerciseInfoFragment : Fragment() {
     private lateinit var viewModel: ExerciseInfoViewModel
@@ -21,11 +20,11 @@ class ExerciseInfoFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_exercise_info, container, false)
     }
 
-    override fun onStart() {
+    /*override fun onStart() {
         super.onStart()
         val args = ExerciseInfoFragmentArgs.fromBundle(requireArguments())
         val exerciseTemplate = args.exerciseTemplate
 
         exerciseinfo_text.text = exerciseTemplate.name
-    }
+    }*/
 }

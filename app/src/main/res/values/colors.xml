@@ -20,10 +20,19 @@
     <color name="error">#C51162</color>
     -->
 
-    <color name="primary">#F06436</color>
+    <color name="primary">#d1410b</color>
+    <color name="primaryLight">#ff733c</color>
+    <color name="primaryDark">#980000</color>
+    <color name="secondary">#f57f17</color>
+    <color name="secondaryLight">#ffb04c</color>
+    <color name="secondaryDark">#bc5100</color>
+    <color name="primaryText">#ffffff</color>
+    <color name="secondaryText">#000000</color>
+
+    <!--<color name="primary">#F06436</color>
     <color name="primaryLight">#F57138</color>
     <color name="primaryDark">#E43D26</color>
-    <color name="primaryDarker">#8D332A</color>
+    <color name="primaryDarker">#8D332A</color>-->
 
     <color name="greyLight">#37373F</color>
     <color name="greyDark">#33333D</color>

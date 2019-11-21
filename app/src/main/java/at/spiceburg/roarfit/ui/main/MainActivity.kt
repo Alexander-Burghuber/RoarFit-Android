@@ -8,26 +8,32 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
+import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.ui.auth.AuthActivity
-import at.spiceburg.roarfit.ui.workout.WorkoutActivity
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetListener {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,37 +42,34 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         // setup navigation
-        val navController = findNavController(this, R.id.navhostfragment_main)
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            // TODO: hide bottom nav
-        }
-        val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.dashboardFragment,
-            R.id.statisticsFragment,
-            R.id.historyFragment,
-            R.id.profileFragment
-        ).build()
         setSupportActionBar(toolbar_main)
+        navController = findNavController(this, R.id.navhost_main)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.equipmentListFragment) {
+                bottomnav_main.visibility = View.GONE
+                fab_main_exerciseaction.visibility = View.GONE
+            } else {
+                bottomnav_main.visibility = View.VISIBLE
+                fab_main_exerciseaction.visibility = View.VISIBLE
+            }
+        }
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.dashboardFragment,
+                R.id.statisticsFragment,
+                R.id.historyFragment,
+                R.id.profileFragment
+            )
+        )
         bottomnav_main.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        fab_main.setOnClickListener {
-            // check if the permission to use the camera has been granted
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // permission has not been granted
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.CAMERA),
-                    Constants.PERMISSION_REQUEST_CODE_CAMERA
-                )
-            } else {
-                // permission has already been granted
-                startWorkoutActivity()
-            }
+        fab_main_exerciseaction.setOnClickListener {
+            val bottomSheet = BottomSheetExerciseAction()
+            bottomSheet.show(
+                supportFragmentManager,
+                BottomSheetExerciseAction::class.java.simpleName
+            )
         }
 
         val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
@@ -87,13 +90,17 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        viewModel.getAllExerciseTemplates().observe(this, Observer { exerciseTemplates ->
+        viewModel.getAllExerciseTemplates().observe(this) { exerciseTemplates ->
             var output = ""
             exerciseTemplates.forEach {
                 output += "\nname: ${it.name} equipment: ${it.equipment} bodyPart: ${it.bodyPart}"
             }
             Log.d(TAG, "Found ${exerciseTemplates.size} exercise templates: $output")
-        })
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onRequestPermissionsResult(
@@ -105,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == Constants.PERMISSION_REQUEST_CODE_CAMERA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // permission granted
-                startWorkoutActivity()
+                openEquipmentListFragment()
             } else {
                 // permission denied
                 Snackbar.make(
@@ -133,6 +140,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBottomSheetResult(useQR: Boolean) {
+        if (useQR) {
+            // check if the permission to use the camera has been granted
+            val status = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            if (status == PackageManager.PERMISSION_GRANTED) {
+                // permission has already been granted
+                // TODO
+            } else {
+                // request the permission
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.CAMERA),
+                    Constants.PERMISSION_REQUEST_CODE_CAMERA
+                )
+            }
+        } else {
+            openEquipmentListFragment()
+        }
+    }
+
     fun logout() {
         val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
         spEditor.remove("username")
@@ -147,15 +174,30 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
+    fun onBottomSheetAction(useCamera: Boolean) {
+        if (useCamera) {
+            Log.d(TAG, "Camera clicked")
+        } else {
+            Log.d(TAG, "List clicked")
+        }
+    }
+
     private fun startAuthActivity() {
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    private fun startWorkoutActivity() {
-        val intent = Intent(this, WorkoutActivity::class.java)
-        startActivity(intent)
+    private fun openEquipmentListFragment() {
+        val options = navOptions {
+            anim {
+                enter = R.anim.slide_in_right
+                exit = R.anim.slide_out_left
+                popEnter = R.anim.slide_in_left
+                popExit = R.anim.slide_out_right
+            }
+        }
+        navController.navigate(R.id.equipmentListFragment, null, options)
     }
 
     companion object {

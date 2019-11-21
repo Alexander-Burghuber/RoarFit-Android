@@ -1,15 +1,16 @@
 package at.spiceburg.roarfit.ui.workout.equipmentlist
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Equipment
-import at.spiceburg.roarfit.ui.workout.WorkoutActivity
+import at.spiceburg.roarfit.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_equipment_list.*
 
 class EquipmentListFragment : Fragment() {
@@ -22,7 +23,7 @@ class EquipmentListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_equipment_list, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    /*override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val closeIcon = requireContext().getDrawable(R.drawable.ic_close_black_24dp)!!
@@ -30,15 +31,22 @@ class EquipmentListFragment : Fragment() {
         val activity = (requireActivity() as WorkoutActivity)
         activity.supportActionBar?.setHomeAsUpIndicator(closeIcon)
         //activity.toolbar_workout.navigationIcon = closeIcon
+    }*/
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val closeIcon = getDrawable(context, R.drawable.ic_close_black_24dp)!!
+        closeIcon.setTint(context.getColor(R.color.white))
+        (requireActivity() as MainActivity).supportActionBar?.setHomeAsUpIndicator(closeIcon)
     }
 
     override fun onStart() {
         super.onStart()
 
         val onEquipmentClicked: (exerciseTemplate: Equipment) -> Unit = { equipment ->
-            val action = EquipmentListFragmentDirections
-                .actionEquipmentListFragmentToExerciseListFragment(equipment)
-            findNavController().navigate(action)
+            /*  val action = EquipmentListFragmentDirections
+                  .actionEquipmentListFragmentToExerciseListFragment(equipment)
+              findNavController().navigate(action)*/
         }
 
         val adapter = EquipmentListAdapter(requireContext(), onEquipmentClicked)

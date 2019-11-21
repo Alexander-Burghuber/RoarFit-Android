@@ -11,7 +11,7 @@
         android:id="@+id/appbarlayout_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/navhostfragment_main"
+        android:layout_below="@+id/navhost_main"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <fragment
-        android:id="@+id/navhostfragment_main"
+        android:id="@+id/navhost_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -49,13 +49,13 @@
         tools:layout_conversion_absoluteWidth="411dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_main"
+        android:id="@+id/fab_main_exerciseaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:elevation="1dp"
-        app:backgroundTint="@color/primary"
+        app:backgroundTint="@color/primaryLight"
         app:layout_constraintBottom_toTopOf="@+id/bottomnav_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_fitness_center_black_24dp"

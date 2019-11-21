@@ -3,7 +3,6 @@ package at.spiceburg.roarfit.ui.workout
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -19,7 +18,7 @@ class WorkoutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
 
-        navController = findNavController(R.id.navhostfragment_workout)
+        // navController = findNavController(R.id.navhostfragment_workout)
         appBarConfiguration = AppBarConfiguration(navController.graph)
 
         setSupportActionBar(toolbar_workout)

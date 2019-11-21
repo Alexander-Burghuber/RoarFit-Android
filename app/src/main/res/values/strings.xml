@@ -18,6 +18,10 @@
     <string name="app_bar_settings">Settings</string>
     <string name="app_bar_logout">Logout</string>
 
+    <string name="main_bottomsheet_title">Exercise</string>
+    <string name="main_bottomsheet_qr">QR</string>
+    <string name="main_bottomsheet_list">List</string>
+
     <!-- WorkoutActivity -->
     <string name="exercise_info_button_start">Start</string>
     <string name="ongoing_exercise_button_pause">Pause</string>

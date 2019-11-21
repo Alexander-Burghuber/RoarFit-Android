@@ -26,5 +26,9 @@
         android:name="at.spiceburg.roarfit.ui.main.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
-
+    <fragment
+        android:id="@+id/equipmentListFragment"
+        android:name="at.spiceburg.roarfit.ui.workout.equipmentlist.EquipmentListFragment"
+        android:label="EquipmentListFragment"
+        tools:layout="@layout/fragment_equipment_list" />
 </navigation>
