@@ -1,16 +1,15 @@
 package at.spiceburg.roarfit.features.main
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val exerciseRepo: ExerciseRepository = ExerciseRepository.Factory.create(application)
+class MainViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
@@ -33,11 +32,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
          }
      }*/
 
-    fun initDatabase(): LiveData<Boolean> {
-        val inputStream = getApplication<Application>().assets.open("exercises.json")
+    fun initDatabase(context: Context): LiveData<Boolean> {
+        val inputStream = context.assets.open("exercises.json")
         val reader = JsonReader(inputStream.reader())
         val exerciseTemplates: Array<ExerciseTemplate> =
             Gson().fromJson(reader, Array<ExerciseTemplate>::class.java)
         return exerciseRepo.insertAllTemplates(exerciseTemplates.toList())
+    }
+
+    class Factory(private val exerciseRepo: ExerciseRepository) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return MainViewModel(exerciseRepo) as T
+        }
     }
 }

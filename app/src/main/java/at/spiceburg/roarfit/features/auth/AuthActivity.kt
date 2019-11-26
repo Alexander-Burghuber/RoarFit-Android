@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_auth.*
 
 class AuthActivity : AppCompatActivity() {
+
     private lateinit var viewModel: AuthViewModel
     private lateinit var goldfinger: Goldfinger
 

@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.profile
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,24 +7,20 @@ import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.data.repositories.UserRepository
 
-class ProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
+class ProfileViewModel(private val userRepo: UserRepository) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        userRepository.clear()
+        userRepo.clear()
     }
 
     fun getUser(userId: Int, jwt: String): LiveData<Resource<User>> {
-        return userRepository.getUser(userId, jwt)
+        return userRepo.getUser(userId, jwt)
     }
 
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val userRepo: UserRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ProfileViewModel(
-                UserRepository.Factory.create(
-                    context
-                )
-            ) as T
+            return ProfileViewModel(userRepo) as T
         }
     }
 }

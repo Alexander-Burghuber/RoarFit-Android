@@ -24,6 +24,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.auth.AuthActivity
 import at.spiceburg.roarfit.utils.Constants
@@ -40,7 +41,9 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetL
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        val appContainer = (application as MyApplication).appContainer
+        viewModel = ViewModelProviders.of(this, appContainer.mainViewModelFactory)
+            .get(MainViewModel::class.java)
 
         // setup navigation
         setSupportActionBar(toolbar_main)
@@ -100,7 +103,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetL
         val appVersion = packageManager.getPackageInfo(packageName, 0).versionCode
         if (sp.getInt("db_initialised_version", 0) < appVersion) {
             // if not, then create the db with the needed content before continuing the data loading
-            viewModel.initDatabase().observe(this, Observer {
+            viewModel.initDatabase(this).observe(this, Observer {
                 Log.d(TAG, "Initialised database")
                 sp.edit().putInt("db_initialised_version", appVersion).apply()
             })

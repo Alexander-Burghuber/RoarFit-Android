@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import kotlinx.android.synthetic.main.fragment_exercise.*
 import java.text.SimpleDateFormat
@@ -20,13 +21,15 @@ class ExerciseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(
-            this,
-            ExerciseViewModel.Factory(requireContext())
-        )
-            .get(ExerciseViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_exercise, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val appContainer = (requireActivity().application as MyApplication).appContainer
+        viewModel = ViewModelProviders.of(this, appContainer.exerciseViewModelFactory)
+            .get(ExerciseViewModel::class.java)
     }
 
     override fun onStart() {

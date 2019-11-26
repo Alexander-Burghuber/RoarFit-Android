@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.exerciselist
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,9 +13,9 @@ class ExerciseListViewModel(private val exerciseRepo: ExerciseRepository) : View
         return exerciseRepo.getTemplates(equipment)
     }
 
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val exerciseRepo: ExerciseRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ExerciseListViewModel(ExerciseRepository.Factory.create(context)) as T
+            return ExerciseListViewModel(exerciseRepo) as T
         }
     }
 }

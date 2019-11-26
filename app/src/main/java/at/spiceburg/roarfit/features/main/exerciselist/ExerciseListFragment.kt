@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment
 
@@ -17,10 +18,15 @@ class ExerciseListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this, ExerciseListViewModel.Factory(requireContext()))
-            .get(ExerciseListViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_exercise_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val appContainer = (requireActivity().application as MyApplication).appContainer
+        viewModel = ViewModelProviders.of(this, appContainer.exerciseListViewModelFactory)
+            .get(ExerciseListViewModel::class.java)
     }
 
     /*override fun onStart() {

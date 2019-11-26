@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.exercise
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -34,13 +33,9 @@ class ExerciseViewModel(private val exerciseRepo: ExerciseRepository) : ViewMode
         timer.cancel()
     }
 
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val exerciseRepo: ExerciseRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ExerciseViewModel(
-                ExerciseRepository.Factory.create(
-                    context
-                )
-            ) as T
+            return ExerciseViewModel(exerciseRepo) as T
         }
     }
 }
