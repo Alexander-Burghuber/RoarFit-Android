@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.workout.exerciseinfo.ExerciseInfoFragment">
+    tools:context=".features.main.exerciseinfo.ExerciseInfoFragment">
 
     <TextView
         android:id="@+id/exerciseinfo_text"

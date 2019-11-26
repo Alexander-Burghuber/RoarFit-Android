@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintlayout_camera"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".features.main.camera.CameraFragment">
+
+    <SurfaceView
+        android:id="@+id/surfaceview_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="355dp"
+        android:alpha="0.7"
+        app:cardBackgroundColor="@color/greyDark"
+        app:cardCornerRadius="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_camera_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:contentDescription="@string/camera_close_desc"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_close_black_24dp"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="15dp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="235dp"
+        android:layout_height="235dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="248dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginBottom="248dp"
+        android:alpha="0.4"
+        android:contentDescription="@null"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_crop_free_black_24dp" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardview_camera_equipment"
+        android:layout_width="220dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="500dp"
+        android:layout_marginEnd="105dp"
+        android:layout_marginBottom="191dp"
+        android:alpha="0.7"
+        android:minHeight="200dp"
+        app:cardBackgroundColor="@color/greyLight"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <EditText
+                android:id="@+id/text_camera_equipment"
+                style="@android:style/Widget.Material.Light.EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="5dp"
+                android:background="@null"
+                android:ems="10"
+                android:focusable="false"
+                android:hint="@string/camera_equipment"
+                android:importantForAutofill="no"
+                android:inputType="none"
+                android:textColor="@color/white"
+                android:textColorHint="@color/grey"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/image_camera_cardicon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/image_camera_cardicon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="13dp"
+                android:contentDescription="@null"
+                android:tint="@color/lightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_qrcode" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

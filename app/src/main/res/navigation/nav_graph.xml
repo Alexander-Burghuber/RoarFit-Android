@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="at.spiceburg.roarfit.features.main.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="at.spiceburg.roarfit.features.main.history.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="at.spiceburg.roarfit.features.main.statistics.StatisticsFragment"
+        android:label="Statistics"
+        tools:layout="@layout/fragment_statistics" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="at.spiceburg.roarfit.features.main.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="at.spiceburg.roarfit.features.main.camera.CameraFragment"
+        android:label="CameraFragment"
+        tools:layout="@layout/fragment_camera" />
+    <fragment
+        android:id="@+id/equipmentListFragment"
+        android:name="at.spiceburg.roarfit.features.main.equipmentlist.EquipmentListFragment"
+        android:label="Choose equipment"
+        tools:layout="@layout/fragment_equipment_list" />
+</navigation>

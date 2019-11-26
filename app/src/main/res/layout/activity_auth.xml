@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.auth.AuthActivity">
+    tools:context=".features.auth.AuthActivity">
 
     <ImageView
         android:id="@+id/image_auth_logo"
@@ -15,6 +15,7 @@
         android:layout_marginStart="151dp"
         android:layout_marginTop="21dp"
         android:layout_marginEnd="152dp"
+        android:contentDescription="@string/auth_logo_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,6 +29,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="168dp"
         android:backgroundTintMode="screen"
+        android:contentDescription="@string/auth_fingerprint_desc"
         android:tint="@color/grey"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +47,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="127dp"
         android:layout_marginBottom="179dp"
-        android:text="Or Login with Fingerprint"
+        android:text="@string/auth_fingerprint_text"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -5,7 +5,7 @@
     android:id="@+id/constraintlayout_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.profile.ProfileFragment">
+    tools:context=".features.main.profile.ProfileFragment">
 
     <ImageView
         android:id="@+id/image_profile_icon"
@@ -13,6 +13,7 @@
         android:layout_height="150dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:contentDescription="@null"
         android:src="@drawable/ic_account_circle_black_24dp"
         android:tint="@color/grey"
         app:layout_constraintStart_toStartOf="parent"

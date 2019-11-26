@@ -9,6 +9,9 @@
     <string name="hint_customer_number">Customer number</string>
     <string name="fingerprint_checkbox">Use fingerprint authentication for future logins</string>
     <string name="login">Login</string>
+    <string name="auth_fingerprint_text">Or Login with Fingerprint</string>
+    <string name="auth_logo_desc">RoarFit Logo</string>
+    <string name="auth_fingerprint_desc">Fingerprint</string>
 
     <!-- MainActivity -->
     <string name="bottom_nav_dashboard">Dashboard</string>
@@ -18,9 +21,14 @@
     <string name="app_bar_settings">Settings</string>
     <string name="app_bar_logout">Logout</string>
 
-    <string name="main_bottomsheet_title">Exercise</string>
+    <!-- Bottom sheet -->
+    <string name="main_bottomsheet_title">Choose equipment from</string>
     <string name="main_bottomsheet_qr">QR</string>
     <string name="main_bottomsheet_list">List</string>
+
+    <!-- Camera -->
+    <string name="camera_equipment">Equipment</string>
+    <string name="camera_close_desc">Close</string>
 
     <!-- WorkoutActivity -->
     <string name="exercise_info_button_start">Start</string>
