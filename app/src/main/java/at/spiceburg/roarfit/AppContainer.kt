@@ -15,15 +15,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AppContainer(context: Context) {
 
-    private val keyFitApi = Retrofit.Builder()
+    val keyFitApi: KeyFitApi = Retrofit.Builder()
         .baseUrl("https://staging.key.fit/lionsoft/app/")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(KeyFitApi::class.java)
+
     private val userDao = AppDatabase.getDatabase(context).userDao()
     private val exerciseDao = AppDatabase.getDatabase(context).exerciseDao()
-
     private var userRepository = UserRepository(keyFitApi, userDao)
     private var exerciseRepository = ExerciseRepository(keyFitApi, exerciseDao)
 

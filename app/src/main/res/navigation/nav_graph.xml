@@ -16,24 +16,90 @@
         android:name="at.spiceburg.roarfit.features.main.history.HistoryFragment"
         android:label="History"
         tools:layout="@layout/fragment_history" />
+
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="at.spiceburg.roarfit.features.main.statistics.StatisticsFragment"
         android:label="Statistics"
         tools:layout="@layout/fragment_statistics" />
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="at.spiceburg.roarfit.features.main.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/cameraFragment"
         android:name="at.spiceburg.roarfit.features.main.camera.CameraFragment"
         android:label="CameraFragment"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_exerciseListFragment"
+            app:destination="@id/exerciseListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/dashboardFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/equipmentListFragment"
         android:name="at.spiceburg.roarfit.features.main.equipmentlist.EquipmentListFragment"
         android:label="Choose equipment"
-        tools:layout="@layout/fragment_equipment_list" />
+        tools:layout="@layout/fragment_equipment_list">
+        <action
+            android:id="@+id/action_equipmentListFragment_to_exerciseListFragment"
+            app:destination="@id/exerciseListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseListFragment"
+        android:name="at.spiceburg.roarfit.features.main.exerciselist.ExerciseListFragment"
+        android:label="Choose exercise"
+        tools:layout="@layout/fragment_exercise_list">
+        <argument
+            android:name="equipment"
+            app:argType="at.spiceburg.roarfit.data.Equipment" />
+        <action
+            android:id="@+id/action_exerciseListFragment_to_exerciseInfoFragment"
+            app:destination="@id/exerciseInfoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseInfoFragment"
+        android:name="at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment"
+        android:label="Exercise Info"
+        tools:layout="@layout/fragment_exercise_info">
+        <argument
+            android:name="template"
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
+        <action
+            android:id="@+id/action_exerciseInfoFragment_to_exerciseFragment"
+            app:destination="@id/exerciseFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/dashboardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/exerciseFragment"
+        android:name="at.spiceburg.roarfit.features.main.exercise.ExerciseFragment"
+        android:label="Exercise"
+        tools:layout="@layout/fragment_exercise">
+        <argument
+            android:name="template"
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
+    </fragment>
+
 </navigation>

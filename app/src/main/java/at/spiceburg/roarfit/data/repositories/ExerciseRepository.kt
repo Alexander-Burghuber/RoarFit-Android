@@ -1,16 +1,13 @@
 package at.spiceburg.roarfit.data.repositories
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.Equipment
-import at.spiceburg.roarfit.data.db.AppDatabase
 import at.spiceburg.roarfit.data.db.ExerciseDao
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.network.KeyFitApi
-import at.spiceburg.roarfit.network.KeyFitApiFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -72,19 +69,5 @@ class ExerciseRepository(private val keyFitApi: KeyFitApi, private val exerciseD
 
     companion object {
         private val TAG = ExerciseRepository::class.java.simpleName
-    }
-
-    class Factory {
-        companion object {
-            private var exerciseRepository: ExerciseRepository? = null
-            fun create(context: Context): ExerciseRepository {
-                if (exerciseRepository == null) {
-                    val keyFitApi = KeyFitApiFactory.create()
-                    val exerciseDao = AppDatabase.getDatabase(context).exerciseDao()
-                    exerciseRepository = ExerciseRepository(keyFitApi, exerciseDao)
-                }
-                return exerciseRepository!!
-            }
-        }
     }
 }

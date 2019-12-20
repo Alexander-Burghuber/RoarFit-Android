@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.features.main.MainActivity
@@ -34,7 +35,10 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        viewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
+        val appContainer = (application as MyApplication).appContainer
+
+        viewModel = ViewModelProviders.of(this, AuthViewModel.Factory(appContainer.keyFitApi))
+            .get(AuthViewModel::class.java)
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
         // observe the status of the login network request

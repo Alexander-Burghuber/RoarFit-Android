@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Equipment
@@ -21,16 +22,6 @@ class EquipmentListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_equipment_list, container, false)
     }
 
-    /*override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val closeIcon = requireContext().getDrawable(R.drawable.ic_close_black_24dp)!!
-        closeIcon.setTint(resources.getColor(R.color.white, null))
-        val activity = (requireActivity() as WorkoutActivity)
-        activity.supportActionBar?.setHomeAsUpIndicator(closeIcon)
-        //activity.toolbar_workout.navigationIcon = closeIcon
-    }*/
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         /*  val closeIcon = getDrawable(context, R.drawable.ic_close_black_24dp)!!
@@ -42,9 +33,9 @@ class EquipmentListFragment : Fragment() {
         super.onStart()
 
         val onEquipmentClicked: (exerciseTemplate: Equipment) -> Unit = { equipment ->
-            /*  val action = EquipmentListFragmentDirections
-                  .actionEquipmentListFragmentToExerciseListFragment(equipment)
-              findNavController().navigate(action)*/
+            val action = EquipmentListFragmentDirections
+                .actionEquipmentListFragmentToExerciseListFragment(equipment)
+            findNavController().navigate(action)
         }
 
         val adapter = EquipmentListAdapter(requireContext(), onEquipmentClicked)

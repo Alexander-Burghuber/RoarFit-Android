@@ -3,19 +3,19 @@ package at.spiceburg.roarfit.features.auth
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.LoginRequest
 import at.spiceburg.roarfit.data.LoginResponse
 import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.network.KeyFitApi
-import at.spiceburg.roarfit.network.KeyFitApiFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(private val keyFitApi: KeyFitApi) : ViewModel() {
+
     val loginLD = MutableLiveData<Resource<LoginResponse>>()
-    private val keyFitApi: KeyFitApi = KeyFitApiFactory.create()
     private val disposables = CompositeDisposable()
 
     fun login(username: String, password: String, customerNum: Int) {
@@ -53,5 +53,11 @@ class AuthViewModel : ViewModel() {
 
     companion object {
         private val TAG = AuthViewModel::class.java.simpleName
+    }
+
+    class Factory(private val keyFitApi: KeyFitApi) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return AuthViewModel(keyFitApi) as T
+        }
     }
 }

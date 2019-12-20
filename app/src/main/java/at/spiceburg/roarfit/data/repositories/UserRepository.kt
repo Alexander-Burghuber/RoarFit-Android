@@ -1,15 +1,12 @@
 package at.spiceburg.roarfit.data.repositories
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.Resource
-import at.spiceburg.roarfit.data.db.AppDatabase
 import at.spiceburg.roarfit.data.db.UserDao
 import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.network.KeyFitApi
-import at.spiceburg.roarfit.network.KeyFitApiFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -68,19 +65,5 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
 
     companion object {
         private val TAG = UserRepository::class.java.simpleName
-    }
-
-    class Factory {
-        companion object {
-            private var userRepository: UserRepository? = null
-            fun create(context: Context): UserRepository {
-                if (userRepository == null) {
-                    val keyFitApi = KeyFitApiFactory.create()
-                    val userDao = AppDatabase.getDatabase(context).userDao()
-                    userRepository = UserRepository(keyFitApi, userDao)
-                }
-                return userRepository!!
-            }
-        }
     }
 }

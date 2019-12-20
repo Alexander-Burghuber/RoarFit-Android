@@ -5,26 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
+import kotlinx.android.synthetic.main.fragment_exercise_info.*
 
 class ExerciseInfoFragment : Fragment() {
-    private lateinit var viewModel: ExerciseInfoViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this).get(ExerciseInfoViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_exercise_info, container, false)
     }
 
-    /*override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val args = ExerciseInfoFragmentArgs.fromBundle(requireArguments())
-        val exerciseTemplate = args.exerciseTemplate
+        val exerciseTemplate = args.template
+        text_exerciseinfo.text = exerciseTemplate.name
 
-        exerciseinfo_text.text = exerciseTemplate.name
-    }*/
+        button_exerciseinfo_start.setOnClickListener {
+            val action =
+                ExerciseInfoFragmentDirections.actionExerciseInfoFragmentToExerciseFragment(
+                    exerciseTemplate
+                )
+            findNavController().navigate(action)
+        }
+    }
 }

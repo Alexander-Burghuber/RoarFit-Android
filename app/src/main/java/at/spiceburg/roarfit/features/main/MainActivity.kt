@@ -160,6 +160,10 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetL
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onBottomSheetResult(useQR: Boolean) {
         if (useQR) {
             // check if the permission to use the camera has been granted

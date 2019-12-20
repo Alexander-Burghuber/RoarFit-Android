@@ -1,12 +1,11 @@
 package at.spiceburg.roarfit.features.main.camera
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.main.MainActivity
@@ -23,14 +22,17 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
+    }
+
     override fun onStart() {
         super.onStart()
-
         // add status bar settings for camera
         with(requireActivity() as MainActivity) {
             with(window) {
@@ -41,7 +43,7 @@ class CameraFragment : Fragment() {
 
         cameraView = requireView().findViewById(R.id.surfaceview_camera)
 
-        // Init QR-Reader
+        // init QR-Reader
         qrReader = QREader.Builder(requireContext(), cameraView, viewModel)
             .facing(QREader.BACK_CAM)
             .enableAutofocus(true)
@@ -49,32 +51,17 @@ class CameraFragment : Fragment() {
             .height(cameraView.height)
             .build()
 
-        viewModel.qrLD.observe(this, Observer { qrResult ->
-            text_camera_equipment.setText(qrResult)
-        })
-
-        viewModel.equipmentLD.observe(this, Observer { equipment ->
-            // val action = CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
-            // findNavController().navigate(action)
-        })
+        viewModel.qrResult.observe(this) { equipment ->
+            Log.d(TAG, "QR Result: ${equipment.string}")
+            text_camera_equipment.setText(equipment.string)
+            val action =
+                CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
+            findNavController().navigate(action)
+        }
 
         button_camera_close.setOnClickListener {
             findNavController().navigateUp()
         }
-
-        text_camera_equipment.addTextChangedListener(object : TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null) {
-                    viewModel.handleTextChange(s.toString())
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-        })
     }
 
     override fun onResume() {
@@ -94,5 +81,9 @@ class CameraFragment : Fragment() {
         with((requireActivity() as MainActivity)) {
             window.statusBarColor = resources.getColor(R.color.primaryDark, null)
         }
+    }
+
+    companion object {
+        private val TAG = CameraFragment::class.java.simpleName
     }
 }
