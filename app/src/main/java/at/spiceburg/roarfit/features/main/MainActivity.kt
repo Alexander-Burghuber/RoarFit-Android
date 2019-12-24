@@ -31,7 +31,7 @@ import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetListener {
+class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetL
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // setup viewModel
         val appContainer = (application as MyApplication).appContainer
         viewModel = ViewModelProviders.of(this, appContainer.mainViewModelFactory)
             .get(MainViewModel::class.java)
@@ -158,10 +159,6 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.BottomSheetL
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
     }
 
     override fun onBottomSheetResult(useQR: Boolean) {

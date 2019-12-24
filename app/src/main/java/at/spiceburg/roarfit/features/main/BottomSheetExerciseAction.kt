@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.bottomsheet_exerciseaction.*
 
 class BottomSheetExerciseAction : BottomSheetDialogFragment() {
 
-    private lateinit var listener: BottomSheetListener
+    private lateinit var listener: ClickListener
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,7 +23,7 @@ class BottomSheetExerciseAction : BottomSheetDialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener = context as BottomSheetListener
+        listener = context as ClickListener
     }
 
     override fun onStart() {
@@ -38,7 +38,7 @@ class BottomSheetExerciseAction : BottomSheetDialogFragment() {
         }
     }
 
-    interface BottomSheetListener {
+    interface ClickListener {
         fun onBottomSheetResult(useQR: Boolean)
     }
 }

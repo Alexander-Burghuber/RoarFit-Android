@@ -83,23 +83,6 @@
         <argument
             android:name="template"
             app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
-        <action
-            android:id="@+id/action_exerciseInfoFragment_to_exerciseFragment"
-            app:destination="@id/exerciseFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/dashboardFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/exerciseFragment"
-        android:name="at.spiceburg.roarfit.features.main.exercise.ExerciseFragment"
-        android:label="Exercise"
-        tools:layout="@layout/fragment_exercise">
-        <argument
-            android:name="template"
-            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
     </fragment>
 
 </navigation>

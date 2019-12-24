@@ -37,7 +37,6 @@
     <string name="exercise_button_pause">Pause</string>
     <string name="exercise_button_continue">Continue</string>
     <string name="exercise_button_finish">Finish</string>
-    <string name="exercise_stopwatch_default">00:00</string>
 
     <string name="exercise_notification_name">RoarFit Exercise Notification</string>
 
