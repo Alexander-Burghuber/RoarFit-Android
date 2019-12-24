@@ -39,12 +39,6 @@ class ExerciseService : Service() {
                     client = null
                     stopwatch?.dispose()
                 }
-                MSG_PAUSE -> {
-                    stopwatch?.dispose()
-                }
-                MSG_CONTINUE -> {
-                    startStopwatch()
-                }
                 MSG_CHANGE_STATE -> {
                     // get the status of the stopwatch by checking if the stopwatch is null or disposed
                     val isRunning = !(stopwatch?.isDisposed ?: true)
@@ -71,25 +65,27 @@ class ExerciseService : Service() {
     }
 
     override fun onCreate() {
-        Log.d(TAG, "onCreate")
+        Log.d(CHANNEL_ID, "onCreate")
         nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(TAG, "onStartCommand")
+        Log.d(CHANNEL_ID, "onStartCommand")
         // create notification channel if android version is 8+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                TAG,
+            val channel = NotificationChannel(
+                CHANNEL_ID,
                 getString(R.string.exercise_notification_name),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
-            nm.createNotificationChannel(serviceChannel)
+            nm.createNotificationChannel(channel)
         }
 
-        // setup notification
+        // setup notification text
         val exerciseTemplate = intent.getSerializableExtra("template") as ExerciseTemplate
         contentTitle = exerciseTemplate.name
+
+        // show the equipment name if it exists
         exerciseTemplate.equipment?.let {
             contentTitle += " - ${it.string}"
         }
@@ -116,12 +112,12 @@ class ExerciseService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        Log.d(TAG, "onBind")
+        Log.d(CHANNEL_ID, "onBind")
         return messenger.binder
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
+        Log.d(CHANNEL_ID, "onDestroy")
         stopwatch?.dispose()
         stopForeground(true)
     }
@@ -134,7 +130,7 @@ class ExerciseService : Service() {
             .subscribe { ticks ->
                 val formattedTime = formatter.format(Date(ticks * 1000))
 
-                Log.d(TAG, "Stopwatch: $formattedTime")
+                Log.d(CHANNEL_ID, "Stopwatch: $formattedTime")
 
                 // update fragment
                 val msg = Message.obtain(null, MSG_UPDATE, formattedTime)
@@ -156,13 +152,16 @@ class ExerciseService : Service() {
         formattedTime: String,
         pendingIntent: PendingIntent
     ): Notification {
-        return NotificationCompat.Builder(this, TAG)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOnlyAlertOnce(true)
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(resources.getColor(R.color.primary, null))
+            .setColorized(true)
+            .setShowWhen(false)
             .setContentTitle(contentTitle)
             .setContentText(formattedTime)
-            .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             // .addAction(R.drawable.ic_pause_black_24dp, "Pause", pauseIntent)
             /*.setLargeIcon(
                 resources.getDrawable(
@@ -177,12 +176,9 @@ class ExerciseService : Service() {
         const val MSG_REGISTER = 1
         const val MSG_UNREGISTER = 2
         const val MSG_UPDATE = 3
-        const val MSG_PAUSE = 4
-        const val MSG_CONTINUE = 5
-        const val MSG_ISRUNNING = 6
-        const val MSG_CHANGE_STATE = 7
+        const val MSG_CHANGE_STATE = 4
 
         private const val NOTIFICATION_ID = 1
-        private val TAG = ExerciseService::class.java.simpleName
+        private val CHANNEL_ID = ExerciseService::class.java.simpleName
     }
 }
