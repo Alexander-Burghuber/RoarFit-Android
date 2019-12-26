@@ -18,6 +18,7 @@ class ProfileViewModel(private val userRepo: UserRepository) : ViewModel() {
         return userRepo.getUser(userId, jwt)
     }
 
+    @Suppress("UNCHECKED_CAST")
     class Factory(private val userRepo: UserRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return ProfileViewModel(userRepo) as T

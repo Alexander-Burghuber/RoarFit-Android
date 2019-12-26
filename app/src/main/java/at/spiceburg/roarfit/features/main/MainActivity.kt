@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -102,7 +103,9 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         }*/
 
         // check if the db has been initialised on this app version before
-        val appVersion = packageManager.getPackageInfo(packageName, 0).versionCode
+        val appVersion = PackageInfoCompat
+            .getLongVersionCode(packageManager.getPackageInfo(packageName, 0))
+            .toInt()
         if (sp.getInt("db_initialised_version", 0) < appVersion) {
             // if not, then create the db with the needed content before continuing the data loading
             viewModel.initDatabase(this).observe(this, Observer {

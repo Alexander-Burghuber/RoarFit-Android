@@ -17,6 +17,7 @@ import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
+
     private lateinit var viewModel: ProfileViewModel
 
     override fun onCreateView(
@@ -27,7 +28,9 @@ class ProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
         val appContainer = (requireActivity().application as MyApplication).appContainer
         viewModel = ViewModelProviders.of(this, appContainer.profileViewModelFactory)
             .get(ProfileViewModel::class.java)

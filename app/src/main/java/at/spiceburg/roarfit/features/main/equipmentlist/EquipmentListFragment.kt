@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.equipmentlist
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,13 +19,6 @@ class EquipmentListFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_equipment_list, container, false)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        /*  val closeIcon = getDrawable(context, R.drawable.ic_close_black_24dp)!!
-          closeIcon.setTint(context.getColor(R.color.white))
-          (requireActivity() as MainActivity).supportActionBar?.setHomeAsUpIndicator(closeIcon)*/
     }
 
     override fun onStart() {
