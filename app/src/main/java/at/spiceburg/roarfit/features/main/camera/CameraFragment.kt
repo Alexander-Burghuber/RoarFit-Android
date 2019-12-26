@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.features.main.MainActivity
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
 
@@ -18,6 +17,9 @@ class CameraFragment : Fragment() {
     private lateinit var qrReader: QREader
     private lateinit var cameraView: SurfaceView
 
+    private var statusBarColor: Int = 0
+    private var navigationBarColor: Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -26,19 +28,23 @@ class CameraFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
-    }
-
     override fun onStart() {
         super.onStart()
-        // add status bar settings for camera
-        with(requireActivity() as MainActivity) {
-            with(window) {
-                addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                statusBarColor = resources.getColor(R.color.black, null)
-            }
+
+        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
+
+        // change theme to fit camera
+        requireActivity().apply {
+            // allow the modification of system bar colors
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+            // backup the main theme colors
+            statusBarColor = window.statusBarColor
+            navigationBarColor = window.navigationBarColor
+
+            // set the camera theme colors
+            window.statusBarColor = resources.getColor(R.color.black, null)
+            window.navigationBarColor = resources.getColor(R.color.black, null)
         }
 
         cameraView = requireView().findViewById(R.id.surfaceview_camera)
@@ -76,10 +82,13 @@ class CameraFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+
         qrReader.stop()
-        // remove status bar settings for camera
-        with((requireActivity() as MainActivity)) {
-            window.statusBarColor = resources.getColor(R.color.primaryDark, null)
+
+        // reset theme
+        requireActivity().apply {
+            window.statusBarColor = statusBarColor
+            window.navigationBarColor = navigationBarColor
         }
     }
 

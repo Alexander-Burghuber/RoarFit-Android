@@ -13,6 +13,10 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * For manual dependency injection
+ * @see <a href="https://developer.android.com/training/dependency-injection/manual">Manual dependency injection</a>
+ */
 class AppContainer(context: Context) {
 
     val keyFitApi: KeyFitApi = Retrofit.Builder()

@@ -8,10 +8,11 @@ import android.os.*
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
-import at.spiceburg.roarfit.services.ExerciseService
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_exercise.*
 
 class ExerciseActivity : AppCompatActivity() {
@@ -61,7 +62,8 @@ class ExerciseActivity : AppCompatActivity() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 ExerciseService.MSG_UPDATE -> {
-                    text_exercise_stopwatch.text = msg.obj as String
+                    // set the new formatted time from the service
+                    viewModel.time.postValue(msg.obj as String)
                 }
                 ExerciseService.MSG_PAUSE_CONTINUE -> {
                     // true if the stopwatch was paused, false if it continues
@@ -104,6 +106,11 @@ class ExerciseActivity : AppCompatActivity() {
             bindService(bindIntent, connection, Context.BIND_AUTO_CREATE)
         }
 
+        // observe stopwatch time
+        viewModel.time.observe(this) { time ->
+            text_exercise_stopwatch.text = time
+        }
+
         // setup click listeners
         button_exercise_pause.setOnClickListener {
             sendPauseContinue()
@@ -121,6 +128,19 @@ class ExerciseActivity : AppCompatActivity() {
             sendPauseContinue()
         }
     }*/
+
+    override fun onBackPressed() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Are you sure you want to stop the exercise?")
+            .setMessage("The progress will NOT be saved.")
+            .setPositiveButton("Ok") { _, _ ->
+                super.onBackPressed()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
+    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
@@ -196,15 +197,22 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
     }
 
     private fun startEquipmentChooser(useQR: Boolean) {
-        val options = navOptions {
-            anim {
-                enter = R.anim.slide_in_top //slide in right
-                exit = R.anim.slide_out_bottom //slide out left
-                popEnter = R.anim.slide_in_bottom
-                popExit = R.anim.slide_out_top
+        val dest: Int
+        val options: NavOptions?
+        if (useQR) {
+            dest = R.id.cameraFragment
+            options = null
+        } else {
+            dest = R.id.equipmentListFragment
+            options = navOptions {
+                anim {
+                    enter = R.anim.slide_in_top //slide in right
+                    exit = R.anim.slide_out_bottom //slide out left
+                    popEnter = R.anim.slide_in_bottom
+                    popExit = R.anim.slide_out_top
+                }
             }
         }
-        val dest = if (useQR) R.id.cameraFragment else R.id.equipmentListFragment
         navController.navigate(dest, null, options)
     }
 

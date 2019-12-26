@@ -26,6 +26,10 @@ class BottomSheetExerciseAction : BottomSheetDialogFragment() {
         listener = context as ClickListener
     }
 
+    override fun getTheme(): Int {
+        return R.style.Widget_AppTheme_BottomSheet
+    }
+
     override fun onStart() {
         super.onStart()
         fab_bottomsheet_qr.setOnClickListener {

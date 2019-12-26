@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.services
+package at.spiceburg.roarfit.features.exercise
 
 import android.app.*
 import android.content.Context
@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
-import at.spiceburg.roarfit.features.exercise.ExerciseActivity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -171,7 +170,7 @@ class ExerciseService : Service() {
             /* .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0)
-            ) */
+            )*/
             .build()
     }
 

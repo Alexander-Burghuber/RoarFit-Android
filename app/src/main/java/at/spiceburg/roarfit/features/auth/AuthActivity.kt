@@ -30,15 +30,15 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // replaces the launcher theme with the normal one
-        setTheme(R.style.AppTheme)
+        setTheme(R.style.AppTheme_Auth)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
         val appContainer = (application as MyApplication).appContainer
-
         viewModel = ViewModelProviders.of(this, AuthViewModel.Factory(appContainer.keyFitApi))
             .get(AuthViewModel::class.java)
+
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
         // observe the status of the login network request

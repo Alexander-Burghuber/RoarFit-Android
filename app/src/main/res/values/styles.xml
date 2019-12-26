@@ -1,40 +1,36 @@
 <resources>
-    <!-- Base application theme. -->
+    <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
-        <!--<item name="android:statusBarColor">@color/primaryDarker</item>-->
-    </style>
-
-    <style name="AppTheme.Launcher">
-        <item name="android:windowBackground">@drawable/launch_screen</item>
-    </style>
-
-    <style name="AppTheme.Workout" parent="AppTheme">
-        <!--<item name="android:navigationBarColor">@color/dark</item>-->
-        <!--<item name="android:navigationBarColor">@android:color/transparent</item>-->
-        <!--<item name="android:navigationBarColor">@color/lightGrey</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowFullscreen">true</item>-->
+        <item name="android:statusBarColor">@color/primary</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <!-- <style name="AppTheme.NoActionBar" parent="AppTheme">
-         <item name="windowActionBar">false</item>
-         <item name="windowNoTitle">true</item>
-     </style>-->
-
-    <!--
-    <style name="AppTheme.Camera" parent="AppTheme.NoActionBar">
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowFullscreen">true</item>
+    <!-- Launch theme -->
+    <style name="AppTheme.Launcher">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
-    -->
+
+    <!-- AuthActivity theme -->
+    <style name="AppTheme.Auth" parent="AppTheme">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/white</item>
+    </style>
+
+    <!-- BottomSheet theme -->
+    <style name="Widget.AppTheme.BottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
+    </style>
 
     <!-- TextLayoutInput -->
     <style name="ErrorText" parent="TextAppearance.AppCompat">
