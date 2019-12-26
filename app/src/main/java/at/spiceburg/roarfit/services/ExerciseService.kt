@@ -23,11 +23,12 @@ class ExerciseService : Service() {
     private val messenger = Messenger(IncomingHandler())
 
     private lateinit var nm: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
+    private lateinit var contentPendingIntent: PendingIntent
     private lateinit var contentTitle: String
 
     private var stopwatch: Disposable? = null
     private val lastTick = AtomicLong(1L)
+    private val formatter = SimpleDateFormat("mm:ss", Locale.ENGLISH)
 
     inner class IncomingHandler : Handler() {
         override fun handleMessage(msg: Message) {
@@ -39,18 +40,16 @@ class ExerciseService : Service() {
                     client = null
                     stopwatch?.dispose()
                 }
-                MSG_CHANGE_STATE -> {
-                    // get the status of the stopwatch by checking if the stopwatch is null or disposed
-                    val isRunning = !(stopwatch?.isDisposed ?: true)
+                MSG_PAUSE_CONTINUE -> {
+                    val isRunning = isRunning()
                     if (isRunning) {
                         // pause the stopwatch
                         stopwatch?.dispose()
                     } else {
                         // continue the stopwatch
-                        startStopwatch()
+                        runStopWatch()
                     }
-
-                    val returnMsg = Message.obtain(null, MSG_CHANGE_STATE, isRunning)
+                    val returnMsg = Message.obtain(null, MSG_PAUSE_CONTINUE, isRunning)
                     try {
                         client?.send(returnMsg)
                     } catch (e: RemoteException) {
@@ -65,12 +64,13 @@ class ExerciseService : Service() {
     }
 
     override fun onCreate() {
-        Log.d(CHANNEL_ID, "onCreate")
+        Log.d(CHANNEL_ID, "onCreate called")
         nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(CHANNEL_ID, "onStartCommand")
+    override fun onBind(intent: Intent): IBinder {
+        Log.d(CHANNEL_ID, "onBind called")
+
         // create notification channel if android version is 8+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -82,48 +82,50 @@ class ExerciseService : Service() {
         }
 
         // setup notification text
-        val exerciseTemplate = intent.getSerializableExtra("template") as ExerciseTemplate
-        contentTitle = exerciseTemplate.name
+        val template = intent.getSerializableExtra("template") as ExerciseTemplate
+        contentTitle = template.name
 
         // show the equipment name if it exists
-        exerciseTemplate.equipment?.let {
+        template.equipment?.let {
             contentTitle += " - ${it.string}"
         }
 
-        // create pending intent
-        val notificationIntent = Intent(this, ExerciseActivity::class.java)
-            // .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            .putExtra("template", exerciseTemplate)
-        pendingIntent = PendingIntent.getActivity(
+        // create on notification click pending intent
+        val contentIntent = Intent(this, ExerciseActivity::class.java)
+        contentPendingIntent = PendingIntent.getActivity(
             this,
-            System.currentTimeMillis().toInt(),
-            notificationIntent,
+            0,
+            contentIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        // create on pause/continue click pending intent
+        /* val pauseIntent = Intent(this, MyBroadcastReceiver::class.java)
+         pauseIntent.action = getString(R.string.exercise_action_pause)
+         pausePendingIntent = PendingIntent.getBroadcast(
+             this,
+             0,
+             pauseIntent,
+             0
+         )*/
+
         // start notification
-        val notification = buildNotification(contentTitle, "00:00", pendingIntent)
+        val notification = buildNotification("00:00")
         startForeground(NOTIFICATION_ID, notification)
 
         // start stopwatch
-        startStopwatch()
+        runStopWatch()
 
-        return START_NOT_STICKY
-    }
-
-    override fun onBind(intent: Intent?): IBinder {
-        Log.d(CHANNEL_ID, "onBind")
         return messenger.binder
     }
 
     override fun onDestroy() {
-        Log.d(CHANNEL_ID, "onDestroy")
+        Log.d(CHANNEL_ID, "onDestroy called")
         stopwatch?.dispose()
         stopForeground(true)
     }
 
-    private fun startStopwatch() {
-        val formatter = SimpleDateFormat("mm:ss", Locale.ENGLISH)
+    private fun runStopWatch() {
         stopwatch = Observable.interval(1, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .map { lastTick.getAndIncrement() }
@@ -132,7 +134,7 @@ class ExerciseService : Service() {
 
                 Log.d(CHANNEL_ID, "Stopwatch: $formattedTime")
 
-                // update fragment
+                // update view
                 val msg = Message.obtain(null, MSG_UPDATE, formattedTime)
                 try {
                     client?.send(msg)
@@ -141,17 +143,12 @@ class ExerciseService : Service() {
                 }
 
                 // update notification
-                val updatedNotification =
-                    buildNotification(contentTitle, formattedTime, pendingIntent)
+                val updatedNotification = buildNotification(formattedTime)
                 nm.notify(NOTIFICATION_ID, updatedNotification)
             }
     }
 
-    private fun buildNotification(
-        contentTitle: String,
-        formattedTime: String,
-        pendingIntent: PendingIntent
-    ): Notification {
+    private fun buildNotification(formattedTime: String): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(resources.getColor(R.color.primary, null))
@@ -159,24 +156,37 @@ class ExerciseService : Service() {
             .setShowWhen(false)
             .setContentTitle(contentTitle)
             .setContentText(formattedTime)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(contentPendingIntent)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            // .addAction(R.drawable.ic_pause_black_24dp, "Pause", pauseIntent)
-            /*.setLargeIcon(
-                resources.getDrawable(
-                    R.drawable.ic_launcher_foreground,
-                    null
-                ).toBitmap()
-            )*/
+            /* .addAction(NotificationCompat.Action(
+                R.drawable.ic_pause_black_24dp,
+                "Pause",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(
+                    this,
+                    PlaybackStateCompat.ACTION_PLAY_PAUSE
+                )
+            ))*/
+            // .addAction(R.drawable.ic_pause_black_24dp, "Pause", pausePendingIntent)
+            /* .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(0)
+            ) */
             .build()
+    }
+
+    /**
+     * Returns the status of the stopwatch by checking if the stopwatch is null or disposed
+     */
+    private fun isRunning(): Boolean {
+        return !(stopwatch?.isDisposed ?: true)
     }
 
     companion object {
         const val MSG_REGISTER = 1
         const val MSG_UNREGISTER = 2
         const val MSG_UPDATE = 3
-        const val MSG_CHANGE_STATE = 4
+        const val MSG_PAUSE_CONTINUE = 4
 
         private const val NOTIFICATION_ID = 1
         private val CHANNEL_ID = ExerciseService::class.java.simpleName

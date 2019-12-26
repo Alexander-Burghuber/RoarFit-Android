@@ -30,11 +30,10 @@ class ExerciseActivity : AppCompatActivity() {
             // interact with the service.  We are communicating with our
             // service through an IDL interface, so get a client-side
             // representation of that from the raw service object.
+            Log.d(TAG, "onServiceConnected called")
 
             service = Messenger(ibinder)
             bound = true
-
-            Log.d(TAG, "onServiceConnected")
 
             try {
                 val msg = Message.obtain(null, ExerciseService.MSG_REGISTER)
@@ -51,11 +50,10 @@ class ExerciseActivity : AppCompatActivity() {
         override fun onServiceDisconnected(name: ComponentName) {
             // This is called when the connection with the service has been
             // unexpectedly disconnected -- that is, its process crashed.
+            Log.d(TAG, "onServiceDisconnected called")
 
             service = null
             bound = false
-
-            Log.d(TAG, "onServiceDisconnected")
         }
     }
 
@@ -65,7 +63,7 @@ class ExerciseActivity : AppCompatActivity() {
                 ExerciseService.MSG_UPDATE -> {
                     text_exercise_stopwatch.text = msg.obj as String
                 }
-                ExerciseService.MSG_CHANGE_STATE -> {
+                ExerciseService.MSG_PAUSE_CONTINUE -> {
                     // true if the stopwatch was paused, false if it continues
                     val state = msg.obj as Boolean
 
@@ -98,39 +96,47 @@ class ExerciseActivity : AppCompatActivity() {
         text_exercise_equipment.text = exerciseTemplate.equipment?.string
         text_exercise_name.text = exerciseTemplate.name
 
-        // start service
-        val startIntent = Intent(this, ExerciseService::class.java)
-            .putExtra("template", exerciseTemplate)
-        startService(startIntent)
-
         // bind to service
         if (!bound) {
             Log.d(TAG, "Binding service")
             val bindIntent = Intent(this, ExerciseService::class.java)
+                .putExtra("template", exerciseTemplate)
             bindService(bindIntent, connection, Context.BIND_AUTO_CREATE)
         }
 
         // setup click listeners
         button_exercise_pause.setOnClickListener {
-            if (bound) {
-                val msg = Message.obtain(null, ExerciseService.MSG_CHANGE_STATE)
-                try {
-                    service?.send(msg)
-                } catch (e: RemoteException) {
-                    Log.e(TAG, "Unexpected dead ExerciseService", e)
-                    doUnbindService()
-                }
-            }
+            sendPauseContinue()
         }
         button_exercise_finish.setOnClickListener {
-            doStopService()
+            doUnbindService()
             finish()
         }
     }
 
+    /*override fun onNewIntent(intent: Intent?) {
+        Log.d(TAG, "onNewIntent called")
+        super.onNewIntent(intent)
+        if (intent != null && intent.getBooleanExtra("pause", false)) {
+            sendPauseContinue()
+        }
+    }*/
+
     override fun onDestroy() {
         super.onDestroy()
-        doStopService()
+        doUnbindService()
+    }
+
+    private fun sendPauseContinue() {
+        if (bound) {
+            val msg = Message.obtain(null, ExerciseService.MSG_PAUSE_CONTINUE)
+            try {
+                service?.send(msg)
+            } catch (e: RemoteException) {
+                Log.e(TAG, "Unexpected dead ExerciseService", e)
+                doUnbindService()
+            }
+        }
     }
 
     private fun doUnbindService() {
@@ -150,12 +156,6 @@ class ExerciseActivity : AppCompatActivity() {
             unbindService(connection)
             bound = false
         }
-    }
-
-    private fun doStopService() {
-        doUnbindService()
-        val intent = Intent(this, ExerciseService::class.java)
-        stopService(intent)
     }
 
     companion object {
