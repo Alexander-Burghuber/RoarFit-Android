@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
@@ -14,6 +13,7 @@ import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
@@ -38,11 +38,10 @@ class ProfileFragment : Fragment() {
 
         if (jwt != null && customerNum != -1) {
             val appContainer = (activity.application as MyApplication).appContainer
-            viewModel = ViewModelProviders.of(
-                this,
-                ProfileViewModel.Factory(customerNum, appContainer.userRepository)
-            ).get(ProfileViewModel::class.java)
+            val factory = ProfileViewModel.Factory(customerNum, appContainer.userRepository)
+            viewModel = ViewModelProviders.of(this, factory).get(ProfileViewModel::class.java)
 
+            // query the cached user from the database
             viewModel.user.observe(this) { user ->
                 if (user != null) {
                     text_profile_customernum.text = user.id.toString()
@@ -51,6 +50,7 @@ class ProfileFragment : Fragment() {
                 }
             }
 
+            // load the user from the network
             viewModel.loadUser(jwt).observe(this) { status ->
                 when (status) {
                     is Status.Success -> {
@@ -61,25 +61,22 @@ class ProfileFragment : Fragment() {
                     }
                     is Status.Error -> {
                         progress_profile.visibility = View.GONE
-                        status.message?.let { displayToast(it) }
+                        status.message?.let { displaySnackbar(it) }
                         if (status.logout) {
                             activity.logout()
                         }
                     }
                 }
             }
-
         } else {
-            displayToast("Please re-login")
+            displaySnackbar("Please re-login")
             activity.logout()
         }
     }
 
-    private fun displayToast(text: String) {
-        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
-    }
-
-    companion object {
-        private val TAG = ProfileFragment::class.java.simpleName
+    private fun displaySnackbar(text: String) {
+        Snackbar.make(constraintlayout_profile, text, Snackbar.LENGTH_SHORT)
+            .setAction("Dismiss") {} // empty callback dismisses the snackbar by default
+            .show()
     }
 }

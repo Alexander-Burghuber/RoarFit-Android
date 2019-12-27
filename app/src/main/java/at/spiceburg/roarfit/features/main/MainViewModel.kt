@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import com.google.gson.Gson
-import com.google.gson.stream.JsonReader
+import java.io.InputStreamReader
 
 class MainViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() {
 
@@ -29,9 +29,8 @@ class MainViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() 
 
     fun initDatabase(context: Context): LiveData<Boolean> {
         val inputStream = context.assets.open("exercises.json")
-        val reader = JsonReader(inputStream.reader())
         val exerciseTemplates: Array<ExerciseTemplate> =
-            Gson().fromJson(reader, Array<ExerciseTemplate>::class.java)
+            Gson().fromJson(InputStreamReader(inputStream), Array<ExerciseTemplate>::class.java)
         return exerciseRepo.insertAllTemplates(exerciseTemplates.toList())
     }
 

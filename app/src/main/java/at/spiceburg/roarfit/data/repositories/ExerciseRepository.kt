@@ -59,7 +59,8 @@ class ExerciseRepository(private val keyFitApi: KeyFitApi, private val exerciseD
                     // TODO: display error
                     Log.e(TAG, e.message, e)
                 }
-            ))
+            )
+        )
         return liveData
     }
 

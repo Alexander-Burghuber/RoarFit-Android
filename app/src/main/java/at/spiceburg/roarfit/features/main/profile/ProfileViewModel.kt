@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.data.repositories.UserRepository
 
-class ProfileViewModel(private val userId: Int, private val userRepo: UserRepository) :
-    ViewModel() {
+class ProfileViewModel(
+    private val userId: Int,
+    private val userRepo: UserRepository
+) : ViewModel() {
 
     val user = userRepo.getUser(userId)
 
