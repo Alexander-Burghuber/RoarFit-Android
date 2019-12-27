@@ -11,8 +11,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Resource
@@ -42,7 +42,7 @@ class AuthActivity : AppCompatActivity() {
         goldfinger = Goldfinger.Builder(this).setLogEnabled(true).build()
 
         // observe the status of the login network request
-        viewModel.loginLD.observe(this, Observer { resource ->
+        viewModel.login.observe(this) { resource ->
             when (resource) {
                 is Resource.Success -> {
                     val data = resource.data!!
@@ -72,7 +72,7 @@ class AuthActivity : AppCompatActivity() {
                     setLoading(false)
                 }
             }
-        })
+        }
 
         button_auth_login.setOnClickListener {
             setEnabledStateOfInput(false)
@@ -152,13 +152,15 @@ class AuthActivity : AppCompatActivity() {
         customerNum: Int,
         encryptedPwd: String? = null
     ) {
-        val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
-        spEditor.putString("username", username)
-        spEditor.putString("jwt", jwt)
-        spEditor.putInt("customer_num", customerNum)
+        val editor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
+            .putString("username", username)
+            .putString("jwt", jwt)
+            .putInt("customer_num", customerNum)
         // if the password has been encrypted (using the fingerprint), store it for the next login
-        if (encryptedPwd != null) spEditor.putString("encrypted_pwd", encryptedPwd)
-        spEditor.apply()
+        if (encryptedPwd != null) {
+            editor.putString("encrypted_pwd", encryptedPwd)
+        }
+        editor.apply()
 
         setEnabledStateOfInput(true)
         startMainActivity()
@@ -205,7 +207,11 @@ class AuthActivity : AppCompatActivity() {
         text_auth_fingerprint.visibility = View.INVISIBLE
         if (msg != null) {
             displaySnackbar(msg)
-            if (e != null) Log.e("AuthActivity", msg, e) else Log.d("AuthActivity", msg)
+            if (e != null) {
+                Log.e(TAG, msg, e)
+            } else {
+                Log.d(TAG, msg)
+            }
         }
     }
 
@@ -303,5 +309,9 @@ class AuthActivity : AppCompatActivity() {
                 "An unknown error occurred during fingerprint scanning. Please login manually.", e
             )
         }
+    }
+
+    companion object {
+        private val TAG = AuthActivity::class.java.simpleName
     }
 }

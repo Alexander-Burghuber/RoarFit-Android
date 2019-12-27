@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Resource
-import at.spiceburg.roarfit.data.entities.User
+import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -28,56 +28,58 @@ class ProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val appContainer = (requireActivity().application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(this, appContainer.profileViewModelFactory)
-            .get(ProfileViewModel::class.java)
-    }
-
     override fun onStart() {
         super.onStart()
-        val mainActivity = (requireActivity() as MainActivity)
-        val sp = mainActivity.getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
 
+        val activity = (requireActivity() as MainActivity)
+        val sp = activity.getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
         val jwt = sp.getString("jwt", null)
         val customerNum = sp.getInt("customer_num", -1)
-        if (jwt != null && customerNum != -1) {
-            viewModel.getUser(customerNum, jwt).observe(this, Observer { res ->
-                when (res) {
-                    is Resource.Success -> {
-                        displayProfile(res.data!!)
-                        progressbar_profile.visibility = View.GONE
-                    }
-                    is Resource.Loading -> {
-                        progressbar_profile.visibility = View.VISIBLE
-                        constraintlayout_profile.visibility = View.INVISIBLE
 
-                        res.data?.let { user -> displayProfile(user) }
+        if (jwt != null && customerNum != -1) {
+            val appContainer = (activity.application as MyApplication).appContainer
+            viewModel = ViewModelProviders.of(
+                this,
+                ProfileViewModel.Factory(customerNum, appContainer.userRepository)
+            ).get(ProfileViewModel::class.java)
+
+            viewModel.user.observe(this) { user ->
+                if (user != null) {
+                    text_profile_customernum.text = user.id.toString()
+                    text_profile_firstname.text = user.firstName
+                    text_profile_lastname.text = user.lastName
+                }
+            }
+
+            viewModel.loadUser(jwt).observe(this) { status ->
+                when (status) {
+                    is Status.Success -> {
+                        progress_profile.visibility = View.GONE
                     }
-                    is Resource.Error -> {
-                        val msg = res.message!!
-                        if (res.logout!!) {
-                            mainActivity.displayToast("$msg Please re-login.")
-                            mainActivity.logout()
-                        } else {
-                            mainActivity.displayToast(msg)
-                            progressbar_profile.visibility = View.GONE
+                    is Status.Loading -> {
+                        progress_profile.visibility = View.VISIBLE
+                    }
+                    is Status.Error -> {
+                        progress_profile.visibility = View.GONE
+                        status.message?.let { displayToast(it) }
+                        if (status.logout) {
+                            activity.logout()
                         }
                     }
                 }
-            })
+            }
+
         } else {
-            mainActivity.logout()
+            displayToast("Please re-login")
+            activity.logout()
         }
     }
 
-    private fun displayProfile(user: User) {
-        text_profile_customernumber.text = user.id.toString()
-        text_profile_firstname.text = user.firstName
-        text_profile_lastname.text = user.lastName
+    private fun displayToast(text: String) {
+        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+    }
 
-        constraintlayout_profile.visibility = View.VISIBLE
+    companion object {
+        private val TAG = ProfileFragment::class.java.simpleName
     }
 }

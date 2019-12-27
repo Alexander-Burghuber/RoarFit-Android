@@ -11,11 +11,6 @@ import com.google.gson.stream.JsonReader
 
 class MainViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() {
 
-    override fun onCleared() {
-        super.onCleared()
-        exerciseRepo.clear()
-    }
-
     fun getAllExerciseTemplates(): LiveData<List<ExerciseTemplate>> {
         return exerciseRepo.getAllTemplates()
     }
@@ -40,6 +35,11 @@ class MainViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() 
         return exerciseRepo.insertAllTemplates(exerciseTemplates.toList())
     }
 
+    override fun onCleared() {
+        exerciseRepo.clear()
+    }
+
+    @Suppress("UNCHECKED_CAST")
     class Factory(private val exerciseRepo: ExerciseRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MainViewModel(exerciseRepo) as T
