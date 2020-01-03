@@ -11,18 +11,19 @@ import at.spiceburg.roarfit.data.entities.WorkoutPlan
 
 class WorkoutPlansAdapter(context: Context) :
     RecyclerView.Adapter<WorkoutPlansAdapter.WorkoutPlanViewHolder>() {
+
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var workoutPlans: List<WorkoutPlan> = emptyList()
+    private var workoutPlans: Array<WorkoutPlan> = emptyArray()
 
     inner class WorkoutPlanViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.text_workoutlistitem_name)
+        val name: TextView = itemView.findViewById(R.id.text_workoutplan_name)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): WorkoutPlanViewHolder {
-        val itemView = inflater.inflate(R.layout.item_dashboard, parent, false)
+        val itemView = inflater.inflate(R.layout.item_workoutplan, parent, false)
         return WorkoutPlanViewHolder(itemView)
     }
 
@@ -35,7 +36,7 @@ class WorkoutPlansAdapter(context: Context) :
         holder.name.text = workoutPlan.name
     }
 
-    fun setWorkoutPlans(workoutPlans: List<WorkoutPlan>) {
+    fun setWorkoutPlans(workoutPlans: Array<WorkoutPlan>) {
         this.workoutPlans = workoutPlans
         notifyDataSetChanged()
     }

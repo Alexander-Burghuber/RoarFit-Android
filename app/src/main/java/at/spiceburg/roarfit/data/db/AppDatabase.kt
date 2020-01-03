@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import at.spiceburg.roarfit.data.entities.*
+import at.spiceburg.roarfit.utils.Constants
 
 @Database(
     entities = [User::class, WorkoutPlan::class, Workout::class, UserExercise::class, ExerciseTemplate::class],
@@ -28,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "roarfit_database"
+                    Constants.DB_NAME
                 ).build()
                 INSTANCE = instance
                 return instance

@@ -1,8 +1,17 @@
 package at.spiceburg.roarfit.data
 
 class Period {
+
     var minutes: Int
+        set(value) {
+            if (value !in 0..59) throw IllegalArgumentException("Invalid minutes")
+            field = value
+        }
     var seconds: Int
+        set(value) {
+            if (value !in 0..59) throw IllegalArgumentException("Invalid seconds")
+            field = value
+        }
 
     constructor(minutes: Int, seconds: Int) {
         this.minutes = minutes

@@ -5,7 +5,6 @@ import at.spiceburg.roarfit.data.db.AppDatabase
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.features.exercise.ExerciseViewModel
-import at.spiceburg.roarfit.features.main.MainViewModel
 import at.spiceburg.roarfit.features.main.exerciselist.ExerciseListViewModel
 import at.spiceburg.roarfit.network.KeyFitApi
 import retrofit2.Retrofit
@@ -30,7 +29,6 @@ class AppContainer(context: Context) {
     var userRepository = UserRepository(keyFitApi, userDao)
     var exerciseRepository = ExerciseRepository(keyFitApi, exerciseDao)
 
-    val mainViewModelFactory = MainViewModel.Factory(exerciseRepository)
     val exerciseViewModelFactory = ExerciseViewModel.Factory(exerciseRepository)
     val exerciseListViewModelFactory = ExerciseListViewModel.Factory(exerciseRepository)
 }

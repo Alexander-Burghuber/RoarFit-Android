@@ -1,15 +1,23 @@
 package at.spiceburg.roarfit.features.main.dashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.Status
+import at.spiceburg.roarfit.features.main.MainActivity
+import at.spiceburg.roarfit.features.main.MainViewModel
+import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : Fragment() {
+
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,10 +29,35 @@ class DashboardFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val adapter = WorkoutPlansAdapter(requireContext())
-        list_dashboard_workoutplans.adapter = adapter
-        list_dashboard_workoutplans.layoutManager = LinearLayoutManager(requireContext())
 
-        // adapter.setWorkoutPlans()
+        val activity = (requireActivity() as MainActivity)
+        viewModel = activity.viewModel
+        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+        val jwt: String = sp.getString("jwt", null)!!
+
+        val adapter = WorkoutPlansAdapter(activity)
+        list_dashboard_workoutplans.adapter = adapter
+        list_dashboard_workoutplans.layoutManager = LinearLayoutManager(activity)
+
+        viewModel.workoutPlans.observe(this) { workoutPlans ->
+            if (workoutPlans != null) {
+                adapter.setWorkoutPlans(workoutPlans)
+            }
+        }
+
+        viewModel.loadWorkoutPlans(jwt).observe(this) { status ->
+            // todo
+            when (status) {
+                is Status.Success -> {
+
+                }
+                is Status.Loading -> {
+
+                }
+                is Status.Error -> {
+
+                }
+            }
+        }
     }
 }

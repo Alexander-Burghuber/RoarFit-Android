@@ -19,11 +19,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.LoginResponse
+import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.Resource
+import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.activity_auth.*
 import java.nio.charset.Charset
 import java.security.Key
@@ -50,12 +52,16 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
+        // setup viewModel
         val appContainer = (application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(this, AuthViewModel.Factory(appContainer.keyFitApi))
-            .get(AuthViewModel::class.java)
+        viewModel = ViewModelProviders.of(
+            this,
+            AuthViewModel.Factory(appContainer.keyFitApi, appContainer.userRepository)
+        ).get(AuthViewModel::class.java)
 
-        sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
+        sp = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
 
+        // biometric
         executor = ContextCompat.getMainExecutor(this)
         encryptPrompt = BiometricPrompt(this, executor, EncryptCallback())
         decryptPrompt = BiometricPrompt(this, executor, DecryptCallback())
@@ -64,7 +70,7 @@ class AuthActivity : AppCompatActivity() {
         viewModel.login.observe(this) { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    val loginRes: LoginResponse = resource.data!!
+                    val data: LoginData = resource.data!!
 
                     // check if biometric authentication can be set up
                     val remindBiometric = sp.getBoolean(Constants.DONT_REMIND_BIOMETRIC, false)
@@ -80,7 +86,7 @@ class AuthActivity : AppCompatActivity() {
                         encryptPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
                     } else {
                         // the login will be finished because it was a biometric (decrypt) or a normal login
-                        finishLogin(loginRes)
+                        finishLogin(data)
                     }
                 }
                 is Resource.Error -> {
@@ -94,7 +100,6 @@ class AuthActivity : AppCompatActivity() {
 
         // setup login click listener
         button_auth_login.setOnClickListener {
-            setLoading(true)
             hideKeyboard()
 
             val username = input_username.text.toString()
@@ -102,10 +107,10 @@ class AuthActivity : AppCompatActivity() {
             val customerNumber = input_customernumber.text.toString()
 
             if (!username.isBlank() && !password.isBlank() && !customerNumber.isBlank()) {
+                setLoading(true)
                 viewModel.login(username, password, customerNumber.toInt())
             } else {
                 displaySnackbar("Please fill in all fields")
-                setLoading(false)
             }
         }
     }
@@ -113,13 +118,18 @@ class AuthActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val username = sp.getString("username", null)
-        username?.let {
-            input_username.setText(it)
+        val username = sp.getString(Constants.USERNAME, null)
+        if (username != null) {
+            input_username.setText(username)
+        }
+
+        val customerNum = sp.getInt(Constants.USER_ID, -1)
+        if (customerNum != -1) {
+            input_customernumber.setText(customerNum.toString())
         }
 
         // activate biometric decryption if the requirements are met
-        if (username != null && sp.contains("customer_num") && sp.contains(Constants.ENCRYPTED_PWD)) {
+        if (username != null && customerNum != -1 && sp.contains(Constants.ENCRYPTED_PWD)) {
 
             val ivString: String? = sp.getString(Constants.INITIALIZATION_VECTOR, null)
             val key: Key? = getKey()
@@ -129,9 +139,19 @@ class AuthActivity : AppCompatActivity() {
                 val iv = Base64.decode(ivString, Base64.DEFAULT)
                 val cipher = getCipherInstance()
                 cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
+                val promptInfo = createDecryptPromptInfo(username, customerNum)
+
+                // setup button to reopen prompt
+                textinputlayout_auth_password.apply {
+                    endIconDrawable = getDrawable(R.drawable.ic_fingerprint_black_24dp)
+                    endIconMode = TextInputLayout.END_ICON_CUSTOM
+                    endIconContentDescription = getString(R.string.auth_endicon_desc)
+                    setEndIconOnClickListener {
+                        decryptPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+                    }
+                }
 
                 // open biometric decryption prompt
-                val promptInfo = createDecryptPromptInfo(username)
                 decryptPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
             } else {
                 throw RuntimeException("Parameters for Biometric Decryption are null")
@@ -139,15 +159,38 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private fun finishLogin(loginRes: LoginResponse) {
-        sp.edit()
-            .putString(Constants.USERNAME, loginRes.username)
-            .putString(Constants.JWT, loginRes.token)
-            .putInt(Constants.CUSTOMER_NUM, loginRes.customerNum)
-            .apply()
+    private fun finishLogin(data: LoginData, callFromEncrypt: Boolean = false) {
+        val userId: Int = data.customerNum
+        val jwt: String = data.token
 
-        setLoading(false)
-        startMainActivity()
+        viewModel.loadUser(userId, jwt).observe(this) { status ->
+            when (status) {
+                is Status.Success -> {
+                    sp.edit()
+                        .putInt(Constants.USER_ID, userId)
+                        .putString(Constants.JWT, jwt)
+                        .putString(Constants.USERNAME, data.username)
+                        .apply()
+
+                    setLoading(false)
+                    startMainActivity()
+                }
+                is Status.Error -> {
+                    // if the error occurred directly after setup of biometric login reset it
+                    if (callFromEncrypt) {
+                        sp.edit()
+                            .remove(Constants.ENCRYPTED_PWD)
+                            .remove(Constants.INITIALIZATION_VECTOR)
+                            .apply()
+                    }
+
+                    status.message?.let {
+                        displaySnackbar(it)
+                    }
+                    setLoading(false)
+                }
+            }
+        }
     }
 
     private fun checkBiometricRequirements(): Boolean {
@@ -163,10 +206,13 @@ class AuthActivity : AppCompatActivity() {
             .build()
     }
 
-    private fun createDecryptPromptInfo(username: String): BiometricPrompt.PromptInfo {
+    private fun createDecryptPromptInfo(
+        username: String,
+        customerNum: Int
+    ): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
             .setTitle("Quick login using biometrics")
-            .setSubtitle("Username: $username")
+            .setSubtitle("Username: $username, Customer number: $customerNum")
             .setNegativeButtonText("Close")
             .build()
     }
@@ -239,10 +285,10 @@ class AuthActivity : AppCompatActivity() {
 
             val cipher: Cipher? = result.cryptoObject?.cipher
             if (cipher != null) {
-                val loginRes: LoginResponse? = viewModel.login.value?.data
-                if (loginRes != null) {
+                val data: LoginData? = viewModel.login.value?.data
+                if (data != null) {
                     // encrypt the password
-                    val password = loginRes.password
+                    val password = data.password
                     val encryptedBytes: ByteArray =
                         cipher.doFinal(password.toByteArray(Charset.defaultCharset()))
 
@@ -254,7 +300,7 @@ class AuthActivity : AppCompatActivity() {
                         .putString(Constants.INITIALIZATION_VECTOR, iv)
                         .apply()
 
-                    finishLogin(loginRes)
+                    finishLogin(data, true)
                 } else {
                     throw RuntimeException("Login credentials are null")
                 }
@@ -272,9 +318,9 @@ class AuthActivity : AppCompatActivity() {
                         .apply()
 
                     // finish login normally
-                    val loginRes: LoginResponse? = viewModel.login.value?.data
-                    if (loginRes != null) {
-                        finishLogin(loginRes)
+                    val data: LoginData? = viewModel.login.value?.data
+                    if (data != null) {
+                        finishLogin(data)
                     } else {
                         throw RuntimeException("Login credentials are null")
                     }
@@ -304,8 +350,8 @@ class AuthActivity : AppCompatActivity() {
                     val password = String(decryptedBytes, Charset.defaultCharset())
 
                     // do login
-                    val username: String? = sp.getString("username", null)
-                    val customerNum = sp.getInt("customer_num", -1)
+                    val username: String? = sp.getString(Constants.USERNAME, null)
+                    val customerNum = sp.getInt(Constants.USER_ID, -1)
                     if (username != null && customerNum != -1) {
                         viewModel.login(username, password, customerNum)
                     } else {
@@ -323,7 +369,7 @@ class AuthActivity : AppCompatActivity() {
             super.onAuthenticationError(errorCode, errString)
             if (errorCode == BiometricConstants.ERROR_NEGATIVE_BUTTON) {
                 decryptPrompt.cancelAuthentication()
-            } else {
+            } else if (errorCode != BiometricConstants.ERROR_USER_CANCELED) {
                 Toast.makeText(this@AuthActivity, errString, Toast.LENGTH_LONG).show()
             }
         }

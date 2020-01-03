@@ -48,7 +48,6 @@ class ExerciseRepository(private val keyFitApi: KeyFitApi, private val exerciseD
     }
 
     fun getAllTemplates(): LiveData<List<ExerciseTemplate>> {
-        Log.d(TAG, "getTemplates called")
         val liveData = MutableLiveData<List<ExerciseTemplate>>()
         disposables.add(exerciseDao.getAllTemplates()
             .subscribeOn(Schedulers.io())

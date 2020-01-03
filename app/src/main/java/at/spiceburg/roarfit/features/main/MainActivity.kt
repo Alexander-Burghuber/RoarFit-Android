@@ -3,6 +3,7 @@ package at.spiceburg.roarfit.features.main
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.forEach
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
@@ -35,17 +35,33 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListener {
 
-    private lateinit var viewModel: MainViewModel
+    lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        sp = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+
+        // check if user id and jwt is available
+        val userId = sp.getInt(Constants.USER_ID, -1)
+        val jwt: String? = sp.getString(Constants.JWT, null)
+        if (userId == -1 || jwt == null) {
+            logout(true)
+        }
+
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(this, appContainer.mainViewModelFactory)
+        val factory = MainViewModel.Factory(
+            userId,
+            appContainer.userRepository,
+            appContainer.exerciseRepository
+        )
+        viewModel = ViewModelProviders.of(this, factory)
             .get(MainViewModel::class.java)
 
         // setup navigation
@@ -88,30 +104,28 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         fab_main_exerciseaction.setOnClickListener {
-            val bottomSheet = BottomSheetExerciseAction()
-            bottomSheet.show(
+            BottomSheetExerciseAction().show(
                 supportFragmentManager,
                 BottomSheetExerciseAction::class.java.simpleName
             )
         }
 
-        val sp = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE)
         // reset the database if the build is for debug and not for production
         /*if (BuildConfig.DEBUG) {
-            this.deleteDatabase("roarfit_database")
-            sp.edit().putInt("db_initialised_version", 0).apply()
+            deleteDatabase(Constants.DB_NAME)
+            sp.edit().putInt(Constants.DB_INITIALISED_VERSION, 0).apply()
         }*/
 
         // check if the db has been initialised on this app version before
         val appVersion = PackageInfoCompat
             .getLongVersionCode(packageManager.getPackageInfo(packageName, 0))
             .toInt()
-        if (sp.getInt("db_initialised_version", 0) < appVersion) {
+        if (sp.getInt(Constants.DB_INITIALISED_VERSION, 0) < appVersion) {
             // if not, then create the db with the needed content before continuing the data loading
-            viewModel.initDatabase(this).observe(this, Observer {
+            viewModel.initDatabase(this).observe(this) {
                 Log.d(TAG, "Initialised database")
-                sp.edit().putInt("db_initialised_version", appVersion).apply()
-            })
+                sp.edit().putInt(Constants.DB_INITIALISED_VERSION, appVersion).apply()
+            }
         }
 
         // log the exercise templates that are on the db
@@ -158,7 +172,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         return when (item.itemId) {
             R.id.menu_app_bar_settings -> true
             R.id.menu_app_bar_logout -> {
-                logout()
+                logout(false)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -185,12 +199,16 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         }
     }
 
-    fun logout() {
-        val spEditor = getSharedPreferences(Constants.PREFERENCE_FILE, Context.MODE_PRIVATE).edit()
-        spEditor.remove("username")
-            .remove("jwt")
-            .remove("customer_num")
-            .remove("encrypted_pwd")
+    fun logout(displayMsg: Boolean) {
+        if (displayMsg) {
+            displayToast(getString(R.string.main_relogin_message))
+        }
+        sp.edit()
+            .remove(Constants.USERNAME)
+            .remove(Constants.JWT)
+            .remove(Constants.USER_ID)
+            .remove(Constants.ENCRYPTED_PWD)
+            .remove(Constants.INITIALIZATION_VECTOR)
             .apply()
         startAuthActivity()
     }
@@ -209,8 +227,8 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
             dest = R.id.equipmentListFragment
             options = navOptions {
                 anim {
-                    enter = R.anim.slide_in_top //slide in right
-                    exit = R.anim.slide_out_bottom //slide out left
+                    enter = R.anim.slide_in_top
+                    exit = R.anim.slide_out_bottom
                     popEnter = R.anim.slide_in_bottom
                     popExit = R.anim.slide_out_top
                 }

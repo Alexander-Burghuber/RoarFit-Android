@@ -21,7 +21,7 @@ import at.spiceburg.roarfit.data.Period
     )]
 )
 data class WorkoutPlan(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int,
     val userId: Int,
     val name: String,
     val warmup: Period,

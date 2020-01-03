@@ -1,6 +1,6 @@
 package at.spiceburg.roarfit.data
 
-data class LoginResponse(
+data class LoginData(
     val code: Int,
     val token: String,
     var username: String,
