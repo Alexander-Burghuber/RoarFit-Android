@@ -1,5 +1,6 @@
 package at.spiceburg.roarfit.data.repositories
 
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,8 +15,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import retrofit2.HttpException
-import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
 class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: UserDao) {
@@ -26,7 +25,12 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
 
     fun loadUser(userId: Int, jwt: String): LiveData<Status> {
         val liveData = MutableLiveData<Status>(Status.Loading())
-        val loadUser = keyFitApi.getUser(userId, "Bearer $jwt")
+        Handler().postDelayed({
+            val user = User(8387, "Max", "Mustermann")
+            insertUser(user)
+            liveData.value = Status.Success()
+        }, 500)
+        /*val loadUser = keyFitApi.getUser(userId, "Bearer $jwt")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -56,7 +60,7 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
                     liveData.value = status
                 }
             )
-        disposables.add(loadUser)
+        disposables.add(loadUser)*/
         return liveData
     }
 

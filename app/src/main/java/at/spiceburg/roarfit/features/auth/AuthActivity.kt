@@ -47,7 +47,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // replaces the launcher theme with the normal one
-        setTheme(R.style.AppTheme_Auth)
+        setTheme(R.style.AppTheme_White)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -200,9 +200,9 @@ class AuthActivity : AppCompatActivity() {
 
     private fun createEncryptPromptInfo(): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric Quick Login")
-            .setDescription("Activate biometric authentication to quickly login with your fingerprint the next time you open the app.")
-            .setNegativeButtonText("Don't remind me again")
+            .setTitle(getString(R.string.auth_biometric_encrypt_title))
+            .setDescription(getString(R.string.auth_biometric_encrypt_desc))
+            .setNegativeButtonText(getString(R.string.auth_biometric_encrypt_negative_button))
             .build()
     }
 

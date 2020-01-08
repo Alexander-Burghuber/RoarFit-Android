@@ -13,16 +13,24 @@
     <string name="auth_logo_desc">RoarFit Logo</string>
     <string name="auth_fingerprint_desc">Fingerprint</string>
     <string name="auth_endicon_desc">Quick login</string>
+    <string name="auth_biometric_encrypt_title">Biometric Quick Login</string>
+    <string name="auth_biometric_encrypt_desc">Activate biometric authentication to quickly login with your fingerprint the next time you open the app.</string>
+    <string name="auth_biometric_encrypt_negative_button">Don\'t remind me again</string>
 
     <!-- MainActivity -->
     <string name="bottom_nav_dashboard">Dashboard</string>
     <string name="bottom_nav_statistics">Statistics</string>
     <string name="bottom_nav_history">History</string>
     <string name="bottom_nav_profile">Profile</string>
-    <string name="app_bar_settings">Settings</string>
     <string name="app_bar_logout">Logout</string>
 
     <string name="main_relogin_message">Please re-login</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="settings_biometric_category">@string/auth_biometric_encrypt_title</string>
+    <string name="settings_biometric_title">Use biometric quick login</string>
+    <string name="settings_biometric_summary">@string/auth_biometric_encrypt_desc</string>
 
     <!-- Dashboard -->
     <string name="dashboard_workoutplan_header">Workoutplan</string>

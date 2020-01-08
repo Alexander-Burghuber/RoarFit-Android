@@ -42,20 +42,21 @@ class DashboardFragment : Fragment() {
         viewModel.workoutPlans.observe(this) { workoutPlans ->
             if (workoutPlans != null) {
                 adapter.setWorkoutPlans(workoutPlans)
+                list_dashboard_workoutplans.visibility = View.VISIBLE
+            } else {
+                list_dashboard_workoutplans.visibility = View.INVISIBLE
             }
         }
 
         viewModel.loadWorkoutPlans(jwt).observe(this) { status ->
-            // todo
             when (status) {
                 is Status.Success -> {
-
+                    progress_dashboard.visibility = View.GONE
                 }
                 is Status.Loading -> {
-
+                    progress_dashboard.visibility = View.VISIBLE
                 }
                 is Status.Error -> {
-
                 }
             }
         }

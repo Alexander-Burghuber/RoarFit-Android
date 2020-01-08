@@ -29,6 +29,7 @@
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -39,9 +40,15 @@
             android:theme="@style/AppTheme" />
 
         <activity
+            android:name=".features.settings.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName=".features.main.MainActivity" />
+
+        <activity
             android:name=".features.exercise.ExerciseActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.White" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"

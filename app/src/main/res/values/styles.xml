@@ -19,7 +19,7 @@
     </style>
 
     <!-- AuthActivity theme -->
-    <style name="AppTheme.Auth" parent="AppTheme">
+    <style name="AppTheme.White" parent="AppTheme">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@android:color/white</item>
     </style>
