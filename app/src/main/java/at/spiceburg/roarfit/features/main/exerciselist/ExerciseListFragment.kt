@@ -30,8 +30,10 @@ class ExerciseListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val appContainer = (requireActivity().application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(this, appContainer.exerciseListViewModelFactory)
-            .get(ExerciseListViewModel::class.java)
+        viewModel = ViewModelProviders.of(
+            this,
+            ExerciseListViewModel.Factory(appContainer.exerciseRepository)
+        ).get(ExerciseListViewModel::class.java)
 
         val args = ExerciseListFragmentArgs.fromBundle(requireArguments())
         val equipment = args.equipment

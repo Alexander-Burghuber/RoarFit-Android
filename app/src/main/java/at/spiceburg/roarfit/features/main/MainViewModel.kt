@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.User
+import at.spiceburg.roarfit.data.entities.Workout
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import at.spiceburg.roarfit.data.repositories.UserRepository
+import at.spiceburg.roarfit.data.repositories.WorkoutRepository
 import com.google.gson.Gson
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -17,14 +19,19 @@ import java.io.InputStreamReader
 class MainViewModel(
     private val userId: Int,
     private val userRepo: UserRepository,
-    private val exerciseRepo: ExerciseRepository
+    private val exerciseRepo: ExerciseRepository,
+    private val workoutRepo: WorkoutRepository
 ) : ViewModel() {
 
     val user: LiveData<User> = userRepo.getUser(userId)
-    val workoutPlans: LiveData<Array<WorkoutPlan>?> = userRepo.getWorkoutPlans(userId)
+    val workoutPlans: LiveData<Array<WorkoutPlan>?> = workoutRepo.getWorkoutPlans(userId)
 
     fun loadWorkoutPlans(jwt: String): LiveData<Status> {
-        return userRepo.loadWorkoutPlans(userId, jwt)
+        return workoutRepo.loadWorkoutPlans(userId, jwt)
+    }
+
+    fun getWorkoutsOfPlan(workoutPlanId: Int): LiveData<Array<Workout>?> {
+        return workoutRepo.getWorkoutsOfPlan(workoutPlanId)
     }
 
     fun getAllExerciseTemplates(): LiveData<List<ExerciseTemplate>> {
@@ -46,10 +53,11 @@ class MainViewModel(
     class Factory(
         private val userId: Int,
         private val userRep: UserRepository,
-        private val exerciseRepo: ExerciseRepository
+        private val exerciseRepo: ExerciseRepository,
+        private val workoutRepo: WorkoutRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MainViewModel(userId, userRep, exerciseRepo) as T
+            return MainViewModel(userId, userRep, exerciseRepo, workoutRepo) as T
         }
     }
 }

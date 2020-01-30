@@ -1,21 +1,18 @@
 package at.spiceburg.roarfit.data.repositories
 
-import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import at.spiceburg.roarfit.data.Period
 import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.data.db.UserDao
 import at.spiceburg.roarfit.data.entities.User
-import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.network.KeyFitApi
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: UserDao) {
 
@@ -25,12 +22,12 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
 
     fun loadUser(userId: Int, jwt: String): LiveData<Status> {
         val liveData = MutableLiveData<Status>(Status.Loading())
-        Handler().postDelayed({
+        /*Handler().postDelayed({
             val user = User(8387, "Max", "Mustermann")
             insertUser(user)
             liveData.value = Status.Success()
-        }, 500)
-        /*val loadUser = keyFitApi.getUser(userId, "Bearer $jwt")
+        }, 500)*/
+        val loadUser = keyFitApi.getUser(userId, "Bearer $jwt")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -60,52 +57,12 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
                     liveData.value = status
                 }
             )
-        disposables.add(loadUser)*/
+        disposables.add(loadUser)
         return liveData
     }
 
     private fun insertUser(user: User) {
         val insert = userDao.insertUser(user)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onError = { e ->
-                    Log.e(TAG, e.message, e)
-                }
-            )
-        disposables.add(insert)
-    }
-
-    fun getWorkoutPlans(userId: Int): LiveData<Array<WorkoutPlan>?> =
-        userDao.getWorkoutPlans(userId)
-
-    fun loadWorkoutPlans(userId: Int, jwt: String): LiveData<Status> {
-        val liveData = MutableLiveData<Status>(Status.Loading())
-        // val loadWorkoutPlans = keyFitApi.getWorkoutPlans() todo
-        val loadWorkoutPlans = Observable.timer(500L, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = {
-                    val workoutPlans: Array<WorkoutPlan> = arrayOf(
-                        WorkoutPlan(
-                            1, userId, "Starting Strength",
-                            Period(10, 0), Period(15, 0)
-                        )
-                    )
-                    insertWorkoutPlans(workoutPlans)
-                    liveData.value = Status.Success()
-                },
-                onError = {
-                    liveData.value = Status.Error()
-                }
-            )
-        disposables.add(loadWorkoutPlans)
-        return liveData
-    }
-
-    private fun insertWorkoutPlans(workoutPlans: Array<WorkoutPlan>) {
-        val insert = userDao.insertWorkoutPlans(workoutPlans)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(

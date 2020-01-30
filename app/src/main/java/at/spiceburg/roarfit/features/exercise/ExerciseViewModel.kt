@@ -9,8 +9,6 @@ class ExerciseViewModel(private val exerciseRepo: ExerciseRepository) : ViewMode
 
     val time = MutableLiveData<String>("00:00")
 
-
-
     class Factory(private val exerciseRepo: ExerciseRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return ExerciseViewModel(

@@ -70,11 +70,8 @@ class ExerciseActivity : AppCompatActivity() {
                     val state = msg.obj as Boolean
 
                     // set new button string
-                    val stringId = if (state) {
-                        R.string.exercise_button_continue
-                    } else {
-                        R.string.exercise_button_pause
-                    }
+                    val stringId =
+                        if (state) R.string.exercise_button_continue else R.string.exercise_button_pause
                     button_exercise_pause.text = getString(stringId)
                 }
                 else -> super.handleMessage(msg)
@@ -90,8 +87,10 @@ class ExerciseActivity : AppCompatActivity() {
 
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(this, appContainer.exerciseViewModelFactory)
-            .get(ExerciseViewModel::class.java)
+        viewModel = ViewModelProviders.of(
+            this,
+            ExerciseViewModel.Factory(appContainer.exerciseRepository)
+        ).get(ExerciseViewModel::class.java)
 
         // set view elements
         val exerciseTemplate = intent.getSerializableExtra("template") as ExerciseTemplate

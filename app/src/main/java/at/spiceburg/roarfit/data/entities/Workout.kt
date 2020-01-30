@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
     )]
 )
 data class Workout(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int,
     val workoutPlanId: Int,
     val day: Int
 )

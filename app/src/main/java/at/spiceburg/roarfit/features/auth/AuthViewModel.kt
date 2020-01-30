@@ -1,16 +1,21 @@
 package at.spiceburg.roarfit.features.auth
 
-import android.os.Handler
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.LoginData
+import at.spiceburg.roarfit.data.LoginRequest
 import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.network.KeyFitApi
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
+import java.net.UnknownHostException
 
 class AuthViewModel(
     private val keyFitApi: KeyFitApi,
@@ -21,11 +26,11 @@ class AuthViewModel(
     private val disposables = CompositeDisposable()
 
     fun login(username: String, password: String, customerNum: Int) {
-        Handler().postDelayed({
+        /*Handler().postDelayed({
             val loginRes = LoginData(0, "thisisajwt", username, password, customerNum)
             login.value = Resource.Success(loginRes)
-        }, 500)
-        /*val login = keyFitApi.login(LoginRequest(username, password))
+        }, 500)*/
+        val login = keyFitApi.login(LoginRequest(username, password))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -51,7 +56,7 @@ class AuthViewModel(
                     login.value = Resource.Error(msg)
                 }
             )
-        disposables.add(login)*/
+        disposables.add(login)
     }
 
     fun loadUser(userId: Int, jwt: String): LiveData<Status> {

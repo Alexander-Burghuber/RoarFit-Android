@@ -38,13 +38,12 @@ class DashboardFragment : Fragment() {
         val adapter = WorkoutPlansAdapter(activity)
         list_dashboard_workoutplans.adapter = adapter
         list_dashboard_workoutplans.layoutManager = LinearLayoutManager(activity)
-
         viewModel.workoutPlans.observe(this) { workoutPlans ->
-            if (workoutPlans != null) {
+            workoutPlans?.forEach { plan ->
                 adapter.setWorkoutPlans(workoutPlans)
-                list_dashboard_workoutplans.visibility = View.VISIBLE
-            } else {
-                list_dashboard_workoutplans.visibility = View.INVISIBLE
+                viewModel.getWorkoutsOfPlan(plan.id).observe(this) { workouts ->
+
+                }
             }
         }
 

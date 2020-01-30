@@ -147,6 +147,8 @@ class AuthActivity : AppCompatActivity() {
                     endIconMode = TextInputLayout.END_ICON_CUSTOM
                     endIconContentDescription = getString(R.string.auth_endicon_desc)
                     setEndIconOnClickListener {
+                        // re-init cipher because it could have been used before and that will make it non-functional
+                        cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
                         decryptPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
                     }
                 }
@@ -183,7 +185,6 @@ class AuthActivity : AppCompatActivity() {
                             .remove(Constants.INITIALIZATION_VECTOR)
                             .apply()
                     }
-
                     status.message?.let {
                         displaySnackbar(it)
                     }

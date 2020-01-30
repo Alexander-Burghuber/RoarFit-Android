@@ -4,8 +4,7 @@ import android.content.Context
 import at.spiceburg.roarfit.data.db.AppDatabase
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import at.spiceburg.roarfit.data.repositories.UserRepository
-import at.spiceburg.roarfit.features.exercise.ExerciseViewModel
-import at.spiceburg.roarfit.features.main.exerciselist.ExerciseListViewModel
+import at.spiceburg.roarfit.data.repositories.WorkoutRepository
 import at.spiceburg.roarfit.network.KeyFitApi
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -24,11 +23,20 @@ class AppContainer(context: Context) {
         .build()
         .create(KeyFitApi::class.java)
 
-    private val userDao = AppDatabase.getDatabase(context).userDao()
-    private val exerciseDao = AppDatabase.getDatabase(context).exerciseDao()
-    var userRepository = UserRepository(keyFitApi, userDao)
-    var exerciseRepository = ExerciseRepository(keyFitApi, exerciseDao)
+    var userRepository: UserRepository
+    var exerciseRepository: ExerciseRepository
+    var workoutRepository: WorkoutRepository
 
-    val exerciseViewModelFactory = ExerciseViewModel.Factory(exerciseRepository)
-    val exerciseListViewModelFactory = ExerciseListViewModel.Factory(exerciseRepository)
+    init {
+        val database = AppDatabase.getDatabase(context)
+        val userDao = database.userDao()
+        val exerciseDao = database.exerciseDao()
+        val exerciseTemplateDao = database.exerciseTemplateDao()
+        val workoutDao = database.workoutDao()
+        val workoutPlanDao = database.workoutPlanDao()
+
+        userRepository = UserRepository(keyFitApi, userDao)
+        exerciseRepository = ExerciseRepository(keyFitApi, exerciseDao, exerciseTemplateDao)
+        workoutRepository = WorkoutRepository(keyFitApi, workoutDao, workoutPlanDao)
+    }
 }

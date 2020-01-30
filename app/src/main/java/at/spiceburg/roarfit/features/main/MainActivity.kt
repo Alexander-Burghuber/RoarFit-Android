@@ -60,7 +60,8 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         val factory = MainViewModel.Factory(
             userId,
             appContainer.userRepository,
-            appContainer.exerciseRepository
+            appContainer.exerciseRepository,
+            appContainer.workoutRepository
         )
         viewModel = ViewModelProviders.of(this, factory)
             .get(MainViewModel::class.java)
@@ -218,7 +219,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         startAuthActivity()
     }
 
-    fun displayToast(text: String) {
+    private fun displayToast(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 

@@ -15,8 +15,11 @@ import at.spiceburg.roarfit.utils.Constants
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun exerciseDao(): ExerciseDao
     abstract fun userDao(): UserDao
+    abstract fun exerciseDao(): ExerciseDao
+    abstract fun exerciseTemplateDao(): ExerciseTemplateDao
+    abstract fun workoutDao(): WorkoutDao
+    abstract fun workoutPlanDao(): WorkoutPlanDao
 
     companion object {
         @Volatile
