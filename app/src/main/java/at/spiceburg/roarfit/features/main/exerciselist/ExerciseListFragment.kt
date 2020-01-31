@@ -47,7 +47,7 @@ class ExerciseListFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        val adapter = ExerciseListAdapter(requireContext(), onExerciseClicked)
+        val adapter = ExerciseListAdapter(onExerciseClicked, requireContext())
         recyclerview_exerciselist_exercises.adapter = adapter
         recyclerview_exerciselist_exercises.layoutManager = LinearLayoutManager(requireContext())
 

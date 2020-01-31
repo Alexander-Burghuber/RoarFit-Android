@@ -2,7 +2,6 @@ package at.spiceburg.roarfit.features.main.dashboard
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,26 +35,41 @@ class DashboardFragment : Fragment() {
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString("jwt", null)!!
 
-        val adapter = WorkoutPlansAdapter(activity)
+        val adapter = WorkoutsAdapter(activity)
         list_dashboard_workoutplans.adapter = adapter
         list_dashboard_workoutplans.layoutManager = LinearLayoutManager(activity)
+
         viewModel.workoutPlans.observe(this) { workoutPlans ->
-            workoutPlans?.forEach { plan ->
-                adapter.setWorkoutPlans(workoutPlans)
-                viewModel.getWorkoutsOfPlan(plan.id).observe(this) { workouts ->
-                    Log.d(TAG, workouts!![0].day.toString())
+            if (workoutPlans != null && workoutPlans.isNotEmpty()) {
+                val workoutPlan = workoutPlans[0]
+                text_dashboard_name.text = workoutPlan.name
+                viewModel.getWorkoutsOfPlan(workoutPlan.id).observe(this) { workouts ->
+
+                    workouts?.forEach { workout ->
+                        viewModel.getAllExerciseTemplates().observe(this) { templates ->
+                            viewModel.getExercisesOfWorkout(workout.id)
+                                .observer(this) { exercises ->
+                                    exercises?.foreach {
+                                        val template =
+                                            templates.find { it.id == exercise.templateId }
+
+                                    }
+                                }
+                        }
+                    }
+
+                    if (workouts != null) {
+
+                        adapter.setWorkoutPlans(workouts)
+                    }
                 }
             }
         }
 
         viewModel.loadWorkoutPlans(jwt).observe(this) { status ->
             when (status) {
-                is Status.Success -> {
-                    progress_dashboard.visibility = View.GONE
-                }
-                is Status.Loading -> {
-                    progress_dashboard.visibility = View.VISIBLE
-                }
+                is Status.Success -> progress_dashboard.visibility = View.GONE
+                is Status.Loading -> progress_dashboard.visibility = View.VISIBLE
                 is Status.Error -> {
                 }
             }

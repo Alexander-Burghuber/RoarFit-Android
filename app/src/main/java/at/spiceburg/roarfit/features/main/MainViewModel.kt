@@ -5,10 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Status
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
-import at.spiceburg.roarfit.data.entities.User
-import at.spiceburg.roarfit.data.entities.Workout
-import at.spiceburg.roarfit.data.entities.WorkoutPlan
+import at.spiceburg.roarfit.data.entities.*
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.data.repositories.WorkoutRepository
@@ -32,6 +29,10 @@ class MainViewModel(
 
     fun getWorkoutsOfPlan(workoutPlanId: Int): LiveData<Array<Workout>?> {
         return workoutRepo.getWorkoutsOfPlan(workoutPlanId)
+    }
+
+    fun getExercisesOfWorkout(workoutId: Int): LiveData<Array<UserExercise>?> {
+        return workoutRepo.getExercisesOfWorkout(workoutId)
     }
 
     fun getAllExerciseTemplates(): LiveData<List<ExerciseTemplate>> {

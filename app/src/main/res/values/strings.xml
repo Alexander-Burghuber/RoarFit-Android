@@ -35,6 +35,9 @@
     <!-- Dashboard -->
     <string name="dashboard_workoutplan_header">Workoutplan</string>
 
+    <!-- WorkoutPlan -->
+    <string name="dashboard_workoutplan_day">Day %d</string>
+
     <!-- Bottom sheet -->
     <string name="main_bottomsheet_title">Choose equipment from</string>
     <string name="main_bottomsheet_qr">QR</string>

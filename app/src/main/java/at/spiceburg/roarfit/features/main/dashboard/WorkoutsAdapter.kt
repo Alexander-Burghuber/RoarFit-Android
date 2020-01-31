@@ -7,23 +7,24 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.WorkoutPlan
+import at.spiceburg.roarfit.data.entities.Workout
 
-class WorkoutPlansAdapter(context: Context) :
-    RecyclerView.Adapter<WorkoutPlansAdapter.WorkoutPlanViewHolder>() {
+class WorkoutsAdapter(
+    private val context: Context
+) : RecyclerView.Adapter<WorkoutsAdapter.WorkoutPlanViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var workoutPlans: Array<WorkoutPlan> = emptyArray()
+    private var workoutPlans: Array<Workout> = emptyArray()
 
     inner class WorkoutPlanViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.text_workoutplan_name)
+        val day: TextView = itemView.findViewById(R.id.text_workoutplan_day)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): WorkoutPlanViewHolder {
-        val itemView = inflater.inflate(R.layout.item_workoutplan, parent, false)
+        val itemView = inflater.inflate(R.layout.item_workout, parent, false)
         return WorkoutPlanViewHolder(itemView)
     }
 
@@ -33,10 +34,11 @@ class WorkoutPlansAdapter(context: Context) :
 
     override fun onBindViewHolder(holder: WorkoutPlanViewHolder, position: Int) {
         val workoutPlan = workoutPlans[position]
-        holder.name.text = workoutPlan.name
+        holder.day.text =
+            context.resources.getString(R.string.dashboard_workoutplan_day, workoutPlan.day)
     }
 
-    fun setWorkoutPlans(workoutPlans: Array<WorkoutPlan>) {
+    fun setWorkoutPlans(workoutPlans: Array<Workout>) {
         this.workoutPlans = workoutPlans
         notifyDataSetChanged()
     }

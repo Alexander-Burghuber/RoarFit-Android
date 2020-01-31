@@ -7,6 +7,7 @@ import at.spiceburg.roarfit.data.Period
 import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.data.db.WorkoutDao
 import at.spiceburg.roarfit.data.db.WorkoutPlanDao
+import at.spiceburg.roarfit.data.entities.UserExercise
 import at.spiceburg.roarfit.data.entities.Workout
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.network.KeyFitApi
@@ -29,9 +30,9 @@ class WorkoutRepository(
         return workoutPlanDao.getWorkoutPlans(userId)
     }
 
+    // TODO: Network req
     fun loadWorkoutPlans(userId: Int, jwt: String): LiveData<Status> {
         val liveData = MutableLiveData<Status>(Status.Loading())
-        // TODO: Network req
         val loadWorkoutPlans = Observable.timer(500L, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -81,6 +82,24 @@ class WorkoutRepository(
                 onError = { e -> Log.e(TAG, e.message, e) }
             )
         disposables.add(getWorkoutsOfPlan)
+        return liveData
+    }
+
+    fun getExercisesOfWorkout(workoutId: Int): LiveData<Array<UserExercise>?> {
+        val liveData = MutableLiveData<Array<UserExercise>?>()
+        val getExercisesOfWorkout = Observable.timer(500L, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = {
+                    val userExercises = arrayOf(
+                        UserExercise(0, 3,)
+                    )
+                    liveData.value = workouts
+                },
+                onError = { e -> Log.e(TAG, e.message, e) }
+            )
+        disposables.add(getExercisesOfWorkout)
         return liveData
     }
 

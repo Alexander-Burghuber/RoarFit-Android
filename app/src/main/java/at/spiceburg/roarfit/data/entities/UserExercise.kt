@@ -22,7 +22,7 @@ import androidx.room.PrimaryKey
     )]
 )
 data class UserExercise(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int,
     val templateId: Int,
     val sets: Int,
     val reps: Int,
