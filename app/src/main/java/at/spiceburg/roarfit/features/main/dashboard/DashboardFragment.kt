@@ -2,6 +2,7 @@ package at.spiceburg.roarfit.features.main.dashboard
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +43,7 @@ class DashboardFragment : Fragment() {
             workoutPlans?.forEach { plan ->
                 adapter.setWorkoutPlans(workoutPlans)
                 viewModel.getWorkoutsOfPlan(plan.id).observe(this) { workouts ->
-
+                    Log.d(TAG, workouts!![0].day.toString())
                 }
             }
         }
@@ -59,5 +60,9 @@ class DashboardFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object {
+        private val TAG = DashboardFragment::class.java.simpleName
     }
 }

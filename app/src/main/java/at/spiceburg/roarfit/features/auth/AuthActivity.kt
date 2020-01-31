@@ -52,6 +52,8 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
+        // deleteDatabase(Constants.DB_NAME)
+
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
         viewModel = ViewModelProviders.of(
