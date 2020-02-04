@@ -2,7 +2,7 @@ package at.spiceburg.roarfit.network
 
 import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.LoginRequest
-import at.spiceburg.roarfit.data.entities.User
+import at.spiceburg.roarfit.data.db.entities.User
 import io.reactivex.Single
 import retrofit2.http.*
 

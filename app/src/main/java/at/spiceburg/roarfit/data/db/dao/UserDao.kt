@@ -1,11 +1,11 @@
-package at.spiceburg.roarfit.data.db
+package at.spiceburg.roarfit.data.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import at.spiceburg.roarfit.data.entities.User
+import at.spiceburg.roarfit.data.db.entities.User
 import io.reactivex.Completable
 
 @Dao

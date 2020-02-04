@@ -5,7 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import at.spiceburg.roarfit.data.entities.*
+import at.spiceburg.roarfit.data.db.dao.UserDao
+import at.spiceburg.roarfit.data.db.dao.WorkoutExerciseDao
+import at.spiceburg.roarfit.data.db.entities.*
 import at.spiceburg.roarfit.utils.Constants
 
 @Database(
@@ -16,10 +18,7 @@ import at.spiceburg.roarfit.utils.Constants
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
-    abstract fun exerciseDao(): ExerciseDao
-    abstract fun exerciseTemplateDao(): ExerciseTemplateDao
-    abstract fun workoutDao(): WorkoutDao
-    abstract fun workoutPlanDao(): WorkoutPlanDao
+    abstract fun workoutExerciseDao(): WorkoutExerciseDao
 
     companion object {
         @Volatile

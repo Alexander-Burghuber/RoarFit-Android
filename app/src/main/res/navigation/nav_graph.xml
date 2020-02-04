@@ -82,7 +82,7 @@
         tools:layout="@layout/fragment_exercise_info">
         <argument
             android:name="template"
-            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
+            app:argType="at.spiceburg.roarfit.data.db.entities.ExerciseTemplate" />
     </fragment>
 
 </navigation>

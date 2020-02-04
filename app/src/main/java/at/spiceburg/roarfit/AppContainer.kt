@@ -30,13 +30,10 @@ class AppContainer(context: Context) {
     init {
         val database = AppDatabase.getDatabase(context)
         val userDao = database.userDao()
-        val exerciseDao = database.exerciseDao()
-        val exerciseTemplateDao = database.exerciseTemplateDao()
-        val workoutDao = database.workoutDao()
-        val workoutPlanDao = database.workoutPlanDao()
+        val workoutExerciseDao = database.workoutExerciseDao()
 
         userRepository = UserRepository(keyFitApi, userDao)
-        exerciseRepository = ExerciseRepository(keyFitApi, exerciseDao, exerciseTemplateDao)
-        workoutRepository = WorkoutRepository(keyFitApi, workoutDao, workoutPlanDao)
+        exerciseRepository = ExerciseRepository(keyFitApi, workoutExerciseDao)
+        workoutRepository = WorkoutRepository(keyFitApi, workoutExerciseDao)
     }
 }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
 
 class ExerciseListAdapter(
     val onExerciseClicked: (ExerciseTemplate) -> Unit,

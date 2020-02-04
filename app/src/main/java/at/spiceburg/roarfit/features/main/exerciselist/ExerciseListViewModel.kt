@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Equipment
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 
 class ExerciseListViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() {

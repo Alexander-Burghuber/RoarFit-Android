@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.Workout
+import at.spiceburg.roarfit.data.db.entities.Workout
 
 class WorkoutsAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<WorkoutsAdapter.WorkoutPlanViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var workoutPlans: Array<Workout> = emptyArray()
+    private var workouts: Array<Workout> = emptyArray()
 
     inner class WorkoutPlanViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val day: TextView = itemView.findViewById(R.id.text_workoutplan_day)
@@ -29,17 +29,17 @@ class WorkoutsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return workoutPlans.size
+        return workouts.size
     }
 
     override fun onBindViewHolder(holder: WorkoutPlanViewHolder, position: Int) {
-        val workoutPlan = workoutPlans[position]
+        val workoutPlan = workouts[position]
         holder.day.text =
             context.resources.getString(R.string.dashboard_workoutplan_day, workoutPlan.day)
     }
 
-    fun setWorkoutPlans(workoutPlans: Array<Workout>) {
-        this.workoutPlans = workoutPlans
+    fun setWorkouts(workouts: Array<Workout>) {
+        this.workouts = workouts
         notifyDataSetChanged()
     }
 }

@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_exercise.*
 

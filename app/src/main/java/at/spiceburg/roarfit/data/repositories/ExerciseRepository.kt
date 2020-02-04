@@ -5,9 +5,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.Equipment
-import at.spiceburg.roarfit.data.db.ExerciseDao
-import at.spiceburg.roarfit.data.db.ExerciseTemplateDao
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.db.dao.WorkoutExerciseDao
+import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
 import at.spiceburg.roarfit.network.KeyFitApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -16,8 +15,7 @@ import io.reactivex.schedulers.Schedulers
 
 class ExerciseRepository(
     private val keyFitApi: KeyFitApi,
-    private val exerciseDao: ExerciseDao,
-    private val exerciseTemplateDao: ExerciseTemplateDao
+    private val dao: WorkoutExerciseDao
 ) {
 
     private val disposables = CompositeDisposable()
@@ -26,7 +24,7 @@ class ExerciseRepository(
     @SuppressLint("CheckResult")
     fun insertAllTemplates(templates: List<ExerciseTemplate>): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
-        exerciseTemplateDao.insertAllTemplates(templates)
+        dao.insertAllTemplates(templates)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -38,7 +36,7 @@ class ExerciseRepository(
 
     fun getTemplates(equipment: Equipment): LiveData<List<ExerciseTemplate>> {
         val liveData = MutableLiveData<List<ExerciseTemplate>>()
-        val getTemplates = exerciseTemplateDao.getTemplates(equipment)
+        val getTemplates = dao.getTemplates(equipment)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -52,9 +50,9 @@ class ExerciseRepository(
         return liveData
     }
 
-    fun getAllTemplates(): LiveData<List<ExerciseTemplate>> {
-        val liveData = MutableLiveData<List<ExerciseTemplate>>()
-        val getAllTemplates = exerciseTemplateDao.getAllTemplates()
+    fun getAllTemplates(): LiveData<Array<ExerciseTemplate>> {
+        val liveData = MutableLiveData<Array<ExerciseTemplate>>()
+        val getAllTemplates = dao.getAllTemplates()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(

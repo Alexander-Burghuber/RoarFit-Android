@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.Status
-import at.spiceburg.roarfit.data.db.UserDao
-import at.spiceburg.roarfit.data.entities.User
+import at.spiceburg.roarfit.data.db.dao.UserDao
+import at.spiceburg.roarfit.data.db.entities.User
 import at.spiceburg.roarfit.network.KeyFitApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -42,7 +42,7 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
                             status.logout = true
                             status.message = when (e.code()) {
                                 401 -> "The authorization token has expired"
-                                404 -> "The entered customer number is not associated with an user."
+                                404 -> "The entered customer number is not associated with an user"
                                 else -> "An unexpected error occurred"
                             }
                         }
@@ -66,9 +66,7 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onError = { e ->
-                    Log.e(TAG, e.message, e)
-                }
+                onError = { e -> Log.e(TAG, e.message, e) }
             )
         disposables.add(insert)
     }

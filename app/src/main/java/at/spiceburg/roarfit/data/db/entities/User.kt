@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.data.entities
+package at.spiceburg.roarfit.data.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

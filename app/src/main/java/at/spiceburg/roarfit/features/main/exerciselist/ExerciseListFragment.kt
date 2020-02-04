@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
 import at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment
 import kotlinx.android.synthetic.main.fragment_exercise_list.*
 
