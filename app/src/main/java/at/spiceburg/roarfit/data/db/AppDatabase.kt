@@ -4,21 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import at.spiceburg.roarfit.data.db.dao.UserDao
-import at.spiceburg.roarfit.data.db.dao.WorkoutExerciseDao
-import at.spiceburg.roarfit.data.db.entities.*
 import at.spiceburg.roarfit.utils.Constants
 
 @Database(
-    entities = [User::class, WorkoutPlan::class, Workout::class, UserExercise::class, ExerciseTemplate::class],
+    entities = [UserDB::class],
     version = 1
 )
-@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun userDao(): UserDao
-    abstract fun workoutExerciseDao(): WorkoutExerciseDao
+    abstract fun dao(): Dao
 
     companion object {
         @Volatile

@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 class AppContainer(context: Context) {
 
-    val keyFitApi: KeyFitApi = Retrofit.Builder()
+    private val keyFitApi: KeyFitApi = Retrofit.Builder()
         //.baseUrl("https://staging.key.fit/lionsoft/app/")
         .baseUrl("https://vm102.htl-leonding.ac.at/roarfit/")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -30,11 +30,10 @@ class AppContainer(context: Context) {
 
     init {
         val database = AppDatabase.getDatabase(context)
-        val userDao = database.userDao()
-        val workoutExerciseDao = database.workoutExerciseDao()
+        val dao = database.dao()
 
-        userRepository = UserRepository(keyFitApi, userDao)
-        exerciseRepository = ExerciseRepository(keyFitApi, workoutExerciseDao)
-        workoutRepository = WorkoutRepository(keyFitApi, workoutExerciseDao)
+        userRepository = UserRepository(keyFitApi, dao)
+        exerciseRepository = ExerciseRepository(keyFitApi)
+        workoutRepository = WorkoutRepository(keyFitApi)
     }
 }

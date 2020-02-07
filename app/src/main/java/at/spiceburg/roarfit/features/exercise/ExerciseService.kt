@@ -7,7 +7,7 @@ import android.os.*
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

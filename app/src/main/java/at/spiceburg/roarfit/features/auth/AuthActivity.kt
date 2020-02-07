@@ -20,7 +20,7 @@ import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.LoginData
-import at.spiceburg.roarfit.data.Resource
+import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
@@ -56,7 +56,7 @@ class AuthActivity : AppCompatActivity() {
         val appContainer = (application as MyApplication).appContainer
         viewModel = ViewModelProviders.of(
             this,
-            AuthViewModel.Factory(appContainer.keyFitApi, appContainer.userRepository)
+            AuthViewModel.Factory(appContainer.userRepository)
         ).get(AuthViewModel::class.java)
 
         sp = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -74,10 +74,10 @@ class AuthActivity : AppCompatActivity() {
 
             if (!username.isBlank() && !password.isBlank()) {
                 setLoading(true)
-                viewModel.login(username, password).observe(this) { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            val data: LoginData = resource.data!!
+                viewModel.login(username, password).observe(this) { response ->
+                    when (response) {
+                        is Response.Success -> {
+                            val data: LoginData = response.data!!
 
                             // check if biometric authentication can be set up
                             val remindBiometric =
@@ -102,8 +102,8 @@ class AuthActivity : AppCompatActivity() {
                                 finishLogin(data)
                             }
                         }
-                        is Resource.Error -> {
-                            resource.message?.let { displaySnackbar(it) }
+                        is Response.Error -> {
+                            response.message?.let { displaySnackbar(it) }
                             setLoading(false)
                         }
                     }
@@ -158,10 +158,10 @@ class AuthActivity : AppCompatActivity() {
     private fun finishLogin(data: LoginData, callFromEncrypt: Boolean = false) {
         val jwt: String = data.token
 
-        viewModel.loadUser(jwt).observe(this) { resource ->
-            when (resource) {
-                is Resource.Success -> {
-                    val userId: Int = resource.data!!
+        viewModel.loadUser(jwt).observe(this) { response ->
+            when (response) {
+                is Response.Success -> {
+                    val userId: Int = response.data!!
                     sp.edit()
                         .putInt(Constants.USER_ID, userId)
                         .putString(Constants.JWT, jwt)
@@ -171,7 +171,7 @@ class AuthActivity : AppCompatActivity() {
                     setLoading(false)
                     startMainActivity()
                 }
-                is Resource.Error -> {
+                is Response.Error -> {
                     // if the error occurred directly after setup of biometric login reset it
                     if (callFromEncrypt) {
                         sp.edit()
@@ -179,7 +179,7 @@ class AuthActivity : AppCompatActivity() {
                             .remove(Constants.INITIALIZATION_VECTOR)
                             .apply()
                     }
-                    resource.message?.let { displaySnackbar(it) }
+                    response.message?.let { displaySnackbar(it) }
                     setLoading(false)
                 }
             }
@@ -333,20 +333,20 @@ class AuthActivity : AppCompatActivity() {
                     // do login
                     val username: String? = sp.getString(Constants.USERNAME, null)
                     if (username != null) {
-                        viewModel.login(username, password).observe(this@AuthActivity) { resource ->
-                            when (resource) {
-                                is Resource.Success -> {
-                                    val data: LoginData = resource.data!!
+                        viewModel.login(username, password).observe(this@AuthActivity) { response ->
+                            when (response) {
+                                is Response.Success -> {
+                                    val data: LoginData = response.data!!
                                     finishLogin(data)
                                 }
-                                is Resource.Error -> {
-                                    resource.message?.let { displaySnackbar(it) }
+                                is Response.Error -> {
+                                    response.message?.let { displaySnackbar(it) }
                                     setLoading(false)
                                 }
                             }
                         }
                     } else {
-                        throw RuntimeException("Username and customerNum are unexpectedly null")
+                        throw RuntimeException("Username is null")
                     }
                 } else {
                     throw RuntimeException("Encrypted password was not found")

@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.data.db.entities
+package at.spiceburg.roarfit.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
  * @property lastName the last name of the user
  */
 @Entity
-data class User(
+data class UserDB(
     @PrimaryKey val id: Int,
     val firstName: String,
     val lastName: String

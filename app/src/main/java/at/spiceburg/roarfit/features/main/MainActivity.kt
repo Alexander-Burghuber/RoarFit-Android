@@ -6,18 +6,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
@@ -111,34 +107,6 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
                 BottomSheetExerciseAction::class.java.simpleName
             )
         }
-
-        // reset the database if the build is for debug and not for production
-        /*if (BuildConfig.DEBUG) {
-            deleteDatabase(Constants.DB_NAME)
-            sp.edit().putInt(Constants.DB_INITIALISED_VERSION, 0).apply()
-        }*/
-
-        // check if the db has been initialised on this app version before
-        val appVersion = PackageInfoCompat
-            .getLongVersionCode(packageManager.getPackageInfo(packageName, 0))
-            .toInt()
-        if (sp.getInt(Constants.DB_INITIALISED_VERSION, 0) < appVersion) {
-            // if not, then create the db with the needed content before continuing the data loading
-            viewModel.initDatabase(this).observe(this) {
-                Log.d(TAG, "Initialised database")
-                sp.edit().putInt(Constants.DB_INITIALISED_VERSION, appVersion).apply()
-            }
-        }
-
-        /*
-        // log the exercise templates that are on the db
-        viewModel.getAllExerciseTemplates().observe(this) { exerciseTemplates ->
-            var output = ""
-            exerciseTemplates.forEach {
-                output += "\nname: ${it.name} equipment: ${it.equipment} bodyPart: ${it.bodyPart}"
-            }
-            Log.d(TAG, "Found ${exerciseTemplates.size} exercise templates: $output")
-        }*/
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -208,7 +176,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
 
     fun logout(displayMsg: Boolean) {
         if (displayMsg) {
-            displayToast(getString(R.string.main_relogin_message))
+            displaySnackbar(getString(R.string.main_relogin_message))
         }
         sp.edit()
             .remove(Constants.USERNAME)
@@ -220,8 +188,10 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         startAuthActivity()
     }
 
-    private fun displayToast(text: String) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+    fun displaySnackbar(text: String) {
+        Snackbar.make(constraintlayout_main, text, Snackbar.LENGTH_LONG)
+            .setAction("Dismiss") {}
+            .show()
     }
 
     private fun startEquipmentChooser(useQR: Boolean) {
