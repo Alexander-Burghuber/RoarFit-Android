@@ -130,6 +130,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
             }
         }
 
+        /*
         // log the exercise templates that are on the db
         viewModel.getAllExerciseTemplates().observe(this) { exerciseTemplates ->
             var output = ""
@@ -137,7 +138,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
                 output += "\nname: ${it.name} equipment: ${it.equipment} bodyPart: ${it.bodyPart}"
             }
             Log.d(TAG, "Found ${exerciseTemplates.size} exercise templates: $output")
-        }
+        }*/
     }
 
     override fun onSupportNavigateUp(): Boolean {

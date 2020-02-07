@@ -17,7 +17,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class AppContainer(context: Context) {
 
     val keyFitApi: KeyFitApi = Retrofit.Builder()
-        .baseUrl("https://staging.key.fit/lionsoft/app/")
+        //.baseUrl("https://staging.key.fit/lionsoft/app/")
+        .baseUrl("https://vm102.htl-leonding.ac.at/roarfit/")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()

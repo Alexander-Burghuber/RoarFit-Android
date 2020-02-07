@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.LoginRequest
 import at.spiceburg.roarfit.data.Resource
-import at.spiceburg.roarfit.data.Status
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.network.KeyFitApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import retrofit2.HttpException
 import java.net.UnknownHostException
 
 class AuthViewModel(
@@ -22,15 +22,14 @@ class AuthViewModel(
     private val userRepo: UserRepository
 ) : ViewModel() {
 
-    val login = MutableLiveData<Resource<LoginData>>()
     private val disposables = CompositeDisposable()
 
-    fun login(username: String, password: String, customerNum: Int) {
+    fun login(username: String, password: String): LiveData<Resource<LoginData>> {
         /*Handler().postDelayed({
             val loginRes = LoginData(0, "thisisajwt", username, password, customerNum)
             login.value = Resource.Success(loginRes)
         }, 500)*/
-        val login = keyFitApi.login(LoginRequest(username, password))
+        /*val login = keyFitApi.login(LoginRequest(username, password))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -56,11 +55,35 @@ class AuthViewModel(
                     login.value = Resource.Error(msg)
                 }
             )
+        disposables.add(login)*/
+        val liveData = MutableLiveData<Resource<LoginData>>()
+        val login = keyFitApi.login(LoginRequest(username, password))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { data ->
+                    data.username = username
+                    data.password = password
+                    liveData.value = Resource.Success(data)
+                },
+                onError = { e ->
+                    Log.e(TAG, "Error logging in", e)
+                    val msg = if (e is UnknownHostException) {
+                        "Server not reachable"
+                    } else if (e is HttpException && e.code() == 401) {
+                        "Username or password is wrong"
+                    } else {
+                        "An unknown error occurred"
+                    }
+                    liveData.value = Resource.Error(msg)
+                }
+            )
         disposables.add(login)
+        return liveData
     }
 
-    fun loadUser(userId: Int, jwt: String): LiveData<Status> {
-        return userRepo.loadUser(userId, jwt)
+    fun loadUser(jwt: String): LiveData<Resource<Int>> {
+        return userRepo.loadUser(jwt)
     }
 
     override fun onCleared() {

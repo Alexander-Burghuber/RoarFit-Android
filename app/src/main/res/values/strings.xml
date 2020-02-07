@@ -6,7 +6,7 @@
     <!-- AuthActivity -->
     <string name="hint_username">Username (admin)</string>
     <string name="hint_password">Password (admin)</string>
-    <string name="hint_customer_number">Customer number</string>
+    <string name="hint_customer_number">Customer number (disabled)</string>
     <string name="fingerprint_checkbox">Use fingerprint authentication for future logins</string>
     <string name="login">Login</string>
     <string name="auth_fingerprint_text">Or Login with Fingerprint</string>

@@ -3,7 +3,7 @@ package at.spiceburg.roarfit.data.repositories
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import at.spiceburg.roarfit.data.Status
+import at.spiceburg.roarfit.data.Resource
 import at.spiceburg.roarfit.data.db.dao.UserDao
 import at.spiceburg.roarfit.data.db.entities.User
 import at.spiceburg.roarfit.network.KeyFitApi
@@ -20,41 +20,33 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
 
     fun getUser(userId: Int): LiveData<User> = userDao.getUser(userId)
 
-    fun loadUser(userId: Int, jwt: String): LiveData<Status> {
-        val liveData = MutableLiveData<Status>(Status.Loading())
-        /*Handler().postDelayed({
-            val user = User(8387, "Max", "Mustermann")
-            insertUser(user)
-            liveData.value = Status.Success()
-        }, 500)*/
-        val loadUser = keyFitApi.getUser(userId, "Bearer $jwt")
+    fun loadUser(jwt: String): LiveData<Resource<Int>> {
+        val liveData = MutableLiveData<Resource<Int>>()
+        val loadUser = keyFitApi.getUser("Bearer $jwt")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { user ->
                     insertUser(user)
-                    liveData.value = Status.Success()
+                    liveData.value = Resource.Success(user.id)
                 },
                 onError = { e ->
-                    val status = Status.Error()
-                    when (e) {
+                    val msg: String = when (e) {
                         is HttpException -> {
-                            status.logout = true
-                            status.message = when (e.code()) {
+                            when (e.code()) {
                                 401 -> "The authorization token has expired"
-                                404 -> "The entered customer number is not associated with an user"
                                 else -> "An unexpected error occurred"
                             }
                         }
                         is UnknownHostException -> {
-                            status.message = "Server not reachable"
+                            "Server not reachable"
                         }
                         else -> {
                             Log.e(TAG, e.message, e)
-                            status.message = "An unknown error occurred"
+                            "An unknown error occurred"
                         }
                     }
-                    liveData.value = status
+                    liveData.value = Resource.Error(msg)
                 }
             )
         disposables.add(loadUser)
@@ -66,7 +58,7 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val userDao: User
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onError = { e -> Log.e(TAG, e.message, e) }
+                onError = { e -> Log.e(TAG, "Error inserting user", e) }
             )
         disposables.add(insert)
     }

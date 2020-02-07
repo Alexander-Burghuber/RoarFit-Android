@@ -11,7 +11,6 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Status
-import at.spiceburg.roarfit.data.db.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.db.entities.Workout
 import at.spiceburg.roarfit.data.db.entities.WorkoutPlan
 import at.spiceburg.roarfit.features.main.MainActivity
@@ -54,6 +53,7 @@ class DashboardFragment : Fragment() {
 
                 adapter.setWorkouts(workouts)
 
+                /*
                 viewModel.getAllExerciseTemplates().observe(this) { templates ->
                     workouts.forEach { workout ->
                         viewModel.getExercisesOfWorkout(workout.id).observe(this) { exercises ->
@@ -68,6 +68,7 @@ class DashboardFragment : Fragment() {
                         }
                     }
                 }
+                */
             }
         }
 
