@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
@@ -31,7 +31,7 @@ class CameraFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CameraViewModel::class.java)
 
         // change theme to fit camera
         requireActivity().apply {

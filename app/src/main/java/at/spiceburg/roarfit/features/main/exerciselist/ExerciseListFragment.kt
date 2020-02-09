@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.MyApplication
@@ -30,9 +30,9 @@ class ExerciseListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val appContainer = (requireActivity().application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(
+        viewModel = ViewModelProvider(
             this,
-            ExerciseListViewModel.Factory(appContainer.exerciseRepository)
+            ExerciseListViewModel.Factory()
         ).get(ExerciseListViewModel::class.java)
 
         val args = ExerciseListFragmentArgs.fromBundle(requireArguments())
@@ -52,9 +52,9 @@ class ExerciseListFragment : Fragment() {
         recyclerview_exerciselist_exercises.layoutManager = LinearLayoutManager(requireContext())
 
         // fixme
-        viewModel.getExerciseTemplates(equipment)?.observe(this, Observer { exerciseTemplates ->
+        viewModel.getExerciseTemplates(equipment)?.observe(this) { exerciseTemplates ->
             adapter.setExerciseTemplates(exerciseTemplates)
-        })
+        }
     }
 
     companion object {

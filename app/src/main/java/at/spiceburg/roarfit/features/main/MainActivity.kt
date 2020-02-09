@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
@@ -56,11 +56,9 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         val factory = MainViewModel.Factory(
             userId,
             appContainer.userRepository,
-            appContainer.exerciseRepository,
             appContainer.workoutRepository
         )
-        viewModel = ViewModelProviders.of(this, factory)
-            .get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
 
         // setup navigation
         setSupportActionBar(toolbar_main)

@@ -7,7 +7,7 @@ import android.content.ServiceConnection
 import android.os.*
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
@@ -87,9 +87,9 @@ class ExerciseActivity : AppCompatActivity() {
 
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(
+        viewModel = ViewModelProvider(
             this,
-            ExerciseViewModel.Factory(appContainer.exerciseRepository)
+            ExerciseViewModel.Factory()
         ).get(ExerciseViewModel::class.java)
 
         // set view elements

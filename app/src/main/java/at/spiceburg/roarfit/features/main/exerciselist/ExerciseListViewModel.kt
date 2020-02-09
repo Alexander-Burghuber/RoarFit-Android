@@ -5,17 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Equipment
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
-import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 
-class ExerciseListViewModel(private val exerciseRepo: ExerciseRepository) : ViewModel() {
+class ExerciseListViewModel() : ViewModel() {
 
     fun getExerciseTemplates(equipment: Equipment): LiveData<List<ExerciseTemplate>>? {
         return null
     }
 
-    class Factory(private val exerciseRepo: ExerciseRepository) : ViewModelProvider.Factory {
+    class Factory : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ExerciseListViewModel(exerciseRepo) as T
+            return ExerciseListViewModel() as T
         }
     }
 }

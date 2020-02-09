@@ -2,7 +2,6 @@ package at.spiceburg.roarfit
 
 import android.content.Context
 import at.spiceburg.roarfit.data.db.AppDatabase
-import at.spiceburg.roarfit.data.repositories.ExerciseRepository
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.data.repositories.WorkoutRepository
 import at.spiceburg.roarfit.network.KeyFitApi
@@ -25,7 +24,6 @@ class AppContainer(context: Context) {
         .create(KeyFitApi::class.java)
 
     var userRepository: UserRepository
-    var exerciseRepository: ExerciseRepository
     var workoutRepository: WorkoutRepository
 
     init {
@@ -33,7 +31,6 @@ class AppContainer(context: Context) {
         val dao = database.dao()
 
         userRepository = UserRepository(keyFitApi, dao)
-        exerciseRepository = ExerciseRepository(keyFitApi)
         workoutRepository = WorkoutRepository(keyFitApi)
     }
 }

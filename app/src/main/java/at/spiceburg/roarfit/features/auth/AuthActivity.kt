@@ -15,7 +15,7 @@ import androidx.biometric.BiometricConstants
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
@@ -54,7 +54,7 @@ class AuthActivity : AppCompatActivity() {
 
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
-        viewModel = ViewModelProviders.of(
+        viewModel = ViewModelProvider(
             this,
             AuthViewModel.Factory(appContainer.userRepository)
         ).get(AuthViewModel::class.java)
