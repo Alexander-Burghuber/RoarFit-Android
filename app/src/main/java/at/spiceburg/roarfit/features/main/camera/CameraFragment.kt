@@ -1,11 +1,9 @@
 package at.spiceburg.roarfit.features.main.camera
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
 import github.nisrulz.qreader.QREader
@@ -57,13 +55,13 @@ class CameraFragment : Fragment() {
             .height(cameraView.height)
             .build()
 
-        viewModel.qrResult.observe(this) { equipment ->
+        /* fixme viewModel.qrResult.observe(this) { equipment ->
             Log.d(TAG, "QR Result: ${equipment.string}")
             text_camera_equipment.setText(equipment.string)
             val action =
                 CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
             findNavController().navigate(action)
-        }
+        }*/
 
         button_camera_close.setOnClickListener {
             findNavController().navigateUp()

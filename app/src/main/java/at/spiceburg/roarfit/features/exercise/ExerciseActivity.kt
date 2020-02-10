@@ -94,7 +94,7 @@ class ExerciseActivity : AppCompatActivity() {
 
         // set view elements
         val exerciseTemplate = intent.getSerializableExtra("template") as ExerciseTemplate
-        text_exercise_equipment.text = exerciseTemplate.equipment?.string
+        // fixme text_exercise_equipment.text = exerciseTemplate.equipment?.string
         text_exercise_name.text = exerciseTemplate.name
 
         // bind to service

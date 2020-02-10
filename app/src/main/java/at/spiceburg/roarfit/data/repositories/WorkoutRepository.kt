@@ -45,6 +45,31 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
         return liveData
     }
 
+    fun getEquipment(jwt: String): LiveData<Response<List<String>>> {
+        val liveData = MutableLiveData<Response<List<String>>>(Response.Loading())
+        val loadEquipment = keyFitApi.getEquipment("Bearer $jwt")
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { equipment ->
+                    liveData.value = Response.Success(equipment)
+                },
+                onError = { e ->
+                    Log.e(TAG, "Error getting equipment", e)
+                    liveData.value = if (e is UnknownHostException) {
+                        Response.Error("Server not reachable")
+                    } else if (e is HttpException && e.code() == 401) {
+                        // jwt is invalid
+                        Response.Error("Please re-login", true)
+                    } else {
+                        Response.Error("An unknown error occurred")
+                    }
+                }
+            )
+        disposables.add(loadEquipment)
+        return liveData
+    }
+
     fun clear() {
         disposables.clear()
     }

@@ -34,6 +34,7 @@
         android:name="at.spiceburg.roarfit.features.main.camera.CameraFragment"
         android:label="CameraFragment"
         tools:layout="@layout/fragment_camera">
+        <!--
         <action
             android:id="@+id/action_cameraFragment_to_exerciseListFragment"
             app:destination="@id/exerciseListFragment"
@@ -41,7 +42,7 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/dashboardFragment" />
+            app:popUpTo="@+id/dashboardFragment" /> -->
     </fragment>
 
     <fragment
@@ -49,13 +50,13 @@
         android:name="at.spiceburg.roarfit.features.main.equipmentlist.EquipmentListFragment"
         android:label="Choose equipment"
         tools:layout="@layout/fragment_equipment_list">
-        <action
+        <!-- todo <action
             android:id="@+id/action_equipmentListFragment_to_exerciseListFragment"
             app:destination="@id/exerciseListFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right" />-->
     </fragment>
 
     <fragment
@@ -63,9 +64,9 @@
         android:name="at.spiceburg.roarfit.features.main.exerciselist.ExerciseListFragment"
         android:label="Choose exercise"
         tools:layout="@layout/fragment_exercise_list">
-        <argument
+        <!--<argument
             android:name="equipment"
-            app:argType="at.spiceburg.roarfit.data.Equipment" />
+            app:argType="at.spiceburg.roarfit.data.Equipment" />-->
         <action
             android:id="@+id/action_exerciseListFragment_to_exerciseInfoFragment"
             app:destination="@id/exerciseInfoFragment"

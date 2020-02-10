@@ -21,6 +21,10 @@ class MainViewModel(
         return workoutRepo.getWorkoutPlan(jwt)
     }
 
+    fun getEquipment(jwt: String): LiveData<Response<List<String>>> {
+        return workoutRepo.getEquipment(jwt)
+    }
+
     override fun onCleared() {
         workoutRepo.clear()
     }

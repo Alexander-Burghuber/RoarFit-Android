@@ -85,9 +85,9 @@ class ExerciseService : Service() {
         contentTitle = template.name
 
         // show the equipment name if it exists
-        template.equipment?.let {
+        /* fixme template.equipment?.let {
             contentTitle += " - ${it.string}"
-        }
+        }*/
 
         // create on notification click pending intent
         val contentIntent = Intent(this, ExerciseActivity::class.java)

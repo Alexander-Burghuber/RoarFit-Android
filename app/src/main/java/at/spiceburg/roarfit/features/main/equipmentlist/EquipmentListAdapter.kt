@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Equipment
 
-class EquipmentListAdapter(context: Context, val onEquipmentClicked: (Equipment) -> Unit) :
+class EquipmentListAdapter(context: Context, val onEquipmentClicked: (String) -> Unit) :
     RecyclerView.Adapter<EquipmentListAdapter.EquipmentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var equipment: List<Equipment> = emptyList()
+    private var equipment: List<String> = emptyList()
 
     inner class EquipmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val equipmentName: TextView = itemView.findViewById(R.id.text_itemequipment_name)
@@ -35,10 +34,10 @@ class EquipmentListAdapter(context: Context, val onEquipmentClicked: (Equipment)
 
     override fun onBindViewHolder(holder: EquipmentViewHolder, position: Int) {
         val equipment = equipment[position]
-        holder.equipmentName.text = equipment.string
+        holder.equipmentName.text = equipment
     }
 
-    fun setExerciseTemplates(equipment: List<Equipment>) {
+    fun setExerciseTemplates(equipment: List<String>) {
         this.equipment = equipment
         notifyDataSetChanged()
     }

@@ -6,14 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment
-import kotlinx.android.synthetic.main.fragment_exercise_list.*
 
 class ExerciseListFragment : Fragment() {
 
@@ -35,7 +30,7 @@ class ExerciseListFragment : Fragment() {
             ExerciseListViewModel.Factory()
         ).get(ExerciseListViewModel::class.java)
 
-        val args = ExerciseListFragmentArgs.fromBundle(requireArguments())
+        /* fixme val args = ExerciseListFragmentArgs.fromBundle(requireArguments())
         val equipment = args.equipment
         text_exerciselist_title.text = equipment.string
 
@@ -54,7 +49,7 @@ class ExerciseListFragment : Fragment() {
         // fixme
         viewModel.getExerciseTemplates(equipment)?.observe(this) { exerciseTemplates ->
             adapter.setExerciseTemplates(exerciseTemplates)
-        }
+        }*/
     }
 
     companion object {
