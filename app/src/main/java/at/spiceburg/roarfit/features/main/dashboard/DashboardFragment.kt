@@ -43,30 +43,18 @@ class DashboardFragment : Fragment() {
         viewModel.getWorkoutPlans(jwt).observe(this) { res ->
             when (res) {
                 is Response.Success -> {
-                    progress_dashboard.visibility = View.GONE
-
                     val workoutPlan: WorkoutPlan = res.data!!
                     text_dashboard_name.text = workoutPlan.name
+                    adapter.addWorkouts(workoutPlan.workouts)
 
-                    workoutPlan.workouts.forEach { workout ->
-                        viewModel.getExercisesOfWorkout(jwt, workout.id).observe(this) { res ->
-                            if (res is Response.Success) {
-                                workout.userExercises = res.data!!
-                                adapter.addWorkout(workout)
-                            } else if (res is Response.Error) {
-                                if (res.logout == true) {
-                                    activity.logout(true)
-                                } else {
-                                    activity.displaySnackbar(res.message!!)
-                                }
-                            }
-                        }
-                    }
+                    progress_dashboard.visibility = View.GONE
                 }
                 is Response.Loading -> {
                     progress_dashboard.visibility = View.VISIBLE
                 }
                 is Response.Error -> {
+                    progress_dashboard.visibility = View.GONE
+
                     if (res.logout == true) {
                         activity.logout(true)
                     } else {

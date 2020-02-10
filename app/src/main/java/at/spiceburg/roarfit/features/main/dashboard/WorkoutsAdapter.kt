@@ -69,14 +69,14 @@ class WorkoutsAdapter(
         val workout = workouts[position]
         holder.day.text =
             context.resources.getString(R.string.dashboard_workoutplan_day, workout.day)
-        val adapter = ExerciseAdapter(context)
+        val adapter = SpecificationsAdapter(context)
         holder.exerciseList.adapter = adapter
         holder.exerciseList.layoutManager = LinearLayoutManager(context)
-        adapter.setExercises(workout.userExercises)
+        adapter.setSpecifications(workout.specifications)
     }
 
-    fun addWorkout(workout: Workout) {
-        this.workouts.add(workout)
+    fun addWorkouts(workouts: List<Workout>) {
+        this.workouts.addAll(workouts)
         notifyDataSetChanged()
     }
 }

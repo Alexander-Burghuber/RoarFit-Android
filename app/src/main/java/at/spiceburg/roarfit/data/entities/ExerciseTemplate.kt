@@ -7,5 +7,5 @@ data class ExerciseTemplate(
     val id: Int,
     val name: String,
     val equipment: Equipment?,
-    val bodyPart: String
+    val bodyParts: List<String>
 ) : Serializable

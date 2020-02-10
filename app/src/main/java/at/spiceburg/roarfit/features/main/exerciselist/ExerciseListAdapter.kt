@@ -40,7 +40,8 @@ class ExerciseListAdapter(
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
         val exerciseTemplate = exerciseTemplates[position]
         holder.exerciseName.text = exerciseTemplate.name
-        holder.bodyPart.text = exerciseTemplate.bodyPart
+        // todo fixme
+        holder.bodyPart.text = exerciseTemplate.bodyParts[0]
     }
 
     fun setExerciseTemplates(exerciseTemplates: List<ExerciseTemplate>) {

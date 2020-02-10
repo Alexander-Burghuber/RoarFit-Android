@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.Response
-import at.spiceburg.roarfit.data.entities.UserExercise
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.network.KeyFitApi
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,31 +42,6 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
                 }
             )
         disposables.add(loadWorkoutPlans)
-        return liveData
-    }
-
-    fun getExercisesOfWorkout(jwt: String, workoutId: Int): LiveData<Response<List<UserExercise>>> {
-        val liveData = MutableLiveData<Response<List<UserExercise>>>(Response.Loading())
-        val loadExercises = keyFitApi.getExercises("Bearer $jwt", workoutId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = { exercises ->
-                    liveData.value = Response.Success(exercises)
-                },
-                onError = { e ->
-                    Log.e(TAG, "Error getting exercises of workout", e)
-                    liveData.value = if (e is UnknownHostException) {
-                        Response.Error("Server not reachable")
-                    } else if (e is HttpException && e.code() == 401) {
-                        // jwt is invalid
-                        Response.Error("Please re-login", true)
-                    } else {
-                        Response.Error("An unknown error occurred")
-                    }
-                }
-            )
-        disposables.addAll(loadExercises)
         return liveData
     }
 

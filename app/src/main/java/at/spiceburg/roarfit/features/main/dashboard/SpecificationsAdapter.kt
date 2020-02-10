@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.entities.UserExercise
+import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 
-class ExerciseAdapter(context: Context) :
-    RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
+class SpecificationsAdapter(context: Context) :
+    RecyclerView.Adapter<SpecificationsAdapter.ExerciseViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var exercises: List<UserExercise> = emptyList()
+    private var specifications: List<ExerciseSpecification> = emptyList()
 
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.text_itemexerciseinfo_exercisename)
@@ -29,17 +29,23 @@ class ExerciseAdapter(context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return exercises.size
+        return specifications.size
     }
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
-        val exercise = exercises[position]
-        holder.name.text = exercise.template.name
-        holder.bodyPart.text = exercise.template.bodyPart
+        val specification = specifications[position]
+        holder.name.text = specification.exercise.template.name
+
+        val bodyParts: List<String> = specification.exercise.template.bodyParts
+        var bodyPartsStr = ""
+        for (i in bodyParts.indices) {
+            bodyPartsStr += if (i == 0) bodyParts[i] else ", ${bodyParts[i]}"
+        }
+        holder.bodyPart.text = bodyPartsStr
     }
 
-    fun setExercises(exercises: List<UserExercise>) {
-        this.exercises = exercises
+    fun setSpecifications(specifications: List<ExerciseSpecification>) {
+        this.specifications = specifications
         notifyDataSetChanged()
     }
 }

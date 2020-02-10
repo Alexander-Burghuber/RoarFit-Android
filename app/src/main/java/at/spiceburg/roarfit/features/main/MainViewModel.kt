@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.data.db.UserDB
-import at.spiceburg.roarfit.data.entities.UserExercise
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.data.repositories.WorkoutRepository
@@ -20,10 +19,6 @@ class MainViewModel(
 
     fun getWorkoutPlans(jwt: String): LiveData<Response<WorkoutPlan>> {
         return workoutRepo.getWorkoutPlan(jwt)
-    }
-
-    fun getExercisesOfWorkout(jwt: String, workoutId: Int): LiveData<Response<List<UserExercise>>> {
-        return workoutRepo.getExercisesOfWorkout(jwt, workoutId)
     }
 
     override fun onCleared() {
