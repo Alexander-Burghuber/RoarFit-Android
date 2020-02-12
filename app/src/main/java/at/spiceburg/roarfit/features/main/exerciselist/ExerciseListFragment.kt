@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Response
@@ -39,11 +40,9 @@ class ExerciseListFragment : Fragment() {
         text_exerciselist_title.text = equipment
 
         val onExerciseClicked: (exerciseTemplate: ExerciseTemplate) -> Unit = { exerciseTemplate ->
-            /*val action =
-                ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseInfoFragment(
-                    exerciseTemplate
-                )
-            findNavController().navigate(action)*/
+            val action =
+                ExerciseListFragmentDirections.actionExerciseListToExerciseInfo(exerciseTemplate)
+            findNavController().navigate(action)
         }
 
         val adapter = ExerciseListAdapter(onExerciseClicked, requireContext())

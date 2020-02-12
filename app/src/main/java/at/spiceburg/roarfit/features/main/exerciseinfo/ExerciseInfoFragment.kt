@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.exercise.ExerciseActivity
 import kotlinx.android.synthetic.main.fragment_exercise_info.*
@@ -30,7 +31,7 @@ class ExerciseInfoFragment : Fragment() {
             val intent = Intent(requireContext(), ExerciseActivity::class.java)
                 .putExtra("template", exerciseTemplate)
             startActivity(intent)
-            // findNavController().popBackStack(R.id.dashboardFragment, false)
+            findNavController().popBackStack(R.id.dashboardFragment, false)
         }
     }
 }

@@ -53,7 +53,6 @@ class CameraFragment : Fragment() {
             window.navigationBarColor = resources.getColor(R.color.black, null)
         }
 
-
         val activity = (requireActivity() as MainActivity)
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!

@@ -103,6 +103,7 @@ class ExerciseActivity : AppCompatActivity() {
             val bindIntent = Intent(this, ExerciseService::class.java)
                 .putExtra("template", exerciseTemplate)
             bindService(bindIntent, connection, Context.BIND_AUTO_CREATE)
+            // startService(Intent(this, ExerciseService::class.java))
         }
 
         // observe stopwatch time
@@ -116,6 +117,7 @@ class ExerciseActivity : AppCompatActivity() {
         }
         button_exercise_finish.setOnClickListener {
             doUnbindService()
+            // stopService(Intent(this, ExerciseService::class.java))
             finish()
         }
     }

@@ -67,7 +67,7 @@
             android:name="equipment"
             app:argType="at.spiceburg.roarfit.data.Equipment" />-->
         <action
-            android:id="@+id/action_exerciseListFragment_to_exerciseInfoFragment"
+            android:id="@+id/action_exerciseList_to_exerciseInfo"
             app:destination="@id/exerciseInfoFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
