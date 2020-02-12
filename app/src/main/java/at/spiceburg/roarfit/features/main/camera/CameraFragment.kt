@@ -1,17 +1,27 @@
 package at.spiceburg.roarfit.features.main.camera
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.features.main.MainActivity
+import at.spiceburg.roarfit.features.main.MainViewModel
+import at.spiceburg.roarfit.utils.Constants
+import github.nisrulz.qreader.QRDataListener
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
+import java.util.*
 
 class CameraFragment : Fragment() {
 
-    private lateinit var viewModel: CameraViewModel
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var qrReader: QREader
     private lateinit var cameraView: SurfaceView
 
@@ -29,8 +39,6 @@ class CameraFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        viewModel = ViewModelProvider(this).get(CameraViewModel::class.java)
-
         // change theme to fit camera
         requireActivity().apply {
             // allow the modification of system bar colors
@@ -45,23 +53,50 @@ class CameraFragment : Fragment() {
             window.navigationBarColor = resources.getColor(R.color.black, null)
         }
 
+
+        val activity = (requireActivity() as MainActivity)
+        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+        val jwt: String = sp.getString(Constants.JWT, null)!!
+
+        val mainHandler = Handler(Looper.getMainLooper())
+        val qrListener = QRDataListener { data ->
+            mainHandler.post {
+                viewModel.getEquipment(jwt).observe(this@CameraFragment) { res ->
+                    when (res) {
+                        is Response.Success -> {
+                            val equipment: Array<String> = res.data!!
+                            val foundEquipment: String? = equipment.find {
+                                it.toLowerCase(Locale.US) == data.toLowerCase(Locale.US)
+                            }
+                            if (foundEquipment != null) {
+                                text_camera_equipment.setText(foundEquipment)
+                                val action =
+                                    CameraFragmentDirections.actionCameraToExerciseList(
+                                        foundEquipment
+                                    )
+                                this@CameraFragment.findNavController().navigate(action)
+                            }
+                        }
+                        is Response.Loading -> {
+                            // todo
+                        }
+                        is Response.Error -> {
+                            // todo
+                        }
+                    }
+                }
+            }
+        }
+
         cameraView = requireView().findViewById(R.id.surfaceview_camera)
 
         // init QR-Reader
-        qrReader = QREader.Builder(requireContext(), cameraView, viewModel)
+        qrReader = QREader.Builder(requireContext(), cameraView, qrListener)
             .facing(QREader.BACK_CAM)
             .enableAutofocus(true)
             .width(cameraView.width)
             .height(cameraView.height)
             .build()
-
-        /* fixme viewModel.qrResult.observe(this) { equipment ->
-            Log.d(TAG, "QR Result: ${equipment.string}")
-            text_camera_equipment.setText(equipment.string)
-            val action =
-                CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(equipment)
-            findNavController().navigate(action)
-        }*/
 
         button_camera_close.setOnClickListener {
             findNavController().navigateUp()

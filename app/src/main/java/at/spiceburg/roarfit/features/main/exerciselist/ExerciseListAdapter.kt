@@ -15,7 +15,7 @@ class ExerciseListAdapter(
 ) : RecyclerView.Adapter<ExerciseListAdapter.ExerciseViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var exerciseTemplates: List<ExerciseTemplate> = emptyList()
+    private var exerciseTemplates: Array<ExerciseTemplate> = emptyArray()
 
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val exerciseName: TextView = itemView.findViewById(R.id.text_itemexerciseinfo_exercisename)
@@ -44,7 +44,7 @@ class ExerciseListAdapter(
         holder.bodyPart.text = exerciseTemplate.bodyParts[0]
     }
 
-    fun setExerciseTemplates(exerciseTemplates: List<ExerciseTemplate>) {
+    fun setExerciseTemplates(exerciseTemplates: Array<ExerciseTemplate>) {
         this.exerciseTemplates = exerciseTemplates
         notifyDataSetChanged()
     }

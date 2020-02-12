@@ -11,7 +11,7 @@ import at.spiceburg.roarfit.R
 class EquipmentListAdapter(context: Context, val onEquipmentClicked: (String) -> Unit) :
     RecyclerView.Adapter<EquipmentListAdapter.EquipmentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var equipment: List<String> = emptyList()
+    private var equipment: Array<String> = emptyArray()
 
     inner class EquipmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val equipmentName: TextView = itemView.findViewById(R.id.text_itemequipment_name)
@@ -37,7 +37,7 @@ class EquipmentListAdapter(context: Context, val onEquipmentClicked: (String) ->
         holder.equipmentName.text = equipment
     }
 
-    fun setExerciseTemplates(equipment: List<String>) {
+    fun setExerciseTemplates(equipment: Array<String>) {
         this.equipment = equipment
         notifyDataSetChanged()
     }

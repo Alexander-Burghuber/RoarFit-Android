@@ -2,13 +2,13 @@ package at.spiceburg.roarfit.features.main.equipmentlist
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Response
@@ -33,9 +33,9 @@ class EquipmentListFragment : Fragment() {
         super.onStart()
 
         val onEquipmentClicked: (equipment: String) -> Unit = { equipment ->
-            Log.d(TAG, "clicked equipment: $equipment")
-            // fixme val action = EquipmentListFragmentDirections.actionEquipmentListFragmentToExerciseListFragment(equipment)
-            // findNavController().navigate(action)
+            val action =
+                EquipmentListFragmentDirections.actionEquipmentListToExerciseList(equipment)
+            findNavController().navigate(action)
         }
 
         val adapter = EquipmentListAdapter(requireContext(), onEquipmentClicked)
@@ -49,7 +49,7 @@ class EquipmentListFragment : Fragment() {
         viewModel.getEquipment(jwt).observe(this) { res ->
             when (res) {
                 is Response.Success -> {
-                    val equipment: List<String> = res.data!!
+                    val equipment: Array<String> = res.data!!
                     adapter.setExerciseTemplates(equipment)
                 }
                 is Response.Loading -> {

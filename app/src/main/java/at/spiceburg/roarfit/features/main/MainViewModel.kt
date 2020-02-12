@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.data.db.UserDB
+import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.data.repositories.WorkoutRepository
@@ -16,13 +17,28 @@ class MainViewModel(
 ) : ViewModel() {
 
     val user: LiveData<UserDB> = userRepo.getUser(userId)
+    private var workoutPlans: LiveData<Response<WorkoutPlan>>? = null
+    private var equipment: LiveData<Response<Array<String>>>? = null
 
     fun getWorkoutPlans(jwt: String): LiveData<Response<WorkoutPlan>> {
-        return workoutRepo.getWorkoutPlan(jwt)
+        if (workoutPlans == null) {
+            workoutPlans = workoutRepo.getWorkoutPlan(jwt)
+        }
+        return workoutPlans!!
     }
 
-    fun getEquipment(jwt: String): LiveData<Response<List<String>>> {
-        return workoutRepo.getEquipment(jwt)
+    fun getEquipment(jwt: String): LiveData<Response<Array<String>>> {
+        if (equipment == null) {
+            equipment = workoutRepo.getEquipment(jwt)
+        }
+        return equipment!!
+    }
+
+    fun getExerciseTemplates(
+        jwt: String,
+        equipment: String
+    ): LiveData<Response<Array<ExerciseTemplate>>> {
+        return workoutRepo.getExerciseTemplates(jwt, equipment)
     }
 
     override fun onCleared() {
@@ -38,5 +54,9 @@ class MainViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MainViewModel(userId, workoutRepo, userRepo) as T
         }
+    }
+
+    companion object {
+        private val TAG = MainViewModel::class.java.simpleName
     }
 }
