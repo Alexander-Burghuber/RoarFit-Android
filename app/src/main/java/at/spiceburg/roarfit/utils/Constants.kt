@@ -22,4 +22,8 @@ object Constants {
 
     // Database name
     const val DB_NAME = "roarfit_database"
+
+    // Notification Channel Id
+    const val CHANNEL_ID = "RoarFit_Exercise_Notification"
+    const val NOTIFICATION_ID = 1453
 }

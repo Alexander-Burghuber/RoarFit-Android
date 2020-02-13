@@ -1,8 +1,11 @@
 package at.spiceburg.roarfit.features.auth
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
@@ -51,6 +54,9 @@ class AuthActivity : AppCompatActivity() {
         setContentView(R.layout.activity_auth)
 
         // deleteDatabase(Constants.DB_NAME)
+
+        // create notification channel
+        createNotificationChannel()
 
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
@@ -267,6 +273,23 @@ class AuthActivity : AppCompatActivity() {
         Snackbar.make(constraintlayout_auth, text, Snackbar.LENGTH_LONG)
             .setAction("Dismiss") {}
             .show()
+    }
+
+    private fun createNotificationChannel() {
+        // on Android 8.0+ a notification channel must be registered and should be done as soon as possible
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                Constants.CHANNEL_ID,
+                "Exercise",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                enableVibration(false)
+                enableLights(false)
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     inner class EncryptCallback(private val data: LoginData) :
