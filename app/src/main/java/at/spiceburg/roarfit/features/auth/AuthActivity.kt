@@ -285,6 +285,7 @@ class AuthActivity : AppCompatActivity() {
             ).apply {
                 enableVibration(false)
                 enableLights(false)
+                setSound(null, null)
             }
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

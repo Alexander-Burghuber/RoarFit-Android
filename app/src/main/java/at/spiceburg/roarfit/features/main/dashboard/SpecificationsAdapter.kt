@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 
-class SpecificationsAdapter(context: Context) :
-    RecyclerView.Adapter<SpecificationsAdapter.ExerciseViewHolder>() {
+class SpecificationsAdapter(
+    context: Context, private val onExerciseClicked: (ExerciseSpecification) -> Unit
+) : RecyclerView.Adapter<SpecificationsAdapter.ExerciseViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var specifications: List<ExerciseSpecification> = emptyList()
@@ -18,6 +19,12 @@ class SpecificationsAdapter(context: Context) :
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.text_itemexerciseinfo_exercisename)
         val bodyPart: TextView = itemView.findViewById(R.id.text_itemexerciseinfo_bodypart)
+
+        init {
+            itemView.setOnClickListener {
+                onExerciseClicked.invoke(specifications[adapterPosition])
+            }
+        }
     }
 
     override fun onCreateViewHolder(

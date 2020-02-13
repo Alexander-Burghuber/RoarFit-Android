@@ -26,6 +26,7 @@ class ExerciseService : IntentService("ExerciseService") {
     private var disposableStopwatch: Disposable? = null
     private var connectedStopWatch: Disposable? = null
     private lateinit var pendingIntent: PendingIntent
+    private lateinit var templateName: String
 
     inner class LocalBinder : Binder() {
         fun getService(): ExerciseService = this@ExerciseService
@@ -40,7 +41,8 @@ class ExerciseService : IntentService("ExerciseService") {
 
     override fun onHandleIntent(intent: Intent?) {
         startStopwatch()
-        val notification = buildNotification("00:00", pendingIntent)
+        templateName = intent?.getStringExtra("templateName")!!
+        val notification = buildNotification("00:00")
         startForeground(Constants.NOTIFICATION_ID, notification)
     }
 
@@ -84,16 +86,18 @@ class ExerciseService : IntentService("ExerciseService") {
             Log.d(TAG, "Stopwatch: $time")
 
             // update notification
-            val updatedNotification = buildNotification(time, pendingIntent)
+            val updatedNotification = buildNotification(time)
             nm.notify(Constants.NOTIFICATION_ID, updatedNotification)
         }
     }
 
-    private fun buildNotification(time: String, pendingIntent: PendingIntent): Notification {
+    private fun buildNotification(time: String): Notification {
         return NotificationCompat.Builder(this, Constants.CHANNEL_ID)
-            .setContentTitle("Hello there!")
+            .setContentTitle(templateName)
             .setContentText(time)
             .setSmallIcon(R.drawable.ic_notification)
+            .setColor(resources.getColor(R.color.primary, null))
+            .setColorized(true)
             .setContentIntent(pendingIntent) // intent for on notification click
             .setPriority(NotificationCompat.PRIORITY_HIGH) // for Android 7.1 and lower
             .setCategory(NotificationCompat.CATEGORY_TRANSPORT) // media transport playback

@@ -44,8 +44,6 @@ class ExerciseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise)
 
-        Log.d(TAG, "onCreate called")
-
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
         viewModel = ViewModelProvider(
@@ -59,7 +57,10 @@ class ExerciseActivity : AppCompatActivity() {
         text_exercise_equipment.text = exerciseTemplate.equipment
         text_exercise_name.text = exerciseTemplate.name
 
-        val serviceIntent = Intent(this, ExerciseService::class.java)
+        val serviceIntent = Intent(this, ExerciseService::class.java).apply {
+            putExtra("templateName", exerciseTemplate.name)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent)
         } else {
@@ -85,7 +86,6 @@ class ExerciseActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "OnResume called")
         val intent = Intent(this, ExerciseService::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
         if (bound) {
@@ -95,7 +95,6 @@ class ExerciseActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG, "onPause called")
         disposableStopwatch?.dispose()
     }
 
@@ -111,11 +110,6 @@ class ExerciseActivity : AppCompatActivity() {
                 dialog.cancel()
             }
             .show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy called")
     }
 
     private fun observeStopwatch() {

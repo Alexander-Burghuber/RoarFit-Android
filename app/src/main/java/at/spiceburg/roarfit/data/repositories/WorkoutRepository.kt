@@ -22,14 +22,14 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
 
     private val disposables = CompositeDisposable()
 
-    fun getWorkoutPlan(jwt: String): LiveData<Response<WorkoutPlan>> {
-        val liveData = MutableLiveData<Response<WorkoutPlan>>(Response.Loading())
+    fun getWorkoutPlan(jwt: String): LiveData<Response<Array<WorkoutPlan>>> {
+        val liveData = MutableLiveData<Response<Array<WorkoutPlan>>>(Response.Loading())
         val loadWorkoutPlans = keyFitApi.getWorkoutPlans("Bearer $jwt")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { workoutPlans ->
-                    liveData.value = Response.Success(workoutPlans[0])
+                    liveData.value = Response.Success(workoutPlans)
                 },
                 onError = { e ->
                     Log.e(TAG, "Error getting workoutplans", e)

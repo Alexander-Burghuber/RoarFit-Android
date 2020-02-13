@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.Workout
 
 class WorkoutsAdapter(
-    private val context: Context
+    private val context: Context, private val onExerciseClicked: (ExerciseSpecification) -> Unit
 ) : RecyclerView.Adapter<WorkoutsAdapter.WorkoutPlanViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -69,7 +70,7 @@ class WorkoutsAdapter(
         val workout = workouts[position]
         holder.day.text =
             context.resources.getString(R.string.dashboard_workoutplan_day, workout.day)
-        val adapter = SpecificationsAdapter(context)
+        val adapter = SpecificationsAdapter(context, onExerciseClicked)
         holder.exerciseList.adapter = adapter
         holder.exerciseList.layoutManager = LinearLayoutManager(context)
         adapter.setSpecifications(workout.specifications)

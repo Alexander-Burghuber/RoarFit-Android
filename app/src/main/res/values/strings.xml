@@ -34,6 +34,7 @@
 
     <!-- Dashboard -->
     <string name="dashboard_workoutplan_header">Workoutplan</string>
+    <string name="dashboard_empty_desc">No workoutplan has been assigned to you. Please contact your trainer.</string>
 
     <!-- WorkoutPlan -->
     <string name="dashboard_workoutplan_day">Day %d</string>

@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
@@ -36,17 +38,29 @@ class DashboardFragment : Fragment() {
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
-        val adapter = WorkoutsAdapter(activity)
+        val onExerciseClicked: (exercise: ExerciseSpecification) -> Unit = {
+            val action =
+                DashboardFragmentDirections.actionDashboardToExerciseInfo(it.exercise.template)
+            findNavController().navigate(action)
+        }
+
+        val adapter = WorkoutsAdapter(activity, onExerciseClicked)
         list_dashboard_workoutplans.adapter = adapter
         list_dashboard_workoutplans.layoutManager = LinearLayoutManager(activity)
 
         viewModel.getWorkoutPlans(jwt).observe(this) { res ->
             when (res) {
                 is Response.Success -> {
-                    val workoutPlan: WorkoutPlan = res.data!!
-                    text_dashboard_name.text = workoutPlan.name
-                    adapter.addWorkouts(workoutPlan.workouts)
+                    val workoutPlans: Array<WorkoutPlan> = res.data!!
+                    if (workoutPlans.isNotEmpty()) {
+                        val workoutPlan = workoutPlans[0]
+                        text_dashboard_name.text = workoutPlan.name
+                        adapter.addWorkouts(workoutPlan.workouts)
 
+                        constraintlayout_dashboard.visibility = View.VISIBLE
+                    } else {
+                        constraintlayout_dashboard_empty.visibility = View.VISIBLE
+                    }
                     progress_dashboard.visibility = View.GONE
                 }
                 is Response.Loading -> {
@@ -54,6 +68,7 @@ class DashboardFragment : Fragment() {
                 }
                 is Response.Error -> {
                     progress_dashboard.visibility = View.GONE
+                    constraintlayout_dashboard.visibility = View.INVISIBLE
 
                     if (res.logout == true) {
                         activity.logout(true)

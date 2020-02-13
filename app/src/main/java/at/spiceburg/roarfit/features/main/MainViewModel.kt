@@ -17,10 +17,10 @@ class MainViewModel(
 ) : ViewModel() {
 
     val user: LiveData<UserDB> = userRepo.getUser(userId)
-    private var workoutPlans: LiveData<Response<WorkoutPlan>>? = null
+    private var workoutPlans: LiveData<Response<Array<WorkoutPlan>>>? = null
     private var equipment: LiveData<Response<Array<String>>>? = null
 
-    fun getWorkoutPlans(jwt: String): LiveData<Response<WorkoutPlan>> {
+    fun getWorkoutPlans(jwt: String): LiveData<Response<Array<WorkoutPlan>>> {
         if (workoutPlans == null) {
             workoutPlans = workoutRepo.getWorkoutPlan(jwt)
         }
