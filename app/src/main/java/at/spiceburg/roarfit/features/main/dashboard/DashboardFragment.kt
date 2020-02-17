@@ -39,8 +39,7 @@ class DashboardFragment : Fragment() {
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val onExerciseClicked: (exercise: ExerciseSpecification) -> Unit = {
-            val action =
-                DashboardFragmentDirections.actionDashboardToExerciseInfo(it.exercise.template)
+            val action = DashboardFragmentDirections.actionDashboardToExerciseInfo(null, it)
             findNavController().navigate(action)
         }
 
@@ -58,23 +57,18 @@ class DashboardFragment : Fragment() {
                         adapter.addWorkouts(workoutPlan.workouts)
 
                         constraintlayout_dashboard.visibility = View.VISIBLE
+                        constraintlayout_dashboard_empty.visibility = View.INVISIBLE
                     } else {
+                        constraintlayout_dashboard.visibility = View.INVISIBLE
                         constraintlayout_dashboard_empty.visibility = View.VISIBLE
                     }
-                    progress_dashboard.visibility = View.GONE
+                    activity.progressMain.hide()
                 }
-                is Response.Loading -> {
-                    progress_dashboard.visibility = View.VISIBLE
-                }
+                is Response.Loading -> activity.progressMain.show()
                 is Response.Error -> {
-                    progress_dashboard.visibility = View.GONE
+                    activity.progressMain.hide()
                     constraintlayout_dashboard.visibility = View.INVISIBLE
-
-                    if (res.logout == true) {
-                        activity.logout(true)
-                    } else {
-                        activity.displaySnackbar(res.message!!)
-                    }
+                    activity.handleNetworkError(res.errorType!!)
                 }
             }
         }

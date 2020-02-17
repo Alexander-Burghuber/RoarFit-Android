@@ -40,8 +40,10 @@ class ExerciseListFragment : Fragment() {
         text_exerciselist_title.text = equipment
 
         val onExerciseClicked: (exerciseTemplate: ExerciseTemplate) -> Unit = { exerciseTemplate ->
-            val action =
-                ExerciseListFragmentDirections.actionExerciseListToExerciseInfo(exerciseTemplate)
+            val action = ExerciseListFragmentDirections.actionExerciseListToExerciseInfo(
+                exerciseTemplate,
+                null
+            )
             findNavController().navigate(action)
         }
 
@@ -58,12 +60,12 @@ class ExerciseListFragment : Fragment() {
                 is Response.Success -> {
                     val templates: Array<ExerciseTemplate> = res.data!!
                     adapter.setExerciseTemplates(templates)
+                    activity.progressMain.hide()
                 }
-                is Response.Loading -> {
-                    // todo
-                }
+                is Response.Loading -> activity.progressMain.show()
                 is Response.Error -> {
-                    // todo
+                    activity.progressMain.show()
+                    activity.handleNetworkError(res.errorType!!)
                 }
             }
         }

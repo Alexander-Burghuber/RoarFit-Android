@@ -9,10 +9,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -24,6 +26,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.features.auth.AuthActivity
 import at.spiceburg.roarfit.features.settings.SettingsActivity
 import at.spiceburg.roarfit.utils.Constants
@@ -33,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListener {
 
     lateinit var viewModel: MainViewModel
+    lateinit var progressMain: ContentLoadingProgressBar
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -43,12 +47,14 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         setContentView(R.layout.activity_main)
 
         sp = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+        progressMain = findViewById(R.id.progress_main)
 
         // check if user id and jwt is available
         val userId = sp.getInt(Constants.USER_ID, -1)
         val jwt: String? = sp.getString(Constants.JWT, null)
         if (userId == -1 || jwt == null) {
-            logout(true)
+            displaySnackbar(getString(R.string.networkerror_jwt_expired))
+            logout()
         }
 
         // setup viewModel
@@ -145,7 +151,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
                 true
             }
             R.id.menu_app_bar_logout -> {
-                logout(false)
+                logout()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -172,10 +178,22 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         }
     }
 
-    fun logout(displayMsg: Boolean) {
-        if (displayMsg) {
-            displaySnackbar(getString(R.string.main_relogin_message))
+    fun handleNetworkError(errorType: ErrorType) {
+        when (errorType) {
+            ErrorType.SERVER_UNREACHABLE -> displaySnackbar(getString(R.string.networkerror_server_unreachable))
+            ErrorType.TIMEOUT -> displaySnackbar(getString(R.string.networkerror_timeout))
+            ErrorType.JWT_EXPIRED -> {
+                displayToast(getString(R.string.networkerror_jwt_expired))
+                logout()
+            }
+            else -> {
+                displayToast(getString(R.string.networkerror_unexpected))
+                logout()
+            }
         }
+    }
+
+    private fun logout() {
         sp.edit()
             .remove(Constants.USERNAME)
             .remove(Constants.JWT)
@@ -186,10 +204,14 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         startAuthActivity()
     }
 
-    fun displaySnackbar(text: String) {
+    private fun displaySnackbar(text: String) {
         Snackbar.make(constraintlayout_main, text, Snackbar.LENGTH_LONG)
             .setAction("Dismiss") {}
             .show()
+    }
+
+    private fun displayToast(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     private fun startEquipmentChooser(useQR: Boolean) {

@@ -55,7 +55,7 @@
     <fragment
         android:id="@+id/equipmentListFragment"
         android:name="at.spiceburg.roarfit.features.main.equipmentlist.EquipmentListFragment"
-        android:label="Choose equipment"
+        android:label="@string/equipmentlist_title"
         tools:layout="@layout/fragment_equipment_list">
         <action
             android:id="@+id/action_equipmentList_to_exerciseList"
@@ -69,7 +69,7 @@
     <fragment
         android:id="@+id/exerciseListFragment"
         android:name="at.spiceburg.roarfit.features.main.exerciselist.ExerciseListFragment"
-        android:label="Choose exercise"
+        android:label="@string/exerciselist_title"
         tools:layout="@layout/fragment_exercise_list">
         <!--<argument
             android:name="equipment"
@@ -89,11 +89,16 @@
     <fragment
         android:id="@+id/exerciseInfoFragment"
         android:name="at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment"
-        android:label="Exercise Info"
+        android:label="@string/exerciseinfo_title"
         tools:layout="@layout/fragment_exercise_info">
         <argument
             android:name="template"
-            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate" />
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate"
+            app:nullable="true" />
+        <argument
+            android:name="specification"
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseSpecification"
+            app:nullable="true" />
     </fragment>
 
 </navigation>

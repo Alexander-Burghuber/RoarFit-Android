@@ -3,6 +3,7 @@ package at.spiceburg.roarfit.data.repositories
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.LoginRequest
 import at.spiceburg.roarfit.data.Response
@@ -14,6 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 class UserRepository(private val keyFitApi: KeyFitApi, private val dao: Dao) {
@@ -35,19 +37,19 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val dao: Dao) {
                 },
                 onError = { e ->
                     Log.e(TAG, "Error logging in", e)
-                    val msg = if (e is UnknownHostException) {
-                        "Server not reachable"
+                    liveData.value = if (e is UnknownHostException) {
+                        Response.Error(ErrorType.SERVER_UNREACHABLE)
+                    } else if (e is SocketTimeoutException) {
+                        Response.Error(ErrorType.TIMEOUT)
                     } else if (e is HttpException && e.code() == 401) {
-                        "Username or password is wrong"
+                        Response.Error(ErrorType.USERNAME_PASSWORD_WRONG)
                     } else {
-                        "An unknown error occurred"
+                        Response.Error(ErrorType.UNEXPECTED)
                     }
-                    liveData.value = Response.Error(msg)
                 }
             )
         disposables.add(login)
         return liveData
-
     }
 
     fun loadUser(jwt: String): LiveData<Response<Int>> {
@@ -61,22 +63,16 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val dao: Dao) {
                     liveData.value = Response.Success(user.id)
                 },
                 onError = { e ->
-                    val msg: String = when (e) {
-                        is HttpException -> {
-                            when (e.code()) {
-                                401 -> "The authorization token has expired"
-                                else -> "An unexpected error occurred"
-                            }
+                    Log.e(TAG, "Error loading user", e)
+                    liveData.value = when (e) {
+                        is HttpException -> when (e.code()) {
+                            401 -> Response.Error(ErrorType.JWT_EXPIRED)
+                            else -> Response.Error(ErrorType.UNEXPECTED)
                         }
-                        is UnknownHostException -> {
-                            "Server not reachable"
-                        }
-                        else -> {
-                            Log.e(TAG, e.message, e)
-                            "An unknown error occurred"
-                        }
+                        is UnknownHostException -> Response.Error(ErrorType.SERVER_UNREACHABLE)
+                        is SocketTimeoutException -> Response.Error(ErrorType.TIMEOUT)
+                        else -> Response.Error(ErrorType.UNEXPECTED)
                     }
-                    liveData.value = Response.Error(msg)
                 }
             )
         disposables.add(loadUser)

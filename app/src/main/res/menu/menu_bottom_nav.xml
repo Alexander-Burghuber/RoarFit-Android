@@ -4,17 +4,17 @@
     <item
         android:id="@+id/dashboardFragment"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/bottom_nav_dashboard" />
+        android:title="@string/main_bottomnav_dashboard" />
     <item
         android:id="@+id/statisticsFragment"
         android:icon="@drawable/ic_show_chart_black_24dp"
-        android:title="@string/bottom_nav_statistics" />
+        android:title="@string/main_bottomnav_statistics" />
     <item
         android:id="@+id/historyFragment"
         android:icon="@drawable/ic_history_black_24dp"
-        android:title="@string/bottom_nav_history" />
+        android:title="@string/main_bottomnav_history" />
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/bottom_nav_profile" />
+        android:title="@string/main_bottomnav_profile" />
 </menu>

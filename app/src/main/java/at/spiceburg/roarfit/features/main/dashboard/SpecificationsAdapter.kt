@@ -31,7 +31,7 @@ class SpecificationsAdapter(
         parent: ViewGroup,
         viewType: Int
     ): ExerciseViewHolder {
-        val itemView = inflater.inflate(R.layout.item_exerciseinfo, parent, false)
+        val itemView = inflater.inflate(R.layout.item_exercise, parent, false)
         return ExerciseViewHolder(itemView)
     }
 

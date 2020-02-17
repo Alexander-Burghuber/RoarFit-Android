@@ -1,57 +1,69 @@
 <resources>
     <!-- General -->
-    <string name="app_name">RoarFit</string>
-    <string name="account_type">fit.key.staging</string>
+    <string name="app_name" translatable="false">RoarFit</string>
+    <string name="account_type" translatable="false">fit.key.staging</string>
+
+    <!-- Network Error -->
+    <string name="networkerror_server_unreachable">Server unreachable</string>
+    <string name="networkerror_username_pwd_wrong">Username or password is wrong</string>
+    <string name="networkerror_unexpected">An unexpected error occurred</string>
+    <string name="networkerror_jwt_expired">Please re-login</string>
+    <string name="networkerror_timeout">Connection timeout</string>
 
     <!-- AuthActivity -->
-    <string name="hint_username">Username (admin)</string>
-    <string name="hint_password">Password (admin)</string>
-    <string name="hint_customer_number">Customer number (disabled)</string>
-    <string name="fingerprint_checkbox">Use fingerprint authentication for future logins</string>
-    <string name="login">Login</string>
-    <string name="auth_fingerprint_text">Or Login with Fingerprint</string>
-    <string name="auth_logo_desc">RoarFit Logo</string>
-    <string name="auth_fingerprint_desc">Fingerprint</string>
-    <string name="auth_endicon_desc">Quick login</string>
+    <string name="auth_hint_username" translatable="false">Username</string>
+    <string name="auth_hint_password">Password</string>
+    <string name="auth_login" translatable="false">Login</string>
+    <string name="auth_logo_desc" translatable="false">RoarFit Logo</string>
+    <string name="auth_fill_all_fields">Please fill in all fields</string>
+    <string name="auth_endicon_desc" translatable="false">@string/auth_biometric_encrypt_title</string>
     <string name="auth_biometric_encrypt_title">Biometric Quick Login</string>
     <string name="auth_biometric_encrypt_desc">Activate biometric authentication to quickly login with your fingerprint the next time you open the app.</string>
     <string name="auth_biometric_encrypt_negative_button">Don\'t remind me again</string>
+    <string name="auth_biometric_decrypt_title">Quick login using biometrics</string>
+    <string name="auth_biometric_decrypt_close">Close</string>
 
     <!-- MainActivity -->
-    <string name="bottom_nav_dashboard">Dashboard</string>
-    <string name="bottom_nav_statistics">Statistics</string>
-    <string name="bottom_nav_history">History</string>
-    <string name="bottom_nav_profile">Profile</string>
-    <string name="app_bar_logout">Logout</string>
-
-    <string name="main_relogin_message">Please re-login</string>
+    <string name="main_bottomnav_dashboard">Dashboard</string>
+    <string name="main_bottomnav_statistics">Statistics</string>
+    <string name="main_bottomnav_history">History</string>
+    <string name="main_bottomnav_profile">Profile</string>
+    <string name="main_appbar_logout" translatable="false">Logout</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
-    <string name="settings_biometric_category">@string/auth_biometric_encrypt_title</string>
-    <string name="settings_biometric_title">Use biometric quick login</string>
-    <string name="settings_biometric_summary">@string/auth_biometric_encrypt_desc</string>
+    <string name="settings_biometric_category" translatable="false">@string/auth_biometric_encrypt_title</string>
+    <string name="settings_biometric_title" translatable="false">@string/auth_biometric_encrypt_title</string>
+    <string name="settings_biometric_summary" translatable="false">@string/auth_biometric_encrypt_desc</string>
 
     <!-- Dashboard -->
     <string name="dashboard_workoutplan_header">Workoutplan</string>
     <string name="dashboard_empty_desc">No workoutplan has been assigned to you. Please contact your trainer.</string>
-
-    <!-- WorkoutPlan -->
     <string name="dashboard_workoutplan_day">Day %d</string>
 
     <!-- Bottom sheet -->
     <string name="main_bottomsheet_title">Choose equipment from</string>
-    <string name="main_bottomsheet_qr">QR</string>
+    <string name="main_bottomsheet_qr" translatable="false">QR</string>
     <string name="main_bottomsheet_list">List</string>
 
     <!-- Camera -->
     <string name="camera_equipment">Equipment</string>
     <string name="camera_close_desc">Close</string>
 
+    <!-- Equipment List -->
+    <string name="equipmentlist_title">Choose equipment</string>
+
+    <!-- Exercise List -->
+    <string name="exerciselist_title">Choose exercise</string>
+    <string name="exerciselist_header_exercises">Exercises</string>
+    <string name="exerciseinfo_title">Exercise information</string>
+    <string name="exerciseinfo_equipment">Equipment</string>
+
     <!-- Exercise Info -->
     <string name="exercise_info_button_start">Start</string>
 
     <!-- Exercise -->
+    <string name="exercise_time" translatable="false">00:00</string>
     <string name="exercise_button_pause">Pause</string>
     <string name="exercise_button_continue">Continue</string>
     <string name="exercise_button_finish">Finish</string>
@@ -59,5 +71,5 @@
     <string name="exercise_notification_name">Exercise</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 </resources>

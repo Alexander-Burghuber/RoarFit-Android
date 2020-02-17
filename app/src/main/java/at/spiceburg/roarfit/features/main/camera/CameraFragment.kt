@@ -63,6 +63,7 @@ class CameraFragment : Fragment() {
                 viewModel.getEquipment(jwt).observe(this@CameraFragment) { res ->
                     when (res) {
                         is Response.Success -> {
+                            activity.progressMain.hide()
                             val equipment: Array<String> = res.data!!
                             val foundEquipment: String? = equipment.find {
                                 it.toLowerCase(Locale.US) == data.toLowerCase(Locale.US)
@@ -76,11 +77,10 @@ class CameraFragment : Fragment() {
                                 this@CameraFragment.findNavController().navigate(action)
                             }
                         }
-                        is Response.Loading -> {
-                            // todo
-                        }
+                        is Response.Loading -> activity.progressMain.show()
                         is Response.Error -> {
-                            // todo
+                            activity.progressMain.hide()
+                            activity.handleNetworkError(res.errorType!!)
                         }
                     }
                 }

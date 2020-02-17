@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_biometric_encrypt_desc">Aktiviere Biometrische Authentifizierung um das nächste Mal schneller einloggen zu können.</string>
+    <string name="auth_biometric_decrypt_title">Quick-Login mit Biometrischen Daten</string>
+    <string name="auth_hint_password">Passwort</string>
+    <string name="auth_biometric_decrypt_close">Schließen</string>
+    <string name="auth_biometric_encrypt_negative_button">Nicht erneut erinnern</string>
+    <string name="auth_biometric_encrypt_title">Biometrischer Quick-Login</string>
+    <string name="main_bottomnav_dashboard">Übersicht</string>
+    <string name="main_bottomnav_statistics">Statistiken</string>
+    <string name="main_bottomnav_history">Verlauf</string>
+    <string name="main_bottomnav_profile">Profil</string>
+    <string name="settings">Einstellungen</string>
+    <string name="dashboard_workoutplan_header">Trainingsplan</string>
+    <string name="dashboard_empty_desc">Es wurde kein Trainingsplan für Sie eingerichtet. Bitte kontaktieren Sie ihren Trainer.</string>
+    <string name="dashboard_workoutplan_day">Tag %d</string>
+    <string name="main_bottomsheet_list">Liste</string>
+    <string name="main_bottomsheet_title">Trainingsgerät auswahlen von</string>
+    <string name="exercise_notification_name">Training</string>
+    <string name="exercise_info_button_start">Start</string>
+    <string name="exercise_button_pause">Pause</string>
+    <string name="exercise_button_finish">Beenden</string>
+    <string name="exercise_button_continue">Fortsetzen</string>
+    <string name="camera_close_desc">Schließen</string>
+    <string name="camera_equipment">Trainingsgerät</string>
+    <string name="equipmentlist_title">Wähle Trainingsgerät</string>
+    <string name="exerciselist_title">Wähle Übung</string>
+    <string name="exerciseinfo_title">Übungsinformationen</string>
+    <string name="exerciselist_header_exercises">Übungen</string>
+    <string name="exerciseinfo_equipment">Trainingsgerät</string>
+    <string name="networkerror_server_unreachable">Server nicht erreichbar</string>
+    <string name="networkerror_unexpected">Ein unerwarteter Fehler ist aufgreten</string>
+    <string name="networkerror_username_pwd_wrong">Username oder Passwort ist falsch</string>
+    <string name="networkerror_jwt_expired">Bitte erneut einloggen</string>
+    <string name="auth_fill_all_fields">Bitte alle Felder ausfüllen</string>
+    <string name="networkerror_timeout">Netzwerk Timeout</string>
+</resources>

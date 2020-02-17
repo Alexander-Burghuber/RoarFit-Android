@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.EquipmentDTO
+import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
@@ -13,6 +14,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 /**
@@ -33,14 +35,7 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
                 },
                 onError = { e ->
                     Log.e(TAG, "Error getting workoutplans", e)
-                    liveData.value = if (e is UnknownHostException) {
-                        Response.Error("Server not reachable")
-                    } else if (e is HttpException && e.code() == 401) {
-                        // jwt is invalid
-                        Response.Error("Please re-login", true)
-                    } else {
-                        Response.Error("An unknown error occurred")
-                    }
+                    liveData.value = handleError(e)
                 }
             )
         disposables.add(loadWorkoutPlans)
@@ -58,14 +53,7 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
                 },
                 onError = { e ->
                     Log.e(TAG, "Error getting equipment", e)
-                    liveData.value = if (e is UnknownHostException) {
-                        Response.Error("Server not reachable")
-                    } else if (e is HttpException && e.code() == 401) {
-                        // jwt is invalid
-                        Response.Error("Please re-login", true)
-                    } else {
-                        Response.Error("An unknown error occurred")
-                    }
+                    liveData.value = handleError(e)
                 }
             )
         disposables.add(loadEquipment)
@@ -86,14 +74,7 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
                 },
                 onError = { e ->
                     Log.e(TAG, "Error getting exercise templates", e)
-                    liveData.value = if (e is UnknownHostException) {
-                        Response.Error("Server not reachable")
-                    } else if (e is HttpException && e.code() == 401) {
-                        // jwt is invalid
-                        Response.Error("Please re-login", true)
-                    } else {
-                        Response.Error("An unknown error occurred")
-                    }
+                    liveData.value = handleError(e)
                 }
             )
         disposables.add(loadEquipment)
@@ -102,6 +83,18 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
 
     fun clear() {
         disposables.clear()
+    }
+
+    private fun <T> handleError(e: Throwable): Response.Error<T> {
+        return if (e is UnknownHostException) {
+            Response.Error(ErrorType.SERVER_UNREACHABLE)
+        } else if (e is HttpException && e.code() == 401) {
+            Response.Error(ErrorType.JWT_EXPIRED)
+        } else if (e is SocketTimeoutException) {
+            Response.Error(ErrorType.TIMEOUT)
+        } else {
+            Response.Error(ErrorType.UNEXPECTED)
+        }
     }
 
     companion object {

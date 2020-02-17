@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.features.main.MainActivity
@@ -109,13 +110,19 @@ class AuthActivity : AppCompatActivity() {
                             }
                         }
                         is Response.Error -> {
-                            response.message?.let { displaySnackbar(it) }
+                            val msg: String = when (response.errorType!!) {
+                                ErrorType.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
+                                ErrorType.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
+                                ErrorType.TIMEOUT -> getString(R.string.networkerror_timeout)
+                                else -> getString(R.string.networkerror_unexpected)
+                            }
+                            displaySnackbar(msg)
                             setLoading(false)
                         }
                     }
                 }
             } else {
-                displaySnackbar("Please fill in all fields")
+                displaySnackbar(getString(R.string.auth_fill_all_fields))
             }
         }
     }
@@ -185,7 +192,13 @@ class AuthActivity : AppCompatActivity() {
                             .remove(Constants.INITIALIZATION_VECTOR)
                             .apply()
                     }
-                    response.message?.let { displaySnackbar(it) }
+                    val msg: String = when (response.errorType!!) {
+                        ErrorType.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
+                        ErrorType.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
+                        ErrorType.TIMEOUT -> getString(R.string.networkerror_timeout)
+                        else -> getString(R.string.networkerror_unexpected)
+                    }
+                    displaySnackbar(msg)
                     setLoading(false)
                 }
             }
@@ -207,9 +220,9 @@ class AuthActivity : AppCompatActivity() {
 
     private fun createDecryptPromptInfo(username: String): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Quick login using biometrics")
+            .setTitle(getString(R.string.auth_biometric_decrypt_title))
             .setSubtitle("Username: $username")
-            .setNegativeButtonText("Close")
+            .setNegativeButtonText(getString(R.string.auth_biometric_decrypt_close))
             .setConfirmationRequired(false)
             .build()
     }
@@ -258,14 +271,13 @@ class AuthActivity : AppCompatActivity() {
     private fun setLoading(isLoading: Boolean) {
         input_username.isEnabled = !isLoading
         input_password.isEnabled = !isLoading
-        // input_customernumber.isEnabled = !isLoading
         button_auth_login.isEnabled = !isLoading
         if (isLoading) {
             button_auth_login.visibility = View.INVISIBLE
-            progressbar_auth.visibility = View.VISIBLE
+            progress_auth.visibility = View.VISIBLE
         } else {
             button_auth_login.visibility = View.VISIBLE
-            progressbar_auth.visibility = View.INVISIBLE
+            progress_auth.visibility = View.INVISIBLE
         }
     }
 
@@ -281,7 +293,7 @@ class AuthActivity : AppCompatActivity() {
             val channel = NotificationChannel(
                 Constants.CHANNEL_ID,
                 "Exercise",
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             ).apply {
                 enableVibration(false)
                 enableLights(false)
@@ -364,7 +376,13 @@ class AuthActivity : AppCompatActivity() {
                                     finishLogin(data)
                                 }
                                 is Response.Error -> {
-                                    response.message?.let { displaySnackbar(it) }
+                                    val msg: String = when (response.errorType!!) {
+                                        ErrorType.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
+                                        ErrorType.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
+                                        ErrorType.TIMEOUT -> getString(R.string.networkerror_timeout)
+                                        else -> getString(R.string.networkerror_unexpected)
+                                    }
+                                    displaySnackbar(msg)
                                     setLoading(false)
                                 }
                             }

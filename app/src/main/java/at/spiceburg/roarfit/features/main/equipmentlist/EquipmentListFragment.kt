@@ -51,12 +51,14 @@ class EquipmentListFragment : Fragment() {
                 is Response.Success -> {
                     val equipment: Array<String> = res.data!!
                     adapter.setExerciseTemplates(equipment)
+                    activity.progressMain.hide()
                 }
                 is Response.Loading -> {
-                    // todo
+                    activity.progressMain.show()
                 }
                 is Response.Error -> {
-                    // todo
+                    activity.progressMain.hide()
+                    activity.handleNetworkError(res.errorType!!)
                 }
             }
         }

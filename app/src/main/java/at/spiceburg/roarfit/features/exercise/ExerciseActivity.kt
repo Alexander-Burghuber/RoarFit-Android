@@ -4,8 +4,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -61,17 +61,15 @@ class ExerciseActivity : AppCompatActivity() {
             putExtra("templateName", exerciseTemplate.name)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
+        startService(serviceIntent)
 
         button_exercise_pause.setOnClickListener {
             if (bound) {
                 if (service.pauseOrContinueStopwatch()) {
+                    button_exercise_pause.text = getString(R.string.exercise_button_continue)
                     disposableStopwatch?.dispose()
                 } else {
+                    button_exercise_pause.text = getString(R.string.exercise_button_pause)
                     observeStopwatch()
                 }
             }
@@ -82,6 +80,10 @@ class ExerciseActivity : AppCompatActivity() {
             stopService(Intent(this, ExerciseService::class.java))
             finish()
         }
+
+        Handler().postDelayed({
+            button_exercise_finish.isEnabled = true
+        }, 500)
     }
 
     override fun onResume() {
@@ -103,8 +105,9 @@ class ExerciseActivity : AppCompatActivity() {
             .setTitle("Are you sure you want to stop the exercise?")
             .setMessage("The progress will NOT be saved.")
             .setPositiveButton("Ok") { _, _ ->
-                super.onBackPressed()
+                unbindService(connection)
                 stopService(Intent(this, ExerciseService::class.java))
+                super.onBackPressed()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.cancel()
