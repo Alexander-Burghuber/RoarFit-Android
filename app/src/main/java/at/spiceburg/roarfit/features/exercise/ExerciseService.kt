@@ -1,8 +1,8 @@
 package at.spiceburg.roarfit.features.exercise
 
-import android.app.IntentService
 import android.app.Notification
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
@@ -18,10 +18,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class ExerciseService : IntentService("ExerciseService") {
+class ExerciseService : Service() {
 
     var stopwatch: ConnectableObservable<String>? = null
-    private var lastTick = 0L
+    private var startTime: Long = 0
+    private var pausedTime: Long = 0
     private val binder = LocalBinder()
     private var disposableStopwatch: Disposable? = null
     private var connectedStopWatch: Disposable? = null
@@ -33,17 +34,18 @@ class ExerciseService : IntentService("ExerciseService") {
     }
 
     override fun onCreate() {
-        super.onCreate()
         val activityIntent = Intent(this, ExerciseActivity::class.java)
         pendingIntent =
             PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        startTime = Date().time
     }
 
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startStopwatch()
         templateName = intent?.getStringExtra("templateName")!!
         val notification = buildNotification("00:00")
         startForeground(Constants.NOTIFICATION_ID, notification)
+        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -51,7 +53,6 @@ class ExerciseService : IntentService("ExerciseService") {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         Log.d(TAG, "onDestroy called")
         disposableStopwatch?.dispose()
         stopwatch = null
@@ -65,8 +66,10 @@ class ExerciseService : IntentService("ExerciseService") {
         return if ((disposableStopwatch?.isDisposed) == false) {
             disposableStopwatch?.dispose()
             connectedStopWatch?.dispose()
+            pausedTime = Date().time
             true
         } else {
+            startTime = Date().time - (pausedTime - startTime)
             startStopwatch()
             false
         }
@@ -77,8 +80,7 @@ class ExerciseService : IntentService("ExerciseService") {
         val nm = NotificationManagerCompat.from(this)
 
         stopwatch = Observable.interval(1, TimeUnit.SECONDS)
-            .map { ++lastTick }
-            .map { ticks -> formatter.format(Date(ticks * 1000)) }
+            .map { formatter.format(Date(Date().time - startTime)) }
             .publish()
         connectedStopWatch = stopwatch?.connect()
 

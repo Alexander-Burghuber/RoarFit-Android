@@ -29,8 +29,8 @@ class EquipmentListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_equipment_list, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         val onEquipmentClicked: (equipment: String) -> Unit = { equipment ->
             val action =

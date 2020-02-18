@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -51,16 +53,38 @@ class ExerciseActivity : AppCompatActivity() {
             ExerciseViewModel.Factory()
         ).get(ExerciseViewModel::class.java)
 
-        // set view elements
-        val exerciseTemplate: ExerciseTemplate =
-            intent.getSerializableExtra("template") as ExerciseTemplate
-        text_exercise_equipment.text = exerciseTemplate.equipment
-        text_exercise_name.text = exerciseTemplate.name
-
         val serviceIntent = Intent(this, ExerciseService::class.java)
-            .putExtra("templateName", exerciseTemplate.name)
+        when {
+            intent.hasExtra("specification") -> {
+                val specification: ExerciseSpecification =
+                    intent.getSerializableExtra("specification") as ExerciseSpecification
 
-        startService(serviceIntent)
+                val template: ExerciseTemplate = specification.exercise.template
+
+                text_exercise_name.text = template.name
+                text_exercise_equipment.text = template.equipment
+
+                serviceIntent.putExtra("templateName", template.name)
+            }
+            intent.hasExtra("template") -> {
+                val template: ExerciseTemplate =
+                    intent.getSerializableExtra("template") as ExerciseTemplate
+
+                text_exercise_equipment.text = template.equipment
+                text_exercise_name.text = template.name
+
+                serviceIntent.putExtra("templateName", template.name)
+            }
+            else -> {
+                throw RuntimeException("ExerciseActivity cannot be started. No valid intent extra has been passed")
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
 
         button_exercise_pause.setOnClickListener {
             if (bound) {
