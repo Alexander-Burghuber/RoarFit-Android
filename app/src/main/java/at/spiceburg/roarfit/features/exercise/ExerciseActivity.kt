@@ -57,9 +57,8 @@ class ExerciseActivity : AppCompatActivity() {
         text_exercise_equipment.text = exerciseTemplate.equipment
         text_exercise_name.text = exerciseTemplate.name
 
-        val serviceIntent = Intent(this, ExerciseService::class.java).apply {
-            putExtra("templateName", exerciseTemplate.name)
-        }
+        val serviceIntent = Intent(this, ExerciseService::class.java)
+            .putExtra("templateName", exerciseTemplate.name)
 
         startService(serviceIntent)
 

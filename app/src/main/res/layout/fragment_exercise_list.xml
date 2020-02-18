@@ -14,40 +14,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/image_exerciselist_icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_fitness_center_black_24dp"
-            android:tint="@color/darkGrey"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/line"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_exerciselist_icon"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/textView"></LinearLayout>
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="19dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/exerciseinfo_equipment"
+            android:layout_marginEnd="16dp"
+            android:text="@string/exerciselist_equipment"
             android:textColor="@color/darkGrey"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/image_exerciselist_icon"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -61,7 +50,7 @@
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/linearLayout"
-            app:layout_constraintTop_toBottomOf="@+id/image_exerciselist_icon"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
             tools:text="Cross Trainer" />
 
         <TextView

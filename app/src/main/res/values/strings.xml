@@ -20,7 +20,7 @@
     <string name="auth_biometric_encrypt_title">Biometric Quick Login</string>
     <string name="auth_biometric_encrypt_desc">Activate biometric authentication to quickly login with your fingerprint the next time you open the app.</string>
     <string name="auth_biometric_encrypt_negative_button">Don\'t remind me again</string>
-    <string name="auth_biometric_decrypt_title">Quick login using biometrics</string>
+    <string name="auth_biometric_decrypt_title">Quick login</string>
     <string name="auth_biometric_decrypt_close">Close</string>
 
     <!-- MainActivity -->
@@ -56,11 +56,19 @@
     <!-- Exercise List -->
     <string name="exerciselist_title">Choose exercise</string>
     <string name="exerciselist_header_exercises">Exercises</string>
-    <string name="exerciseinfo_title">Exercise information</string>
-    <string name="exerciseinfo_equipment">Equipment</string>
+    <string name="exerciselist_equipment">Equipment</string>
 
     <!-- Exercise Info -->
-    <string name="exercise_info_button_start">Start</string>
+    <string name="exerciseinfo_button_start" translatable="false">Start</string>
+    <string name="exerciseinfo_title">Exercise</string>
+    <string name="exerciseinfo_header_exercise">Exercise</string>
+    <string name="exerciseinfo_equipment">Equipment</string>
+    <string name="exerciseinfo_no_equipment">No equipment needed</string>
+    <string name="exerciseinfo_header_bodyparts">Body parts</string>
+    <string name="exerciseinfo_header_trainerinfo">Personal Trainer specifications</string>
+    <string name="exerciseinfo_sets">Sets: %s</string>
+    <string name="exerciseinfo_reps">Reps: %s</string>
+    <string name="exerciseinfo_weight">Weight: %s kg</string>
 
     <!-- Exercise -->
     <string name="exercise_time" translatable="false">00:00</string>

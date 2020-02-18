@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="auth_biometric_encrypt_desc">Aktiviere Biometrische Authentifizierung um das nächste Mal schneller einloggen zu können.</string>
-    <string name="auth_biometric_decrypt_title">Quick-Login mit Biometrischen Daten</string>
+    <string name="auth_biometric_decrypt_title">Quick-Login</string>
     <string name="auth_hint_password">Passwort</string>
     <string name="auth_biometric_decrypt_close">Schließen</string>
     <string name="auth_biometric_encrypt_negative_button">Nicht erneut erinnern</string>
@@ -17,7 +17,6 @@
     <string name="main_bottomsheet_list">Liste</string>
     <string name="main_bottomsheet_title">Trainingsgerät auswahlen von</string>
     <string name="exercise_notification_name">Training</string>
-    <string name="exercise_info_button_start">Start</string>
     <string name="exercise_button_pause">Pause</string>
     <string name="exercise_button_finish">Beenden</string>
     <string name="exercise_button_continue">Fortsetzen</string>
@@ -25,7 +24,7 @@
     <string name="camera_equipment">Trainingsgerät</string>
     <string name="equipmentlist_title">Wähle Trainingsgerät</string>
     <string name="exerciselist_title">Wähle Übung</string>
-    <string name="exerciseinfo_title">Übungsinformationen</string>
+    <string name="exerciseinfo_title">Übung</string>
     <string name="exerciselist_header_exercises">Übungen</string>
     <string name="exerciseinfo_equipment">Trainingsgerät</string>
     <string name="networkerror_server_unreachable">Server nicht erreichbar</string>
@@ -34,4 +33,12 @@
     <string name="networkerror_jwt_expired">Bitte erneut einloggen</string>
     <string name="auth_fill_all_fields">Bitte alle Felder ausfüllen</string>
     <string name="networkerror_timeout">Netzwerk Timeout</string>
+    <string name="exerciseinfo_header_exercise">Übung</string>
+    <string name="exerciselist_equipment">Trainingsgerät</string>
+    <string name="exerciseinfo_no_equipment">Kein Trainingsgerät benötigt</string>
+    <string name="exerciseinfo_header_bodyparts">Körperteile</string>
+    <string name="exerciseinfo_header_trainerinfo">Persönliche Trainer Angaben</string>
+    <string name="exerciseinfo_sets">Sätze: %s</string>
+    <string name="exerciseinfo_reps">WH: %s</string>
+    <string name="exerciseinfo_weight">Gewicht: %s kg</string>
 </resources>
