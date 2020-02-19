@@ -114,18 +114,12 @@ class ExerciseActivity : AppCompatActivity() {
         }
 
         button_exercise_finish.setOnClickListener {
-            doUnbindService()
-            stopService(Intent(this, ExerciseService::class.java))
+            doFinishService()
             finish()
         }
 
         button_exercise_reset.setOnClickListener {
-            if (bound) {
-                service.resetStopWatch()
-                if (!service.isStopWatchRunning()) {
-                    text_exercise_stopwatch.text = getString(R.string.exercise_time)
-                }
-            }
+            resetStopWatch()
         }
     }
 
@@ -154,8 +148,7 @@ class ExerciseActivity : AppCompatActivity() {
         Log.d(TAG, "onDestroy called")
 
         if (isFinishing) {
-            doUnbindService()
-            stopService(Intent(this, ExerciseService::class.java))
+            doFinishService()
         }
     }
 
@@ -191,6 +184,11 @@ class ExerciseActivity : AppCompatActivity() {
         }
     }
 
+    private fun doFinishService() {
+        doUnbindService()
+        stopService(Intent(this, ExerciseService::class.java))
+    }
+
     private fun setupTemplateViews(template: ExerciseTemplate) {
         text_exercise_name.text = template.name
         text_exercise_equipment.text = template.equipment
@@ -213,6 +211,23 @@ class ExerciseActivity : AppCompatActivity() {
         }
 
         scrollview_exercise_specifications.visibility = View.VISIBLE
+    }
+
+    private fun resetStopWatch() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.exercise_reset_warning_title))
+            .setPositiveButton(getString(R.string.exercise_reset_warning_yes)) { _, _ ->
+                if (bound) {
+                    service.resetStopWatch()
+                    if (!service.isStopWatchRunning()) {
+                        text_exercise_stopwatch.text = getString(R.string.exercise_time)
+                    }
+                }
+            }
+            .setNegativeButton(getString(R.string.exercise_reset_warning_no)) { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
     }
 
     companion object {

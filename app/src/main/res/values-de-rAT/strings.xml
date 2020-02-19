@@ -41,4 +41,7 @@
     <string name="exercise_header_trainerinfo">Trainer Angaben</string>
     <string name="exercise_backpress_warning_title">Sind Sie sicher, dass Sie die Übung abbrechen wollen?</string>
     <string name="exercise_backpress_warning_msg">Der Fortschritt wird NICHT gespeichert.</string>
+    <string name="exercise_reset_warning_title">Stoppuhr zurücksetzen?</string>
+    <string name="exercise_reset_warning_yes">Ja</string>
+    <string name="exercise_reset_warning_no">Abbrechen</string>
 </resources>
