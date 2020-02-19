@@ -6,9 +6,9 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.MyApplication
@@ -46,6 +46,8 @@ class ExerciseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise)
 
+        Log.d(TAG, "onCreate called")
+
         // setup viewModel
         val appContainer = (application as MyApplication).appContainer
         viewModel = ViewModelProvider(
@@ -60,9 +62,9 @@ class ExerciseActivity : AppCompatActivity() {
                     intent.getSerializableExtra("specification") as ExerciseSpecification
 
                 val template: ExerciseTemplate = specification.exercise.template
+                setupTemplateViews(template)
 
-                text_exercise_name.text = template.name
-                text_exercise_equipment.text = template.equipment
+                setupSpecificationsViews(specification)
 
                 serviceIntent.putExtra("templateName", template.name)
             }
@@ -70,14 +72,11 @@ class ExerciseActivity : AppCompatActivity() {
                 val template: ExerciseTemplate =
                     intent.getSerializableExtra("template") as ExerciseTemplate
 
-                text_exercise_equipment.text = template.equipment
-                text_exercise_name.text = template.name
+                setupTemplateViews(template)
 
                 serviceIntent.putExtra("templateName", template.name)
             }
-            else -> {
-                throw RuntimeException("ExerciseActivity cannot be started. No valid intent extra has been passed")
-            }
+            else -> throw RuntimeException("ExerciseActivity cannot be started. No valid intent extra has been passed")
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -89,10 +88,20 @@ class ExerciseActivity : AppCompatActivity() {
         button_exercise_pause.setOnClickListener {
             if (bound) {
                 if (service.pauseOrContinueStopwatch()) {
-                    button_exercise_pause.text = getString(R.string.exercise_button_continue)
+                    button_exercise_pause.setImageDrawable(
+                        resources.getDrawable(
+                            R.drawable.ic_play_arrow_black_24dp,
+                            null
+                        )
+                    )
                     disposableStopwatch?.dispose()
                 } else {
-                    button_exercise_pause.text = getString(R.string.exercise_button_pause)
+                    button_exercise_pause.setImageDrawable(
+                        resources.getDrawable(
+                            R.drawable.ic_pause_black_24dp,
+                            null
+                        )
+                    )
                     observeStopwatch()
                 }
             }
@@ -104,13 +113,21 @@ class ExerciseActivity : AppCompatActivity() {
             finish()
         }
 
-        Handler().postDelayed({
-            button_exercise_finish.isEnabled = true
-        }, 500)
+        button_exercise_reset.setOnClickListener {
+            if (bound) {
+                service.resetStopWatch()
+                if (!service.isStopWatchRunning()) {
+                    text_exercise_stopwatch.text = "00:00"
+                }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+
+        Log.d(TAG, "onResume called")
+
         val intent = Intent(this, ExerciseService::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
         if (bound) {
@@ -120,13 +137,26 @@ class ExerciseActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        Log.d(TAG, "pause isFinishing $isFinishing")
+        Log.d(TAG, "onPause called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop called")
+        unbindService(connection)
         disposableStopwatch?.dispose()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy called")
     }
 
     override fun onBackPressed() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Are you sure you want to stop the exercise?")
-            .setMessage("The progress will NOT be saved.")
+            .setTitle(getString(R.string.exercise_backpress_warning_title))
+            .setMessage(getString(R.string.exercise_backpress_warning_msg))
             .setPositiveButton("Ok") { _, _ ->
                 unbindService(connection)
                 stopService(Intent(this, ExerciseService::class.java))
@@ -144,6 +174,30 @@ class ExerciseActivity : AppCompatActivity() {
                 Log.d(TAG, "Stopwatch: $time")
                 text_exercise_stopwatch.text = time
             }
+    }
+
+    private fun setupTemplateViews(template: ExerciseTemplate) {
+        text_exercise_name.text = template.name
+        text_exercise_equipment.text = template.equipment
+    }
+
+    private fun setupSpecificationsViews(specification: ExerciseSpecification) {
+        // set sets
+        text_exercise_sets.text = getString(R.string.exerciseinfo_sets, specification.sets)
+        // set reps
+        text_exercise_reps.text = getString(R.string.exerciseinfo_reps, specification.reps)
+        // set weight if available
+        specification.weight?.let {
+            text_exercise_weight.visibility = View.VISIBLE
+            text_exercise_weight.text = getString(R.string.exerciseinfo_weight, it)
+        }
+        // set additional information from the trainer
+        specification.info?.let {
+            text_exercise_trainer_additionalinfo.visibility = View.VISIBLE
+            text_exercise_trainer_additionalinfo.text = it
+        }
+
+        scrollview_exercise_specifications.visibility = View.VISIBLE
     }
 
     companion object {

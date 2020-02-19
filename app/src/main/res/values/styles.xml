@@ -24,6 +24,13 @@
         <item name="android:statusBarColor">@android:color/white</item>
     </style>
 
+    <!-- ExerciseActivity theme -->
+    <style name="AppTheme.Exercise" parent="AppTheme">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/primaryLight</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
     <!-- BottomSheet theme -->
     <style name="Widget.AppTheme.BottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>

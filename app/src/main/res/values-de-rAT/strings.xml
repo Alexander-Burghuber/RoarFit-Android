@@ -17,9 +17,6 @@
     <string name="main_bottomsheet_list">Liste</string>
     <string name="main_bottomsheet_title">Trainingsgerät auswahlen von</string>
     <string name="exercise_notification_name">Training</string>
-    <string name="exercise_button_pause">Pause</string>
-    <string name="exercise_button_finish">Beenden</string>
-    <string name="exercise_button_continue">Fortsetzen</string>
     <string name="camera_close_desc">Schließen</string>
     <string name="camera_equipment">Trainingsgerät</string>
     <string name="equipmentlist_title">Wähle Trainingsgerät</string>
@@ -41,4 +38,7 @@
     <string name="exerciseinfo_sets">Sätze: %s</string>
     <string name="exerciseinfo_reps">WH: %s</string>
     <string name="exerciseinfo_weight">Gewicht: %s kg</string>
+    <string name="exercise_header_trainerinfo">Trainer Angaben</string>
+    <string name="exercise_backpress_warning_title">Sind Sie sicher, dass Sie die Übung abbrechen wollen?</string>
+    <string name="exercise_backpress_warning_msg">Der Fortschritt wird NICHT gespeichert.</string>
 </resources>

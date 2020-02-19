@@ -23,11 +23,13 @@ class ExerciseService : Service() {
     var stopwatch: ConnectableObservable<String>? = null
     private var startTime: Long = 0
     private var pausedTime: Long = 0
+    private var hasReset = false
     private val binder = LocalBinder()
     private var disposableStopwatch: Disposable? = null
     private var connectedStopWatch: Disposable? = null
     private lateinit var pendingIntent: PendingIntent
     private lateinit var templateName: String
+    private lateinit var nm: NotificationManagerCompat
 
     inner class LocalBinder : Binder() {
         fun getService(): ExerciseService = this@ExerciseService
@@ -37,6 +39,7 @@ class ExerciseService : Service() {
         val activityIntent = Intent(this, ExerciseActivity::class.java)
         pendingIntent =
             PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        nm = NotificationManagerCompat.from(this)
         startTime = Date().time
     }
 
@@ -63,21 +66,40 @@ class ExerciseService : Service() {
      * Returns true if the stopwatch was paused and false if it was continued
      */
     fun pauseOrContinueStopwatch(): Boolean {
-        return if ((disposableStopwatch?.isDisposed) == false) {
+        return if (isStopWatchRunning()) {
             disposableStopwatch?.dispose()
             connectedStopWatch?.dispose()
             pausedTime = Date().time
             true
         } else {
-            startTime = Date().time - (pausedTime - startTime)
+            if (hasReset) {
+                startTime = Date().time
+                hasReset = false
+            } else {
+                startTime = Date().time - (pausedTime - startTime)
+            }
             startStopwatch()
             false
         }
     }
 
+    fun isStopWatchRunning(): Boolean {
+        return (disposableStopwatch?.isDisposed) == false
+    }
+
+    fun resetStopWatch() {
+        if (isStopWatchRunning()) {
+            startTime = Date().time
+        } else {
+            hasReset = true
+            // update notification
+            val updatedNotification = buildNotification("00:00")
+            nm.notify(Constants.NOTIFICATION_ID, updatedNotification)
+        }
+    }
+
     private fun startStopwatch() {
         val formatter = SimpleDateFormat("mm:ss", Locale.US)
-        val nm = NotificationManagerCompat.from(this)
 
         stopwatch = Observable.interval(1, TimeUnit.SECONDS)
             .map { formatter.format(Date(Date().time - startTime)) }
