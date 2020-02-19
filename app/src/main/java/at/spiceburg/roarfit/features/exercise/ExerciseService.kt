@@ -24,9 +24,12 @@ class ExerciseService : Service() {
     private var startTime: Long = 0
     private var pausedTime: Long = 0
     private var hasReset = false
+
     private val binder = LocalBinder()
-    private var disposableStopwatch: Disposable? = null
-    private var connectedStopWatch: Disposable? = null
+
+    private var stopWatchObserver: Disposable? = null
+    private var stopWatchConnector: Disposable? = null
+
     private lateinit var pendingIntent: PendingIntent
     private lateinit var templateName: String
     private lateinit var nm: NotificationManagerCompat
@@ -36,6 +39,8 @@ class ExerciseService : Service() {
     }
 
     override fun onCreate() {
+        Log.d(TAG, "onCreate called")
+
         val activityIntent = Intent(this, ExerciseActivity::class.java)
         pendingIntent =
             PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -44,6 +49,8 @@ class ExerciseService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand called")
+
         startStopwatch()
         templateName = intent?.getStringExtra("templateName")!!
         val notification = buildNotification("00:00")
@@ -52,39 +59,47 @@ class ExerciseService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
+        Log.d(TAG, "onBind called")
         return binder
+    }
+
+    override fun onRebind(intent: Intent?) {
+        super.onRebind(intent)
+        Log.d(TAG, "onRebind called")
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.d(TAG, "onUnbind called")
+        return true
     }
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy called")
-        disposableStopwatch?.dispose()
+
+        stopWatchObserver?.dispose()
+        stopWatchConnector?.dispose()
         stopwatch = null
         stopForeground(true)
     }
 
-    /**
-     * Returns true if the stopwatch was paused and false if it was continued
-     */
-    fun pauseOrContinueStopwatch(): Boolean {
-        return if (isStopWatchRunning()) {
-            disposableStopwatch?.dispose()
-            connectedStopWatch?.dispose()
-            pausedTime = Date().time
-            true
+    fun pauseStopWatch() {
+        stopWatchObserver?.dispose()
+        stopWatchConnector?.dispose()
+        pausedTime = Date().time
+    }
+
+    fun continueStopWatch() {
+        if (hasReset) {
+            startTime = Date().time
+            hasReset = false
         } else {
-            if (hasReset) {
-                startTime = Date().time
-                hasReset = false
-            } else {
-                startTime = Date().time - (pausedTime - startTime)
-            }
-            startStopwatch()
-            false
+            startTime = Date().time - (pausedTime - startTime)
         }
+        startStopwatch()
     }
 
     fun isStopWatchRunning(): Boolean {
-        return (disposableStopwatch?.isDisposed) == false
+        return (stopWatchObserver?.isDisposed) == false
     }
 
     fun resetStopWatch() {
@@ -104,9 +119,9 @@ class ExerciseService : Service() {
         stopwatch = Observable.interval(1, TimeUnit.SECONDS)
             .map { formatter.format(Date(Date().time - startTime)) }
             .publish()
-        connectedStopWatch = stopwatch?.connect()
+        stopWatchConnector = stopwatch?.connect()
 
-        disposableStopwatch = stopwatch?.subscribe { time ->
+        stopWatchObserver = stopwatch?.subscribe { time ->
             Log.d(TAG, "Stopwatch: $time")
 
             // update notification

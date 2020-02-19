@@ -25,11 +25,12 @@ class ExerciseActivity : AppCompatActivity() {
     private lateinit var viewModel: ExerciseViewModel
     private lateinit var service: ExerciseService
     private var bound = false
-    private var disposableStopwatch: Disposable? = null
+    private var stopWatchObserver: Disposable? = null
 
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            Log.d(TAG, "onServiceConnected called")
             val binder = service as ExerciseService.LocalBinder
             this@ExerciseActivity.service = binder.getService()
             bound = true
@@ -37,7 +38,7 @@ class ExerciseActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            Log.d(TAG, "onServiceDisconnected")
+            Log.d(TAG, "onServiceDisconnected called")
             bound = false
         }
     }
@@ -87,28 +88,33 @@ class ExerciseActivity : AppCompatActivity() {
 
         button_exercise_pause.setOnClickListener {
             if (bound) {
-                if (service.pauseOrContinueStopwatch()) {
+                if (service.isStopWatchRunning()) {
+                    // pause the stopWatch
+                    service.pauseStopWatch()
+                    stopWatchObserver?.dispose()
+
                     button_exercise_pause.setImageDrawable(
                         resources.getDrawable(
                             R.drawable.ic_play_arrow_black_24dp,
                             null
                         )
                     )
-                    disposableStopwatch?.dispose()
                 } else {
+                    service.continueStopWatch()
+                    observeStopwatch()
+
                     button_exercise_pause.setImageDrawable(
                         resources.getDrawable(
                             R.drawable.ic_pause_black_24dp,
                             null
                         )
                     )
-                    observeStopwatch()
                 }
             }
         }
 
         button_exercise_finish.setOnClickListener {
-            unbindService(connection)
+            doUnbindService()
             stopService(Intent(this, ExerciseService::class.java))
             finish()
         }
@@ -117,7 +123,7 @@ class ExerciseActivity : AppCompatActivity() {
             if (bound) {
                 service.resetStopWatch()
                 if (!service.isStopWatchRunning()) {
-                    text_exercise_stopwatch.text = "00:00"
+                    text_exercise_stopwatch.text = getString(R.string.exercise_time)
                 }
             }
         }
@@ -130,27 +136,27 @@ class ExerciseActivity : AppCompatActivity() {
 
         val intent = Intent(this, ExerciseService::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        if (bound) {
-            observeStopwatch()
-        }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG, "pause isFinishing $isFinishing")
         Log.d(TAG, "onPause called")
     }
 
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop called")
-        unbindService(connection)
-        disposableStopwatch?.dispose()
+        doUnbindService()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy called")
+
+        if (isFinishing) {
+            doUnbindService()
+            stopService(Intent(this, ExerciseService::class.java))
+        }
     }
 
     override fun onBackPressed() {
@@ -158,7 +164,7 @@ class ExerciseActivity : AppCompatActivity() {
             .setTitle(getString(R.string.exercise_backpress_warning_title))
             .setMessage(getString(R.string.exercise_backpress_warning_msg))
             .setPositiveButton("Ok") { _, _ ->
-                unbindService(connection)
+                doUnbindService()
                 stopService(Intent(this, ExerciseService::class.java))
                 super.onBackPressed()
             }
@@ -169,11 +175,20 @@ class ExerciseActivity : AppCompatActivity() {
     }
 
     private fun observeStopwatch() {
-        disposableStopwatch =
+        Log.d(TAG, "observeStopWatch called")
+        stopWatchObserver =
             service.stopwatch?.observeOn(AndroidSchedulers.mainThread())?.subscribe { time ->
                 Log.d(TAG, "Stopwatch: $time")
                 text_exercise_stopwatch.text = time
             }
+    }
+
+    private fun doUnbindService() {
+        stopWatchObserver?.dispose()
+        if (bound) {
+            unbindService(connection)
+            bound = false
+        }
     }
 
     private fun setupTemplateViews(template: ExerciseTemplate) {
