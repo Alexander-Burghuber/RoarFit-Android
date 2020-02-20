@@ -79,6 +79,18 @@
     <string name="exercise_reset_warning_yes">Yes</string>
     <string name="exercise_reset_warning_no">Cancel</string>
 
+    <!-- Finish Exercise -->
+    <string name="finishexercise_title">Finish Exercise</string>
+    <string name="finishexercise_sets">Sets</string>
+    <string name="finishexercise_reps">Reps</string>
+    <string name="finishexercise_weight">Weight</string>
+    <string name="finishexercise_time">Amount of time</string>
+    <string name="finishexercise_desc">Update here the information about your completed exercise.</string>
+    <string name="finishexercise_min_secs" translatable="false">00</string>
+    <string name="finishexercise_time_divider" translatable="false">:</string>
+    <string name="finishexercise_time_add_zero" translatable="false">0%d</string>
+
+    <!-- Notification -->
     <string name="exercise_notification_name">Exercise</string>
 
     <!-- TODO: Remove or change this placeholder text -->

@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.MyApplication
@@ -18,11 +17,10 @@ import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_exercise.*
 
 class ExerciseActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: ExerciseViewModel
+    lateinit var viewModel: ExerciseViewModel
     private lateinit var service: ExerciseService
     private var bound = false
     private var stopWatchObserver: Disposable? = null
@@ -61,20 +59,12 @@ class ExerciseActivity : AppCompatActivity() {
             intent.hasExtra("specification") -> {
                 val specification: ExerciseSpecification =
                     intent.getSerializableExtra("specification") as ExerciseSpecification
-
                 val template: ExerciseTemplate = specification.exercise.template
-                setupTemplateViews(template)
-
-                setupSpecificationsViews(specification)
-
                 serviceIntent.putExtra("templateName", template.name)
             }
             intent.hasExtra("template") -> {
                 val template: ExerciseTemplate =
                     intent.getSerializableExtra("template") as ExerciseTemplate
-
-                setupTemplateViews(template)
-
                 serviceIntent.putExtra("templateName", template.name)
             }
             else -> throw RuntimeException("ExerciseActivity cannot be started. No valid intent extra has been passed")
@@ -85,42 +75,6 @@ class ExerciseActivity : AppCompatActivity() {
         } else {
             startService(serviceIntent)
         }
-
-        button_exercise_pause.setOnClickListener {
-            if (bound) {
-                if (service.isStopWatchRunning()) {
-                    // pause the stopWatch
-                    service.pauseStopWatch()
-                    stopWatchObserver?.dispose()
-
-                    button_exercise_pause.setImageDrawable(
-                        resources.getDrawable(
-                            R.drawable.ic_play_arrow_black_24dp,
-                            null
-                        )
-                    )
-                } else {
-                    service.continueStopWatch()
-                    observeStopwatch()
-
-                    button_exercise_pause.setImageDrawable(
-                        resources.getDrawable(
-                            R.drawable.ic_pause_black_24dp,
-                            null
-                        )
-                    )
-                }
-            }
-        }
-
-        button_exercise_finish.setOnClickListener {
-            doFinishService()
-            finish()
-        }
-
-        button_exercise_reset.setOnClickListener {
-            resetStopWatch()
-        }
     }
 
     override fun onResume() {
@@ -130,11 +84,6 @@ class ExerciseActivity : AppCompatActivity() {
 
         val intent = Intent(this, ExerciseService::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause called")
     }
 
     override fun onStop() {
@@ -148,31 +97,67 @@ class ExerciseActivity : AppCompatActivity() {
         Log.d(TAG, "onDestroy called")
 
         if (isFinishing) {
-            doFinishService()
+            doStopService()
         }
     }
 
     override fun onBackPressed() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(getString(R.string.exercise_backpress_warning_title))
-            .setMessage(getString(R.string.exercise_backpress_warning_msg))
-            .setPositiveButton("Ok") { _, _ ->
-                doUnbindService()
-                stopService(Intent(this, ExerciseService::class.java))
-                super.onBackPressed()
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.exercise_backpress_warning_title))
+                .setMessage(getString(R.string.exercise_backpress_warning_msg))
+                .setPositiveButton("Ok") { _, _ ->
+                    doUnbindService()
+                    stopService(Intent(this, ExerciseService::class.java))
+                    super.onBackPressed()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.cancel()
+                }
+                .show()
+        } else {
+            supportFragmentManager.popBackStack()
+        }
+    }
+
+    fun fragPauseClick() {
+        if (bound) {
+            if (service.isStopWatchRunning()) {
+                // pause the stopWatch
+                service.pauseStopWatch()
+                stopWatchObserver?.dispose()
+                viewModel.isStopWatchPaused.value = true
+            } else {
+                service.continueStopWatch()
+                observeStopwatch()
+                viewModel.isStopWatchPaused.value = false
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
+        }
+    }
+
+    fun fragFinishClick() {
+        if (bound) {
+            if (service.isStopWatchRunning()) {
+                // pause the stopWatch
+                service.pauseStopWatch()
+                stopWatchObserver?.dispose()
+                viewModel.isStopWatchPaused.value = true
             }
-            .show()
+        }
+
+        openFinishExerciseFragment()
+    }
+
+    fun fragResetClick() {
+        resetStopWatch()
     }
 
     private fun observeStopwatch() {
         Log.d(TAG, "observeStopWatch called")
+
         stopWatchObserver =
             service.stopwatch?.observeOn(AndroidSchedulers.mainThread())?.subscribe { time ->
-                Log.d(TAG, "Stopwatch: $time")
-                text_exercise_stopwatch.text = time
+                viewModel.stopWatch.value = time
             }
     }
 
@@ -184,33 +169,9 @@ class ExerciseActivity : AppCompatActivity() {
         }
     }
 
-    private fun doFinishService() {
+    private fun doStopService() {
         doUnbindService()
         stopService(Intent(this, ExerciseService::class.java))
-    }
-
-    private fun setupTemplateViews(template: ExerciseTemplate) {
-        text_exercise_name.text = template.name
-        text_exercise_equipment.text = template.equipment
-    }
-
-    private fun setupSpecificationsViews(specification: ExerciseSpecification) {
-        // set sets
-        text_exercise_sets.text = getString(R.string.exerciseinfo_sets, specification.sets)
-        // set reps
-        text_exercise_reps.text = getString(R.string.exerciseinfo_reps, specification.reps)
-        // set weight if available
-        specification.weight?.let {
-            text_exercise_weight.visibility = View.VISIBLE
-            text_exercise_weight.text = getString(R.string.exerciseinfo_weight, it)
-        }
-        // set additional information from the trainer
-        specification.info?.let {
-            text_exercise_trainer_additionalinfo.visibility = View.VISIBLE
-            text_exercise_trainer_additionalinfo.text = it
-        }
-
-        scrollview_exercise_specifications.visibility = View.VISIBLE
     }
 
     private fun resetStopWatch() {
@@ -220,7 +181,7 @@ class ExerciseActivity : AppCompatActivity() {
                 if (bound) {
                     service.resetStopWatch()
                     if (!service.isStopWatchRunning()) {
-                        text_exercise_stopwatch.text = getString(R.string.exercise_time)
+                        viewModel.stopWatch.value = getString(R.string.exercise_time)
                     }
                 }
             }
@@ -228,6 +189,23 @@ class ExerciseActivity : AppCompatActivity() {
                 dialog.cancel()
             }
             .show()
+    }
+
+    private fun openFinishExerciseFragment() {
+        val finishExerciseFragment = FinishExerciseFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
+            .replace(R.id.fragment_exercise_container, finishExerciseFragment)
+            .addToBackStack(null)
+            .commit()
+        //doFinishService()
+        //finish()
     }
 
     companion object {

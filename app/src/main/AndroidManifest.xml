@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <!-- TODO: Remove clear text traffic -->
+    <!-- TODO: Remove usesCleartextTraffic -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -49,6 +49,7 @@
             android:name=".features.exercise.ExerciseActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme.Exercise" />
 
         <meta-data

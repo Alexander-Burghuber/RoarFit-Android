@@ -44,4 +44,10 @@
     <string name="exercise_reset_warning_title">Stoppuhr zurücksetzen?</string>
     <string name="exercise_reset_warning_yes">Ja</string>
     <string name="exercise_reset_warning_no">Abbrechen</string>
+    <string name="finishexercise_title">Übung abschließen</string>
+    <string name="finishexercise_sets">Sätze</string>
+    <string name="finishexercise_reps">WH</string>
+    <string name="finishexercise_weight">Gewicht</string>
+    <string name="finishexercise_time">Zeitaufwand</string>
+    <string name="finishexercise_desc">Bearbeite hier die Informationen über die abgeschlossene Übung.</string>
 </resources>
