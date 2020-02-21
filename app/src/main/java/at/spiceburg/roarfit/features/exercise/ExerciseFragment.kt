@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_exercise.*
 class ExerciseFragment : Fragment() {
 
     private val viewModel: ExerciseViewModel by activityViewModels()
+    private lateinit var activity: ExerciseActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,24 +31,14 @@ class ExerciseFragment : Fragment() {
 
         Log.d(TAG, "onActivityCreated called")
 
-        val activity: ExerciseActivity = requireActivity() as ExerciseActivity
-        val intent = activity.intent
-        when {
-            intent.hasExtra("specification") -> {
-                val specification: ExerciseSpecification =
-                    intent.getSerializableExtra("specification") as ExerciseSpecification
+        activity = requireActivity() as ExerciseActivity
 
-                val template: ExerciseTemplate = specification.exercise.template
-                setupTemplateViews(template)
-
-                setupSpecificationsViews(specification)
-            }
-            intent.hasExtra("template") -> {
-                val template: ExerciseTemplate =
-                    intent.getSerializableExtra("template") as ExerciseTemplate
-                setupTemplateViews(template)
-            }
-            else -> throw RuntimeException("ExerciseActivity cannot be started. No valid intent extra has been passed")
+        if (activity.specification != null) {
+            val specification: ExerciseSpecification = activity.specification!!
+            setupTemplateViews(specification.exercise.template)
+            setupSpecificationsViews(specification)
+        } else if (activity.template != null) {
+            setupTemplateViews(activity.template!!)
         }
 
         viewModel.isStopWatchPaused.observe(viewLifecycleOwner) { isPaused ->

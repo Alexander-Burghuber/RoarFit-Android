@@ -14,6 +14,8 @@ import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.features.auth.AuthActivity
+import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -24,6 +26,9 @@ class ExerciseActivity : AppCompatActivity() {
     private lateinit var service: ExerciseService
     private var bound = false
     private var stopWatchObserver: Disposable? = null
+
+    var specification: ExerciseSpecification? = null
+    var template: ExerciseTemplate? = null
 
     private val connection = object : ServiceConnection {
 
@@ -51,7 +56,7 @@ class ExerciseActivity : AppCompatActivity() {
         val appContainer = (application as MyApplication).appContainer
         viewModel = ViewModelProvider(
             this,
-            ExerciseViewModel.Factory()
+            ExerciseViewModel.Factory(appContainer.workoutRepository)
         ).get(ExerciseViewModel::class.java)
 
         val serviceIntent = Intent(this, ExerciseService::class.java)
@@ -59,12 +64,17 @@ class ExerciseActivity : AppCompatActivity() {
             intent.hasExtra("specification") -> {
                 val specification: ExerciseSpecification =
                     intent.getSerializableExtra("specification") as ExerciseSpecification
-                val template: ExerciseTemplate = specification.exercise.template
-                serviceIntent.putExtra("templateName", template.name)
+
+                this.specification = specification
+
+                serviceIntent.putExtra("templateName", specification.exercise.template.name)
             }
             intent.hasExtra("template") -> {
                 val template: ExerciseTemplate =
                     intent.getSerializableExtra("template") as ExerciseTemplate
+
+                this.template = template
+
                 serviceIntent.putExtra("templateName", template.name)
             }
             else -> throw RuntimeException("ExerciseActivity cannot be started. No valid intent extra has been passed")
@@ -152,6 +162,25 @@ class ExerciseActivity : AppCompatActivity() {
         resetStopWatch()
     }
 
+    fun finishExercise() {
+        doStopService()
+        finish()
+    }
+
+    fun logout() {
+        doStopService()
+        getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE).edit()
+            .remove(Constants.USERNAME)
+            .remove(Constants.JWT)
+            .remove(Constants.USER_ID)
+            .remove(Constants.ENCRYPTED_PWD)
+            .remove(Constants.INITIALIZATION_VECTOR)
+            .apply()
+        val intent = Intent(this, AuthActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     private fun observeStopwatch() {
         Log.d(TAG, "observeStopWatch called")
 
@@ -204,8 +233,6 @@ class ExerciseActivity : AppCompatActivity() {
             .replace(R.id.fragment_exercise_container, finishExerciseFragment)
             .addToBackStack(null)
             .commit()
-        //doFinishService()
-        //finish()
     }
 
     companion object {

@@ -1,4 +1,4 @@
-package at.spiceburg.roarfit.data
+package at.spiceburg.roarfit.data.dto
 
 data class LoginRequest(
     val username: String,

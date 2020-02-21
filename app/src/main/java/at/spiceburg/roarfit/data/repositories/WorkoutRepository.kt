@@ -3,9 +3,11 @@ package at.spiceburg.roarfit.data.repositories
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import at.spiceburg.roarfit.data.EquipmentDTO
 import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.data.dto.EquipmentDTO
+import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
+import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.network.KeyFitApi
@@ -65,7 +67,10 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
         equipment: String
     ): LiveData<Response<Array<ExerciseTemplate>>> {
         val liveData = MutableLiveData<Response<Array<ExerciseTemplate>>>(Response.Loading())
-        val loadEquipment = keyFitApi.getExerciseTemplates("Bearer $jwt", EquipmentDTO(equipment))
+        val loadEquipment = keyFitApi.getExerciseTemplates(
+            "Bearer $jwt",
+            EquipmentDTO(equipment)
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -81,20 +86,67 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
         return liveData
     }
 
+    fun addPersonalExercise(
+        jwt: String, templateId: Int, time: String, sets: Int, reps: Int, weight: String?
+    ): LiveData<Response<Unit>> {
+        val liveData = MutableLiveData<Response<Unit>>(Response.Loading())
+        val personalExerciseDTO = PersonalExerciseDTO(templateId, time, sets, reps, weight)
+        val addPersonalExercise = keyFitApi.addPersonalExercise("Bearer $jwt", personalExerciseDTO)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = {
+                    liveData.value = Response.Success(Unit)
+                },
+                onError = { e ->
+                    Log.e(TAG, "Error adding personal exercise", e)
+                    liveData.value = handleError(e)
+                }
+            )
+        disposables.add(addPersonalExercise)
+        return liveData
+    }
+
+    fun addWorkoutExercise(
+        jwt: String, exerciseId: Int, time: String, sets: Int, reps: Int, weight: String?
+    ): LiveData<Response<Unit>> {
+        val liveData = MutableLiveData<Response<Unit>>(Response.Loading())
+        val workoutExerciseDTO = WorkoutExerciseDTO(exerciseId, time, sets, reps, weight)
+        val addWorkoutExercise = keyFitApi.addWorkoutExercise("Bearer $jwt", workoutExerciseDTO)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = {
+                    liveData.value = Response.Success(Unit)
+                },
+                onError = { e ->
+                    Log.e(TAG, "Error adding personal exercise", e)
+                    liveData.value = handleError(e)
+                }
+            )
+        disposables.add(addWorkoutExercise)
+        return liveData
+    }
+
     fun clear() {
         disposables.clear()
     }
 
     private fun <T> handleError(e: Throwable): Response.Error<T> {
-        return if (e is UnknownHostException) {
-            Response.Error(ErrorType.SERVER_UNREACHABLE)
-        } else if (e is HttpException && e.code() == 401) {
-            Response.Error(ErrorType.JWT_EXPIRED)
+        if (e is UnknownHostException) {
+            return Response.Error(ErrorType.SERVER_UNREACHABLE)
+        } else if (e is HttpException) {
+            if (e.code() == 400) {
+                return Response.Error(ErrorType.INVALID_INPUT)
+            } else if (e.code() == 401) {
+                return Response.Error(ErrorType.JWT_EXPIRED)
+            } else if (e.code() == 409) {
+                return Response.Error(ErrorType.EXERCISE_ALREADY_COMPLETED)
+            }
         } else if (e is SocketTimeoutException) {
-            Response.Error(ErrorType.TIMEOUT)
-        } else {
-            Response.Error(ErrorType.UNEXPECTED)
+            return Response.Error(ErrorType.TIMEOUT)
         }
+        return Response.Error(ErrorType.UNEXPECTED)
     }
 
     companion object {

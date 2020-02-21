@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.LoginData
-import at.spiceburg.roarfit.data.LoginRequest
 import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.data.db.Dao
 import at.spiceburg.roarfit.data.db.UserDB
+import at.spiceburg.roarfit.data.dto.LoginRequest
 import at.spiceburg.roarfit.network.KeyFitApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,7 +26,12 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val dao: Dao) {
 
     fun login(username: String, password: String): LiveData<Response<LoginData>> {
         val liveData = MutableLiveData<Response<LoginData>>()
-        val login = keyFitApi.login(LoginRequest(username, password))
+        val login = keyFitApi.login(
+            LoginRequest(
+                username,
+                password
+            )
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(

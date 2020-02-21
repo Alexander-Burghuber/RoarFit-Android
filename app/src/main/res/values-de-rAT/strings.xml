@@ -50,4 +50,6 @@
     <string name="finishexercise_weight">Gewicht</string>
     <string name="finishexercise_time">Zeitaufwand</string>
     <string name="finishexercise_desc">Bearbeite hier die Informationen über die abgeschlossene Übung.</string>
+    <string name="finishexercise_inputs_invalid">Mindestens einer der Eingaben is ungültig</string>
+    <string name="finishexercise_exercise_already_completed">Die Übung wurd bereits abgeschlossen</string>
 </resources>
