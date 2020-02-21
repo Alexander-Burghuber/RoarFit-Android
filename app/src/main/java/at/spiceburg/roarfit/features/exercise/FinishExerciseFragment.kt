@@ -39,7 +39,6 @@ class FinishExerciseFragment : Fragment() {
 
         progress_finishexercise.hide()
 
-
         activity = (requireActivity() as ExerciseActivity)
 
         // setup toolbar
@@ -53,23 +52,22 @@ class FinishExerciseFragment : Fragment() {
         viewModel.stopWatch.observe(viewLifecycleOwner) { time ->
             val units: List<String> = time.split(":")
             input_finishexercise_min.setText(units[0])
-            input_finishexercise_seconds.setText(units[1])
+            input_finishexercise_secs.setText(units[1])
         }
 
-        val timeFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+        val timeFocusListener = View.OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 val input = v as EditText
                 val text = input.text
                 if (!text.isNullOrBlank()) {
                     val number = text.toString().toInt()
-                    if (number > 59) {
-                        val errorColor = resources.getColor(R.color.error, null)
-                        input.setTextColor(errorColor)
-                    } else {
+                    if (validateMinOrSecs(number)) {
                         val blackColor = resources.getColor(R.color.black, null)
                         input.setTextColor(blackColor)
+                    } else {
+                        val errorColor = resources.getColor(R.color.error, null)
+                        input.setTextColor(errorColor)
                     }
-
                     if (number < 10) {
                         input.setText(getString(R.string.finishexercise_time_add_zero, number))
                     }
@@ -78,13 +76,29 @@ class FinishExerciseFragment : Fragment() {
                 }
             }
         }
-        input_finishexercise_min.onFocusChangeListener = timeFocusChangeListener
-        input_finishexercise_seconds.onFocusChangeListener = timeFocusChangeListener
+        input_finishexercise_min.onFocusChangeListener = timeFocusListener
+        input_finishexercise_secs.onFocusChangeListener = timeFocusListener
 
-        activity.specification?.let {
-            input_finishexercise_sets.setText(it.sets)
-            input_finishexercise_reps.setText(it.reps)
-            input_finishexercise_weight.setText(it.weight)
+        if (activity.specification != null) {
+            val specification: ExerciseSpecification = activity.specification!!
+
+            textinputlayout_finishexercise_sets.helperText =
+                getString(R.string.finishexercise_exercise_helpertext_sets, specification.sets)
+            textinputlayout_finishexercise_reps.helperText =
+                getString(R.string.finishexercise_exercise_helpertext_reps, specification.reps)
+
+            if (specification.weight != null) {
+                textinputlayout_finishexercise_weight.helperText = getString(
+                    R.string.finishexercise_exercise_helpertext_weight,
+                    specification.weight
+                )
+            } else {
+                input_finishexercise_weight.visibility = View.GONE
+            }
+
+            setupTemplateViews(specification.exercise.template)
+        } else if (activity.template != null) {
+            setupTemplateViews(activity.template!!)
         }
 
         constraintlayout_finishexercise.setOnFocusChangeListener { _, hasFocus ->
@@ -98,26 +112,94 @@ class FinishExerciseFragment : Fragment() {
             val reps: Int? = input_finishexercise_reps.text.toString().toIntOrNull()
             val weight: String? = input_finishexercise_weight.text.toString()
             val min: Int? = input_finishexercise_min.text.toString().toIntOrNull()
-            val secs: Int? = input_finishexercise_seconds.text.toString().toIntOrNull()
+            val secs: Int? = input_finishexercise_secs.text.toString().toIntOrNull()
 
-            if (sets != null && reps != null && min != null && secs != null) {
-                if (activity.specification != null) {
-                    // workout exercise
-                    val specification: ExerciseSpecification = activity.specification!!
-                    addExercise(
-                        sets, reps, weight,
-                        min, secs, exerciseId = specification.exercise.id
-                    )
-                } else if (activity.template != null) {
-                    // personal exercise
-                    val template: ExerciseTemplate = activity.template!!
-                    addExercise(sets, reps, weight, min, secs, templateId = template.id)
+            if (sets != null) {
+                textinputlayout_finishexercise_sets.isErrorEnabled = false
+                textinputlayout_finishexercise_sets.isHelperTextEnabled = true
+
+                if (reps != null) {
+                    textinputlayout_finishexercise_reps.isErrorEnabled = false
+                    textinputlayout_finishexercise_reps.isHelperTextEnabled = true
+
+                    if (input_finishexercise_weight.visibility == View.GONE || !weight.isNullOrBlank()) {
+                        textinputlayout_finishexercise_weight.isErrorEnabled = false
+                        textinputlayout_finishexercise_weight.isHelperTextEnabled = true
+
+                        if (min != null && validateMinOrSecs(min)) {
+                            val blackColor = resources.getColor(R.color.black, null)
+                            input_finishexercise_min.setTextColor(blackColor)
+
+                            if (secs != null && validateMinOrSecs(secs)) {
+                                input_finishexercise_secs.setTextColor(blackColor)
+
+                                if (activity.specification != null) {
+                                    // workout exercise
+                                    val specification: ExerciseSpecification =
+                                        activity.specification!!
+                                    addExercise(
+                                        sets, reps, weight,
+                                        min, secs, exerciseId = specification.exercise.id
+                                    )
+                                } else if (activity.template != null) {
+                                    // personal exercise
+                                    val template: ExerciseTemplate = activity.template!!
+                                    addExercise(
+                                        sets,
+                                        reps,
+                                        weight,
+                                        min,
+                                        secs,
+                                        templateId = template.id
+                                    )
+                                }
+                            } else {
+                                val errorColor = resources.getColor(R.color.error, null)
+                                input_finishexercise_secs.setTextColor(errorColor)
+                            }
+                        } else {
+                            val errorColor = resources.getColor(R.color.error, null)
+                            input_finishexercise_min.setTextColor(errorColor)
+                        }
+                    } else {
+                        textinputlayout_finishexercise_weight.error =
+                            getString(R.string.finishexercise_exercise_error)
+                    }
+                } else {
+                    textinputlayout_finishexercise_reps.error =
+                        getString(R.string.finishexercise_exercise_error)
                 }
             } else {
-                hideKeyboard()
-                displaySnackbar(getString(R.string.finishexercise_inputs_invalid))
+                textinputlayout_finishexercise_sets.error =
+                    getString(R.string.finishexercise_exercise_error)
             }
+            hideKeyboard()
         }
+    }
+
+    private fun validateMinOrSecs(number: Int): Boolean {
+        return number <= 59
+    }
+
+    private fun setupTemplateViews(template: ExerciseTemplate) {
+        text_finishexercise_exercisename.text = template.name
+
+        val equipment: String? = template.equipment
+        if (equipment != null) {
+            text_finishexercise_equipment.text = equipment
+        } else {
+            text_finishexercise_equipment.setTextColor(resources.getColor(R.color.grey, null))
+            text_finishexercise_equipment.text = getString(R.string.exerciseinfo_no_equipment)
+        }
+
+        // set body part(s)
+        val bodyParts = template.bodyParts
+        var bodyPartsStr = ""
+        for (i in bodyParts.indices) {
+            bodyPartsStr += if (i == 0) bodyParts[i] else ", ${bodyParts[i]}"
+        }
+        text_finishexercise_bodyparts.text =
+            getString(R.string.finishexercise_exercise_bodyparts, bodyPartsStr)
     }
 
     private fun addExercise(
@@ -159,7 +241,7 @@ class FinishExerciseFragment : Fragment() {
                     ErrorType.TIMEOUT -> displaySnackbar(getString(R.string.networkerror_timeout))
                     ErrorType.INVALID_INPUT -> displaySnackbar(getString(R.string.finishexercise_inputs_invalid))
                     ErrorType.EXERCISE_ALREADY_COMPLETED -> {
-                        displaySnackbar(getString(R.string.finishexercise_exercise_already_completed))
+                        displayToast(getString(R.string.finishexercise_exercise_already_completed))
                         activity.finishExercise()
                     }
                     ErrorType.JWT_EXPIRED -> {

@@ -133,18 +133,26 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
     }
 
     private fun <T> handleError(e: Throwable): Response.Error<T> {
-        if (e is UnknownHostException) {
-            return Response.Error(ErrorType.SERVER_UNREACHABLE)
-        } else if (e is HttpException) {
-            if (e.code() == 400) {
-                return Response.Error(ErrorType.INVALID_INPUT)
-            } else if (e.code() == 401) {
-                return Response.Error(ErrorType.JWT_EXPIRED)
-            } else if (e.code() == 409) {
-                return Response.Error(ErrorType.EXERCISE_ALREADY_COMPLETED)
+        when (e) {
+            is UnknownHostException -> {
+                return Response.Error(ErrorType.SERVER_UNREACHABLE)
             }
-        } else if (e is SocketTimeoutException) {
-            return Response.Error(ErrorType.TIMEOUT)
+            is HttpException -> {
+                when {
+                    e.code() == 400 -> {
+                        return Response.Error(ErrorType.INVALID_INPUT)
+                    }
+                    e.code() == 401 -> {
+                        return Response.Error(ErrorType.JWT_EXPIRED)
+                    }
+                    e.code() == 409 -> {
+                        return Response.Error(ErrorType.EXERCISE_ALREADY_COMPLETED)
+                    }
+                }
+            }
+            is SocketTimeoutException -> {
+                return Response.Error(ErrorType.TIMEOUT)
+            }
         }
         return Response.Error(ErrorType.UNEXPECTED)
     }

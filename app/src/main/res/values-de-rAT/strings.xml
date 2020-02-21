@@ -50,6 +50,10 @@
     <string name="finishexercise_weight">Gewicht</string>
     <string name="finishexercise_time">Zeitaufwand</string>
     <string name="finishexercise_desc">Bearbeite hier die Informationen über die abgeschlossene Übung.</string>
-    <string name="finishexercise_inputs_invalid">Mindestens einer der Eingaben is ungültig</string>
-    <string name="finishexercise_exercise_already_completed">Die Übung wurd bereits abgeschlossen</string>
+    <string name="finishexercise_inputs_invalid">Bitte fülle alle Felder korrekt aus</string>
+    <string name="finishexercise_exercise_already_completed">Die Übung wurde bereits abgeschlossen</string>
+    <string name="finishexercise_exercise_helpertext_sets">*Trainer: %s Sätze</string>
+    <string name="finishexercise_exercise_helpertext_reps">*Trainer: %s WH</string>
+    <string name="finishexercise_exercise_helpertext_weight">*Trainer: %s kg</string>
+    <string name="finishexercise_exercise_error">Ungültige Eingabe</string>
 </resources>

@@ -89,8 +89,13 @@
     <string name="finishexercise_min_secs" translatable="false">00</string>
     <string name="finishexercise_time_divider" translatable="false">:</string>
     <string name="finishexercise_time_add_zero" translatable="false">0%d</string>
-    <string name="finishexercise_inputs_invalid">Atleast one of the inputs is invalid</string>
+    <string name="finishexercise_inputs_invalid">At least one of the inputs is invalid</string>
     <string name="finishexercise_exercise_already_completed">The exercise has already been completed</string>
+    <string name="finishexercise_exercise_bodyparts" translatable="false">\u0020- %s</string>
+    <string name="finishexercise_exercise_helpertext_sets">*Trainer: %s sets</string>
+    <string name="finishexercise_exercise_helpertext_reps">*Trainer: %s reps</string>
+    <string name="finishexercise_exercise_helpertext_weight">*Trainer: %s kg</string>
+    <string name="finishexercise_exercise_error">Invalid input</string>
 
     <!-- Notification -->
     <string name="exercise_notification_name">Exercise</string>

@@ -75,11 +75,13 @@ class ExerciseInfoFragment : Fragment() {
     private fun setupTemplate(template: ExerciseTemplate) {
         // set name
         text_exerciseinfo_exercisename.text = template.name
+
         // set description if available
         template.description?.let {
             text_exerciseinfo_desc.visibility = View.VISIBLE
             text_exerciseinfo_desc.text = it
         }
+
         // set equipment if available
         if (template.equipment != null) {
             text_exerciseinfo_equipment.text = template.equipment
@@ -87,6 +89,7 @@ class ExerciseInfoFragment : Fragment() {
             text_exerciseinfo_equipment.setTextColor(resources.getColor(R.color.grey, null))
             text_exerciseinfo_equipment.text = getString(R.string.exerciseinfo_no_equipment)
         }
+
         // set body part(s)
         val bodyParts = template.bodyParts
         var bodyPartsStr = ""

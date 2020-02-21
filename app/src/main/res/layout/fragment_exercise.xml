@@ -121,8 +121,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button_exercise_pause"
-        app:srcCompat="@drawable/ic_stop_black_24dp"
-        app:tint="@color/secondary" />
+        app:srcCompat="@drawable/ic_done_black_24dp"
+        app:tint="@color/primaryLight" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -139,7 +139,7 @@
         app:layout_constraintEnd_toStartOf="@+id/button_exercise_pause"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_refresh_black_24dp"
-        app:tint="@color/secondaryLight" />
+        app:tint="@color/primaryLight" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollview_exercise_specifications"
