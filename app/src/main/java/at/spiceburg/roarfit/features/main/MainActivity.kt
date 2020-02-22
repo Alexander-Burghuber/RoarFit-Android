@@ -27,6 +27,7 @@ import androidx.navigation.ui.setupWithNavController
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.ErrorType
+import at.spiceburg.roarfit.data.Result
 import at.spiceburg.roarfit.features.auth.AuthActivity
 import at.spiceburg.roarfit.features.settings.SettingsActivity
 import at.spiceburg.roarfit.utils.Constants
@@ -183,6 +184,21 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
             ErrorType.SERVER_UNREACHABLE -> displaySnackbar(getString(R.string.networkerror_server_unreachable))
             ErrorType.TIMEOUT -> displaySnackbar(getString(R.string.networkerror_timeout))
             ErrorType.JWT_EXPIRED -> {
+                displayToast(getString(R.string.networkerror_jwt_expired))
+                logout()
+            }
+            else -> {
+                displayToast(getString(R.string.networkerror_unexpected))
+                logout()
+            }
+        }
+    }
+
+    fun handleNetworkError2(errorType: Result.NetworkErrorType) {
+        when (errorType) {
+            Result.NetworkErrorType.SERVER_UNREACHABLE -> displaySnackbar(getString(R.string.networkerror_server_unreachable))
+            Result.NetworkErrorType.TIMEOUT -> displaySnackbar(getString(R.string.networkerror_timeout))
+            Result.NetworkErrorType.JWT_EXPIRED -> {
                 displayToast(getString(R.string.networkerror_jwt_expired))
                 logout()
             }

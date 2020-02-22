@@ -2,6 +2,7 @@ package at.spiceburg.roarfit.features.main.dashboard
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.features.main.MainActivity
@@ -34,6 +34,8 @@ class DashboardFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        Log.d(TAG, "onActivityCreated called")
+
         val activity = (requireActivity() as MainActivity)
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!
@@ -47,9 +49,9 @@ class DashboardFragment : Fragment() {
         list_dashboard_workoutplans.adapter = adapter
         list_dashboard_workoutplans.layoutManager = LinearLayoutManager(activity)
 
-        viewModel.getWorkoutPlans(jwt).observe(this) { res ->
-            when (res) {
-                is Response.Success -> {
+        viewModel.getWorkoutPlans(jwt).observe(viewLifecycleOwner) { res ->
+            when {
+                res.isSuccess() -> {
                     val workoutPlans: Array<WorkoutPlan> = res.data!!
                     if (workoutPlans.isNotEmpty()) {
                         val workoutPlan = workoutPlans[0]
@@ -64,11 +66,13 @@ class DashboardFragment : Fragment() {
                     }
                     activity.progressMain.hide()
                 }
-                is Response.Loading -> activity.progressMain.show()
-                is Response.Error -> {
+                res.isLoading() -> {
+                    activity.progressMain.show()
+                }
+                else -> {
                     activity.progressMain.hide()
                     constraintlayout_dashboard.visibility = View.INVISIBLE
-                    activity.handleNetworkError(res.errorType!!)
+                    activity.handleNetworkError2(res.error!!)
                 }
             }
         }

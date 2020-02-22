@@ -1,14 +1,19 @@
 package at.spiceburg.roarfit.features.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.data.Result
 import at.spiceburg.roarfit.data.db.UserDB
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.data.repositories.WorkoutRepository
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 
 class MainViewModel(
     userId: Int,
@@ -17,14 +22,26 @@ class MainViewModel(
 ) : ViewModel() {
 
     val user: LiveData<UserDB> = userRepo.getUser(userId)
-    private var workoutPlans: LiveData<Response<Array<WorkoutPlan>>>? = null
+    private var workoutPlans = MutableLiveData<Result<Array<WorkoutPlan>>>()
     private var equipment: LiveData<Response<Array<String>>>? = null
 
-    fun getWorkoutPlans(jwt: String): LiveData<Response<Array<WorkoutPlan>>> {
-        if (workoutPlans == null) {
-            workoutPlans = workoutRepo.getWorkoutPlan(jwt)
+    private var disposables = CompositeDisposable()
+
+    fun getWorkoutPlans(jwt: String): LiveData<Result<Array<WorkoutPlan>>> {
+        val res = workoutPlans.value
+        if (res == null || res.shouldReload()) {
+            loadWorkoutPlans(jwt)
         }
-        return workoutPlans!!
+        return workoutPlans
+    }
+
+    private fun loadWorkoutPlans(jwt: String) {
+        workoutPlans.value = Result.loading()
+        val loadWorkoutPlan = workoutRepo.getWorkoutPlan(jwt).subscribeBy(
+            onSuccess = { res -> workoutPlans.value = res },
+            onError = { Log.e(TAG, "LoadWorkoutPlans network call error", it) }
+        )
+        disposables.add(loadWorkoutPlan)
     }
 
     fun getEquipment(jwt: String): LiveData<Response<Array<String>>> {
@@ -42,6 +59,7 @@ class MainViewModel(
     }
 
     override fun onCleared() {
+        disposables.clear()
         workoutRepo.clear()
     }
 

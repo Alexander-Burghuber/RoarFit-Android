@@ -5,12 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.data.Result
 import at.spiceburg.roarfit.data.dto.EquipmentDTO
 import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
 import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.network.KeyFitApi
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -26,22 +28,11 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
 
     private val disposables = CompositeDisposable()
 
-    fun getWorkoutPlan(jwt: String): LiveData<Response<Array<WorkoutPlan>>> {
-        val liveData = MutableLiveData<Response<Array<WorkoutPlan>>>(Response.Loading())
-        val loadWorkoutPlans = keyFitApi.getWorkoutPlans("Bearer $jwt")
+    fun getWorkoutPlan(jwt: String): Single<Result<Array<WorkoutPlan>>> {
+        return keyFitApi.getWorkoutPlans(getJwtString(jwt))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = { workoutPlans ->
-                    liveData.value = Response.Success(workoutPlans)
-                },
-                onError = { e ->
-                    Log.e(TAG, "Error getting workoutplans", e)
-                    liveData.value = handleError(e)
-                }
-            )
-        disposables.add(loadWorkoutPlans)
-        return liveData
+            .toResult()
     }
 
     fun getEquipment(jwt: String): LiveData<Response<Array<String>>> {
@@ -155,6 +146,28 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) {
             }
         }
         return Response.Error(ErrorType.UNEXPECTED)
+    }
+
+    private fun <T> Single<T>.toResult(): Single<Result<T>> {
+        return map { Result.success(it) }
+            .onErrorResumeNext { Single.just(handleNetworkError(it)) }
+    }
+
+    private fun <T> handleNetworkError(e: Throwable): Result<T> {
+        return if (e is UnknownHostException) {
+            Result.failure(Result.NetworkErrorType.SERVER_UNREACHABLE)
+        } else if (e is HttpException && e.code() == 401) {
+            Result.failure(Result.NetworkErrorType.JWT_EXPIRED)
+        } else if (e is SocketTimeoutException) {
+            Result.failure(Result.NetworkErrorType.TIMEOUT)
+        } else {
+            Log.e(TAG, "An unknown network error occurred", e)
+            Result.failure(Result.NetworkErrorType.UNEXPECTED)
+        }
+    }
+
+    private fun getJwtString(jwt: String): String {
+        return "Bearer $jwt"
     }
 
     companion object {

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="at.spiceburg.roarfit.features.main.dashboard.DashboardFragment"
-        android:label="Dashboard"
+        android:label="@string/main_bottomnav_dashboard"
         tools:layout="@layout/fragment_dashboard">
         <action
             android:id="@+id/action_dashboard_to_exerciseInfo"
@@ -22,19 +22,19 @@
     <fragment
         android:id="@+id/historyFragment"
         android:name="at.spiceburg.roarfit.features.main.history.HistoryFragment"
-        android:label="History"
+        android:label="@string/main_bottomnav_history"
         tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="at.spiceburg.roarfit.features.main.statistics.StatisticsFragment"
-        android:label="Statistics"
+        android:label="@string/main_bottomnav_statistics"
         tools:layout="@layout/fragment_statistics" />
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="at.spiceburg.roarfit.features.main.profile.ProfileFragment"
-        android:label="Profile"
+        android:label="@string/main_bottomnav_profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
