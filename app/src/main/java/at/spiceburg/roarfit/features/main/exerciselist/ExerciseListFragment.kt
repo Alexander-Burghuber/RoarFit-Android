@@ -11,7 +11,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
@@ -55,37 +54,22 @@ class ExerciseListFragment : Fragment() {
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
-        viewModel.getExerciseTemplates(jwt, equipment).observe(this) { res ->
-            when (res) {
-                is Response.Success -> {
+        viewModel.getExerciseTemplates(jwt, equipment).observe(viewLifecycleOwner) { res ->
+            when {
+                res.isSuccess() -> {
                     val templates: Array<ExerciseTemplate> = res.data!!
                     adapter.setExerciseTemplates(templates)
                     activity.progressMain.hide()
                 }
-                is Response.Loading -> activity.progressMain.show()
-                is Response.Error -> {
+                res.isLoading() -> {
                     activity.progressMain.show()
-                    activity.handleNetworkError(res.errorType!!)
+                }
+                else -> {
+                    activity.progressMain.show()
+                    activity.handleNetworkError(res.error!!)
                 }
             }
         }
-
-        /*val onExerciseClicked: (exerciseTemplate: ExerciseTemplate) -> Unit = { exerciseTemplate ->
-            val action =
-                ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseInfoFragment(
-                    exerciseTemplate
-                )
-            findNavController().navigate(action)
-        }
-
-        val adapter = ExerciseListAdapter(onExerciseClicked, requireContext())
-        recyclerview_exerciselist_exercises.adapter = adapter
-        recyclerview_exerciselist_exercises.layoutManager = LinearLayoutManager(requireContext())
-
-        // fixme
-        viewModel.getExerciseTemplates(equipment)?.observe(this) { exerciseTemplates ->
-            adapter.setExerciseTemplates(exerciseTemplates)
-        } */
     }
 
     companion object {

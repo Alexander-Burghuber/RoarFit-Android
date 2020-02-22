@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
 import at.spiceburg.roarfit.utils.Constants
@@ -60,9 +59,10 @@ class CameraFragment : Fragment() {
         val mainHandler = Handler(Looper.getMainLooper())
         val qrListener = QRDataListener { data ->
             mainHandler.post {
-                viewModel.getEquipment(jwt).observe(this@CameraFragment) { res ->
-                    when (res) {
-                        is Response.Success -> {
+                // this@CameraFragment is required in this block
+                viewModel.getEquipment(jwt).observe(this@CameraFragment.viewLifecycleOwner) { res ->
+                    when {
+                        res.isSuccess() -> {
                             activity.progressMain.hide()
                             val equipment: Array<String> = res.data!!
                             val foundEquipment: String? = equipment.find {
@@ -71,16 +71,18 @@ class CameraFragment : Fragment() {
                             if (foundEquipment != null) {
                                 text_camera_equipment.setText(foundEquipment)
                                 val action =
-                                    CameraFragmentDirections.actionCameraToExerciseList(
+                                    CameraFragmentDirections.actionCameraFragmentToExerciseListFragment(
                                         foundEquipment
                                     )
                                 this@CameraFragment.findNavController().navigate(action)
                             }
                         }
-                        is Response.Loading -> activity.progressMain.show()
-                        is Response.Error -> {
+                        res.isLoading() -> {
+                            activity.progressMain.show()
+                        }
+                        else -> {
                             activity.progressMain.hide()
-                            activity.handleNetworkError(res.errorType!!)
+                            activity.handleNetworkError(res.error!!)
                         }
                     }
                 }

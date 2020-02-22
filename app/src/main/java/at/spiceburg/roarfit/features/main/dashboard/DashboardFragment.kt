@@ -72,7 +72,7 @@ class DashboardFragment : Fragment() {
                 else -> {
                     activity.progressMain.hide()
                     constraintlayout_dashboard.visibility = View.INVISIBLE
-                    activity.handleNetworkError2(res.error!!)
+                    activity.handleNetworkError(res.error!!)
                 }
             }
         }

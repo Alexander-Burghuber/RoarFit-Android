@@ -8,7 +8,6 @@ import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
 import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
-import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -42,8 +41,8 @@ interface KeyFitApi {
     fun getExerciseTemplates(@Header("Authorization") token: String, @Body equipmentDTO: EquipmentDTO): Single<Array<ExerciseTemplate>>
 
     @POST("personal-exercise")
-    fun addPersonalExercise(@Header("Authorization") token: String, @Body personalExerciseDTO: PersonalExerciseDTO): Completable
+    fun addPersonalExercise(@Header("Authorization") token: String, @Body personalExerciseDTO: PersonalExerciseDTO): Single<Unit>
 
     @POST("workout-exercise")
-    fun addWorkoutExercise(@Header("Authorization") token: String, @Body workoutExerciseDTO: WorkoutExerciseDTO): Completable
+    fun addWorkoutExercise(@Header("Authorization") token: String, @Body workoutExerciseDTO: WorkoutExerciseDTO): Single<Unit>
 }

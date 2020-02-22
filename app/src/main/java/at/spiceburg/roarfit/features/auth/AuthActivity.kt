@@ -22,9 +22,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.ErrorType
 import at.spiceburg.roarfit.data.LoginData
-import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.data.NetworkError
+import at.spiceburg.roarfit.data.db.UserDB
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
@@ -80,11 +80,12 @@ class AuthActivity : AppCompatActivity() {
             val password = input_password.text.toString()
 
             if (!username.isBlank() && !password.isBlank()) {
-                setLoading(true)
-                viewModel.login(username, password).observe(this) { response ->
-                    when (response) {
-                        is Response.Success -> {
-                            val data: LoginData = response.data!!
+                viewModel.login(username, password).observe(this) { res ->
+                    when {
+                        res.isSuccess() -> {
+                            val data: LoginData = res.data!!
+                            data.username = username
+                            data.password = password
 
                             // check if biometric authentication can be set up
                             val remindBiometric =
@@ -109,11 +110,14 @@ class AuthActivity : AppCompatActivity() {
                                 finishLogin(data)
                             }
                         }
-                        is Response.Error -> {
-                            val msg: String = when (response.errorType!!) {
-                                ErrorType.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
-                                ErrorType.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
-                                ErrorType.TIMEOUT -> getString(R.string.networkerror_timeout)
+                        res.isLoading() -> {
+                            setLoading(true)
+                        }
+                        else -> {
+                            val msg: String = when (res.error) {
+                                NetworkError.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
+                                NetworkError.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
+                                NetworkError.TIMEOUT -> getString(R.string.networkerror_timeout)
                                 else -> getString(R.string.networkerror_unexpected)
                             }
                             displaySnackbar(msg)
@@ -171,12 +175,12 @@ class AuthActivity : AppCompatActivity() {
     private fun finishLogin(data: LoginData, callFromEncrypt: Boolean = false) {
         val jwt: String = data.token
 
-        viewModel.loadUser(jwt).observe(this) { response ->
-            when (response) {
-                is Response.Success -> {
-                    val userId: Int = response.data!!
+        viewModel.loadUser(jwt).observe(this) { res ->
+            when {
+                res.isSuccess() -> {
+                    val user: UserDB = res.data!!
                     sp.edit()
-                        .putInt(Constants.USER_ID, userId)
+                        .putInt(Constants.USER_ID, user.id)
                         .putString(Constants.JWT, jwt)
                         .putString(Constants.USERNAME, data.username)
                         .apply()
@@ -184,7 +188,10 @@ class AuthActivity : AppCompatActivity() {
                     setLoading(false)
                     startMainActivity()
                 }
-                is Response.Error -> {
+                res.isLoading() -> {
+                    setLoading(true)
+                }
+                else -> {
                     // if the error occurred directly after setup of biometric login reset it
                     if (callFromEncrypt) {
                         sp.edit()
@@ -192,10 +199,10 @@ class AuthActivity : AppCompatActivity() {
                             .remove(Constants.INITIALIZATION_VECTOR)
                             .apply()
                     }
-                    val msg: String = when (response.errorType!!) {
-                        ErrorType.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
-                        ErrorType.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
-                        ErrorType.TIMEOUT -> getString(R.string.networkerror_timeout)
+                    val msg: String = when (res.error!!) {
+                        NetworkError.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
+                        NetworkError.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
+                        NetworkError.TIMEOUT -> getString(R.string.networkerror_timeout)
                         else -> getString(R.string.networkerror_unexpected)
                     }
                     displaySnackbar(msg)
@@ -369,17 +376,22 @@ class AuthActivity : AppCompatActivity() {
                     // do login
                     val username: String? = sp.getString(Constants.USERNAME, null)
                     if (username != null) {
-                        viewModel.login(username, password).observe(this@AuthActivity) { response ->
-                            when (response) {
-                                is Response.Success -> {
-                                    val data: LoginData = response.data!!
+                        viewModel.login(username, password).observe(this@AuthActivity) { res ->
+                            when {
+                                res.isSuccess() -> {
+                                    val data: LoginData = res.data!!
+                                    data.username = username
+                                    data.password = password
                                     finishLogin(data)
                                 }
-                                is Response.Error -> {
-                                    val msg: String = when (response.errorType!!) {
-                                        ErrorType.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
-                                        ErrorType.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
-                                        ErrorType.TIMEOUT -> getString(R.string.networkerror_timeout)
+                                res.isLoading() -> {
+                                    setLoading(true)
+                                }
+                                else -> {
+                                    val msg: String = when (res.error!!) {
+                                        NetworkError.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
+                                        NetworkError.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
+                                        NetworkError.TIMEOUT -> getString(R.string.networkerror_timeout)
                                         else -> getString(R.string.networkerror_unexpected)
                                     }
                                     displaySnackbar(msg)

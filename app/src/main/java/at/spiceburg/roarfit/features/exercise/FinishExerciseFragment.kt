@@ -13,8 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.ErrorType
-import at.spiceburg.roarfit.data.Response
+import at.spiceburg.roarfit.data.NetworkError
+import at.spiceburg.roarfit.data.Result
+import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
+import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
 import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.utils.Constants
@@ -203,48 +205,43 @@ class FinishExerciseFragment : Fragment() {
     }
 
     private fun addExercise(
-        sets: Int,
-        reps: Int,
-        weight: String?,
-        min: Int,
-        secs: Int,
-        templateId: Int? = null,
-        exerciseId: Int? = null
+        sets: Int, reps: Int, weight: String?, min: Int, secs: Int,
+        templateId: Int? = null, exerciseId: Int? = null
     ) {
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
         if (templateId != null) {
-            viewModel.addPersonalExercise(
-                jwt, templateId, "$min:$secs", sets, reps, weight
-            ).observe(viewLifecycleOwner) { res -> handleNetworkResponse(res) }
+            val dto = PersonalExerciseDTO(templateId, "$min:$secs", sets, reps, weight)
+
+            viewModel.addPersonalExercise(jwt, dto)
+                .observe(viewLifecycleOwner) { handleNetworkResponse(it) }
         } else if (exerciseId != null) {
-            viewModel.addWorkoutExercise(
-                jwt, exerciseId, "$min:$secs", sets, reps, weight
-            ).observe(viewLifecycleOwner) { res -> handleNetworkResponse(res) }
+            val dto = WorkoutExerciseDTO(exerciseId, "$min:$secs", sets, reps, weight)
+            viewModel.addWorkoutExercise(jwt, dto)
+                .observe(viewLifecycleOwner) { res -> handleNetworkResponse(res) }
         }
     }
 
-    private fun handleNetworkResponse(res: Response<Unit>) {
-        when (res) {
-            is Response.Success -> {
+    private fun handleNetworkResponse(res: Result<Unit>) {
+        when {
+            res.isSuccess() -> {
                 progress_finishexercise.hide()
                 activity.finishExercise()
             }
-            is Response.Loading -> {
+            res.isLoading() -> {
                 progress_finishexercise.show()
             }
-            is Response.Error -> {
+            else -> {
                 progress_finishexercise.hide()
-                when (res.errorType) {
-                    ErrorType.SERVER_UNREACHABLE -> displaySnackbar(getString(R.string.networkerror_server_unreachable))
-                    ErrorType.TIMEOUT -> displaySnackbar(getString(R.string.networkerror_timeout))
-                    ErrorType.INVALID_INPUT -> displaySnackbar(getString(R.string.finishexercise_inputs_invalid))
-                    ErrorType.EXERCISE_ALREADY_COMPLETED -> {
+                when (res.error) {
+                    NetworkError.SERVER_UNREACHABLE -> displaySnackbar(getString(R.string.networkerror_server_unreachable))
+                    NetworkError.TIMEOUT -> displaySnackbar(getString(R.string.networkerror_timeout))
+                    NetworkError.EXERCISE_ALREADY_COMPLETED -> {
                         displayToast(getString(R.string.finishexercise_exercise_already_completed))
                         activity.finishExercise()
                     }
-                    ErrorType.JWT_EXPIRED -> {
+                    NetworkError.JWT_EXPIRED -> {
                         displayToast(getString(R.string.networkerror_jwt_expired))
                         activity.logout()
                     }

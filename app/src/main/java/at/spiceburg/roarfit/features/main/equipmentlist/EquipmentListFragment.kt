@@ -11,7 +11,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.data.Response
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
 import at.spiceburg.roarfit.utils.Constants
@@ -46,19 +45,19 @@ class EquipmentListFragment : Fragment() {
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
-        viewModel.getEquipment(jwt).observe(this) { res ->
-            when (res) {
-                is Response.Success -> {
+        viewModel.getEquipment(jwt).observe(viewLifecycleOwner) { res ->
+            when {
+                res.isSuccess() -> {
                     val equipment: Array<String> = res.data!!
                     adapter.setExerciseTemplates(equipment)
                     activity.progressMain.hide()
                 }
-                is Response.Loading -> {
+                res.isLoading() -> {
                     activity.progressMain.show()
                 }
-                is Response.Error -> {
+                else -> {
                     activity.progressMain.hide()
-                    activity.handleNetworkError(res.errorType!!)
+                    activity.handleNetworkError(res.error!!)
                 }
             }
         }

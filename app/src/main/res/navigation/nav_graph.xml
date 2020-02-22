@@ -43,13 +43,13 @@
         android:label="CameraFragment"
         tools:layout="@layout/fragment_camera">
         <action
-            android:id="@+id/action_camera_to_exerciseList"
+            android:id="@+id/action_cameraFragment_to_exerciseListFragment"
             app:destination="@id/exerciseListFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/dashboardFragment" />
+            app:popUpTo="@id/dashboardFragment" />
     </fragment>
 
     <fragment
