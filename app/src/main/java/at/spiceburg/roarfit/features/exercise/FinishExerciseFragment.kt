@@ -124,7 +124,9 @@ class FinishExerciseFragment : Fragment() {
                     textinputlayout_finishexercise_reps.isErrorEnabled = false
                     textinputlayout_finishexercise_reps.isHelperTextEnabled = true
 
-                    if (input_finishexercise_weight.visibility == View.GONE || !weight.isNullOrBlank()) {
+                    if (input_finishexercise_weight.visibility == View.GONE ||
+                        activity.specification == null || !weight.isNullOrBlank()
+                    ) {
                         textinputlayout_finishexercise_weight.isErrorEnabled = false
                         textinputlayout_finishexercise_weight.isHelperTextEnabled = true
 
