@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="at.spiceburg.roarfit.features.main.dashboard.DashboardFragment"
+        android:label="@string/main_bottomnav_dashboard"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_exerciseInfo"
+            app:destination="@id/exerciseInfoFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="at.spiceburg.roarfit.features.main.history.HistoryFragment"
+        android:label="@string/main_bottomnav_history"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="at.spiceburg.roarfit.features.main.statistics.StatisticsFragment"
+        android:label="@string/main_bottomnav_statistics"
+        tools:layout="@layout/fragment_statistics" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="at.spiceburg.roarfit.features.main.profile.ProfileFragment"
+        android:label="@string/main_bottomnav_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="at.spiceburg.roarfit.features.main.camera.CameraFragment"
+        android:label="CameraFragment"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_exerciseListFragment"
+            app:destination="@id/exerciseListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/dashboardFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/equipmentListFragment"
+        android:name="at.spiceburg.roarfit.features.main.equipmentlist.EquipmentListFragment"
+        android:label="@string/equipmentlist_title"
+        tools:layout="@layout/fragment_equipment_list">
+        <action
+            android:id="@+id/action_equipmentList_to_exerciseList"
+            app:destination="@id/exerciseListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseListFragment"
+        android:name="at.spiceburg.roarfit.features.main.exerciselist.ExerciseListFragment"
+        android:label="@string/exerciselist_title"
+        tools:layout="@layout/fragment_exercise_list">
+        <!--<argument
+            android:name="equipment"
+            app:argType="at.spiceburg.roarfit.data.Equipment" />-->
+        <action
+            android:id="@+id/action_exerciseList_to_exerciseInfo"
+            app:destination="@id/exerciseInfoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="equipment"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseInfoFragment"
+        android:name="at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment"
+        android:label="@string/exerciseinfo_title"
+        tools:layout="@layout/fragment_exercise_info">
+        <argument
+            android:name="template"
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseTemplate"
+            app:nullable="true" />
+        <argument
+            android:name="specification"
+            app:argType="at.spiceburg.roarfit.data.entities.ExerciseSpecification"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>
