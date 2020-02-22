@@ -41,6 +41,8 @@
     <string name="dashboard_empty_desc">No workoutplan has been assigned to you. Please contact your trainer.</string>
     <string name="dashboard_workoutplan_day">Day %d</string>
 
+    <string name="itemexercise_completed">Completed</string>
+
     <!-- Bottom sheet -->
     <string name="main_bottomsheet_title">Choose equipment from</string>
     <string name="main_bottomsheet_qr" translatable="false">QR</string>

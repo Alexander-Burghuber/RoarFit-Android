@@ -56,7 +56,7 @@ class MainViewModel(
         return liveData
     }
 
-    private fun loadWorkoutPlans(jwt: String) {
+    fun loadWorkoutPlans(jwt: String) {
         workoutPlans.value = Result.loading()
         val loadWorkoutPlan = workoutRepo.getWorkoutPlan(jwt).subscribeBy(
             onSuccess = { workoutPlans.value = it },

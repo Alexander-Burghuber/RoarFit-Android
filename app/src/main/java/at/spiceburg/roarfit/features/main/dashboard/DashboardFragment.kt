@@ -2,6 +2,7 @@ package at.spiceburg.roarfit.features.main.dashboard
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +50,8 @@ class DashboardFragment : Fragment() {
         list_dashboard_workoutplans.adapter = adapter
         list_dashboard_workoutplans.layoutManager = LinearLayoutManager(activity)
 
+        refresher_dashboard.setColorSchemeColors(resources.getColor(R.color.primary, null))
+
         viewModel.getWorkoutPlans(jwt).observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
@@ -64,17 +67,24 @@ class DashboardFragment : Fragment() {
                         constraintlayout_dashboard.visibility = View.INVISIBLE
                         constraintlayout_dashboard_empty.visibility = View.VISIBLE
                     }
-                    activity.progressMain.hide()
+                    // to remove flickering animation
+                    Handler().postDelayed({
+                        refresher_dashboard?.isRefreshing = false
+                    }, 750)
                 }
                 res.isLoading() -> {
-                    activity.progressMain.show()
+                    refresher_dashboard.isRefreshing = true
                 }
                 else -> {
-                    activity.progressMain.hide()
+                    refresher_dashboard.isRefreshing = false
                     constraintlayout_dashboard.visibility = View.INVISIBLE
                     activity.handleNetworkError(res.error!!)
                 }
             }
+        }
+
+        refresher_dashboard.setOnRefreshListener {
+            viewModel.loadWorkoutPlans(jwt)
         }
     }
 

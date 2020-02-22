@@ -77,6 +77,7 @@ class WorkoutsAdapter(
     }
 
     fun addWorkouts(workouts: List<Workout>) {
+        this.workouts.clear()
         this.workouts.addAll(workouts)
         notifyDataSetChanged()
     }
