@@ -8,6 +8,5 @@ data class ExerciseSpecification(
     val sets: String,
     val weight: String?,
     val info: String?,
-    val exercise: Exercise,
-    val completed: Boolean
+    val exercise: Exercise
 ) : Serializable

@@ -116,7 +116,8 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadWorkoutPlans(sp.getString(Constants.JWT, null)!!)
+        val jwt: String = sp.getString(Constants.JWT, null)!!
+        viewModel.loadWorkoutPlans(jwt)
     }
 
     override fun onSupportNavigateUp(): Boolean {

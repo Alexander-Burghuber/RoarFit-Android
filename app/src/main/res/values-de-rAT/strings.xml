@@ -57,4 +57,5 @@
     <string name="finishexercise_exercise_helpertext_weight">*Trainer: %s kg</string>
     <string name="finishexercise_exercise_error">Ungültige Eingabe</string>
     <string name="itemexercise_completed">Abgeschlossen</string>
+    <string name="history_exercise_info">%1$s - %2$d Sätze - %3$d WH</string>
 </resources>

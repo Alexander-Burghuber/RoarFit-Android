@@ -17,8 +17,8 @@ class AppContainer(context: Context) {
 
     private val keyFitApi: KeyFitApi = Retrofit.Builder()
         //.baseUrl("https://staging.key.fit/lionsoft/app/")
-        //.baseUrl("https://vm102.htl-leonding.ac.at/roarfit/")
-        .baseUrl("http://192.168.0.142:8181/roarfit/")
+        .baseUrl("https://vm102.htl-leonding.ac.at/roarfit/")
+        //.baseUrl("http://192.168.0.142:8181/roarfit/")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()

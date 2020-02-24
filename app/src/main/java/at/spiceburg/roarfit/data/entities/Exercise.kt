@@ -8,5 +8,6 @@ data class Exercise(
     val reps: Int,
     val sets: Int,
     val weight: String?,
-    val time: String
+    val time: String,
+    val completedDate: Long?
 ) : Serializable

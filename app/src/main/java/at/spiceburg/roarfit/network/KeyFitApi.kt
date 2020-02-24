@@ -6,13 +6,11 @@ import at.spiceburg.roarfit.data.dto.EquipmentDTO
 import at.spiceburg.roarfit.data.dto.LoginRequest
 import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
 import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
+import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import io.reactivex.Single
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface KeyFitApi {
 
@@ -45,4 +43,7 @@ interface KeyFitApi {
 
     @POST("workout-exercise")
     fun addWorkoutExercise(@Header("Authorization") token: String, @Body workoutExerciseDTO: WorkoutExerciseDTO): Single<Unit>
+
+    @GET("exercise-history/{count}")
+    fun getExerciseHistory(@Header("Authorization") token: String, @Path("count") count: Int): Single<Array<Exercise>>
 }

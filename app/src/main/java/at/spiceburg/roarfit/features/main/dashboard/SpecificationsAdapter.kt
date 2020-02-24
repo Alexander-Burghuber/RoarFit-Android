@@ -51,7 +51,7 @@ class SpecificationsAdapter(
         }
         holder.bodyPart.text = bodyPartsStr
 
-        if (specification.completed) {
+        if (specification.exercise.completedDate != null) {
             val itemView = holder.itemView
             itemView.setOnClickListener(null)
 

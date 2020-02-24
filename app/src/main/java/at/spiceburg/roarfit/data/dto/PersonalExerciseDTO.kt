@@ -5,5 +5,6 @@ data class PersonalExerciseDTO(
     val time: String,
     val sets: Int,
     val reps: Int,
-    val weight: String?
+    val weight: String?,
+    val completedDate: Long?
 )

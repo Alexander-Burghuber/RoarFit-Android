@@ -22,6 +22,7 @@ import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_finish_exercise.*
+import java.util.*
 
 class FinishExerciseFragment : Fragment() {
 
@@ -214,12 +215,12 @@ class FinishExerciseFragment : Fragment() {
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
         if (templateId != null) {
-            val dto = PersonalExerciseDTO(templateId, "$min:$secs", sets, reps, weight)
+            val dto = PersonalExerciseDTO(templateId, "$min:$secs", sets, reps, weight, Date().time)
 
             viewModel.addPersonalExercise(jwt, dto)
                 .observe(viewLifecycleOwner) { handleNetworkResponse(it) }
         } else if (exerciseId != null) {
-            val dto = WorkoutExerciseDTO(exerciseId, "$min:$secs", sets, reps, weight)
+            val dto = WorkoutExerciseDTO(exerciseId, "$min:$secs", sets, reps, weight, Date().time)
             viewModel.addWorkoutExercise(jwt, dto)
                 .observe(viewLifecycleOwner) { res -> handleNetworkResponse(res) }
         }
