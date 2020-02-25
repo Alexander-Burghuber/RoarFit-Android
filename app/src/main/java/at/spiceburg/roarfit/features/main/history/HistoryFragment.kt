@@ -17,7 +17,6 @@ import at.spiceburg.roarfit.features.main.MainViewModel
 import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_history.*
 
-
 class HistoryFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
