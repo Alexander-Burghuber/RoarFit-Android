@@ -2,6 +2,7 @@ package at.spiceburg.roarfit.features.main.history
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
 import at.spiceburg.roarfit.utils.Constants
@@ -49,13 +51,17 @@ class HistoryFragment : Fragment() {
                     when {
                         res.isSuccess() -> {
                             adapter.addMoreExercise(res.data!!, view)
-                            activity.progressMain.hide()
+
+                            // to remove flickering animation
+                            Handler().postDelayed({
+                                refresher_history.isRefreshing = false
+                            }, 750)
                         }
                         res.isLoading() -> {
-                            activity.progressMain.show()
+                            refresher_history.isRefreshing = true
                         }
                         else -> {
-                            activity.progressMain.hide()
+                            refresher_history.isRefreshing = false
                             activity.handleNetworkError(res.error!!)
                         }
                     }
@@ -63,18 +69,42 @@ class HistoryFragment : Fragment() {
             }
         })
 
+        refresher_history.setColorSchemeColors(resources.getColor(R.color.primary, null))
+
+        getExerciseHistory(activity, adapter, jwt)
+
+        refresher_history.setOnRefreshListener {
+            adapter.clearExercises()
+            getExerciseHistory(activity, adapter, jwt)
+        }
+    }
+
+    private fun getExerciseHistory(activity: MainActivity, adapter: HistoryAdapter, jwt: String) {
         viewModel.getExerciseHistory(jwt, 0).observe(viewLifecycleOwner) { res ->
-            Log.d(TAG, "first get exercises history called")
             when {
                 res.isSuccess() -> {
-                    adapter.setExercises(res.data!!)
-                    activity.progressMain.hide()
+                    val exercises: Array<Exercise> = res.data!!
+
+                    if (exercises.isNotEmpty()) {
+                        adapter.setExercises(exercises)
+                        list_history.visibility = View.VISIBLE
+                        text_history_emptydesc.visibility = View.INVISIBLE
+                    } else {
+                        list_history.visibility = View.INVISIBLE
+                        text_history_emptydesc.visibility = View.VISIBLE
+                    }
+
+                    // to remove flickering animation
+                    Handler().postDelayed({
+                        refresher_history?.isRefreshing = false
+                    }, 750)
                 }
                 res.isLoading() -> {
-                    activity.progressMain.show()
+                    refresher_history.isRefreshing = true
                 }
                 else -> {
-                    activity.progressMain.hide()
+                    list_history.visibility = View.INVISIBLE
+                    refresher_history.isRefreshing = false
                     activity.handleNetworkError(res.error!!)
                 }
             }

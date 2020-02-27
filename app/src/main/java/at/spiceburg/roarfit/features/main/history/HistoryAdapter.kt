@@ -73,4 +73,9 @@ class HistoryAdapter(private val context: Context) :
             notifyItemRangeInserted(oldItemCount, this.exercises.size - 1)
         }
     }
+
+    fun clearExercises() {
+        this.exercises.clear()
+        notifyDataSetChanged()
+    }
 }
