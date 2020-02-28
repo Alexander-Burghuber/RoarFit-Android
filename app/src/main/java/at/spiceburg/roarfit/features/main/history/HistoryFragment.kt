@@ -74,7 +74,6 @@ class HistoryFragment : Fragment() {
         getExerciseHistory(activity, adapter, jwt)
 
         refresher_history.setOnRefreshListener {
-            adapter.clearExercises()
             getExerciseHistory(activity, adapter, jwt)
         }
     }
@@ -83,6 +82,8 @@ class HistoryFragment : Fragment() {
         viewModel.getExerciseHistory(jwt, 0).observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
+                    adapter.clearExercises()
+
                     val exercises: Array<Exercise> = res.data!!
 
                     if (exercises.isNotEmpty()) {

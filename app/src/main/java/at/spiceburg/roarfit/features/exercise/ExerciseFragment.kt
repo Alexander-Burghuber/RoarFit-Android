@@ -76,13 +76,17 @@ class ExerciseFragment : Fragment() {
     private fun setupSpecificationsViews(specification: ExerciseSpecification) {
         // set sets
         text_exercise_sets.text = getString(R.string.exerciseinfo_sets, specification.sets)
+
         // set reps
         text_exercise_reps.text = getString(R.string.exerciseinfo_reps, specification.reps)
+
         // set weight if available
-        specification.weight?.let {
+        val weight: Float = specification.weight
+        if (weight != 0.0f) {
             text_exercise_weight.visibility = View.VISIBLE
-            text_exercise_weight.text = getString(R.string.exerciseinfo_weight, it)
+            text_exercise_weight.text = getString(R.string.exerciseinfo_weight, weight)
         }
+
         // set additional information from the trainer
         specification.info?.let {
             text_exercise_trainer_additionalinfo.visibility = View.VISIBLE

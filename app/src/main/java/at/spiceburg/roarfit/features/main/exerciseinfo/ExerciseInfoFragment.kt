@@ -41,13 +41,17 @@ class ExerciseInfoFragment : Fragment() {
 
         // set sets
         text_exerciseinfo_sets.text = getString(R.string.exerciseinfo_sets, specification.sets)
+
         // set reps
         text_exerciseinfo_reps.text = getString(R.string.exerciseinfo_reps, specification.reps)
+
         // set weight if available
-        specification.weight?.let {
+        val weight: Float = specification.weight
+        if (weight != 0.0f) {
             text_exerciseinfo_weight.visibility = View.VISIBLE
-            text_exerciseinfo_weight.text = getString(R.string.exerciseinfo_weight, it)
+            text_exerciseinfo_weight.text = getString(R.string.exerciseinfo_weight, weight)
         }
+
         // set additional information from the trainer
         specification.info?.let {
             text_exerciseinfo_trainer_additionalinfo.visibility = View.VISIBLE

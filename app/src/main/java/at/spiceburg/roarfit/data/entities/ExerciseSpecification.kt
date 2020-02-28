@@ -4,9 +4,9 @@ import java.io.Serializable
 
 data class ExerciseSpecification(
     val id: Int,
-    val reps: String,
-    val sets: String,
-    val weight: String?,
+    val reps: Int,
+    val sets: Int,
+    val weight: Float,
     val info: String?,
     val exercise: Exercise
 ) : Serializable

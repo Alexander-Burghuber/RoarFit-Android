@@ -7,7 +7,7 @@ data class Exercise(
     val template: ExerciseTemplate,
     val reps: Int,
     val sets: Int,
-    val weight: String?,
+    val weight: Float,
     val time: String,
     val completedDate: Long?
 ) : Serializable

@@ -39,7 +39,6 @@ class HistoryAdapter(private val context: Context) :
         val exercise: Exercise = exercises[position]
         holder.name.text = exercise.template.name
 
-
         var infoString = context.getString(
             R.string.history_exercise_info,
             exercise.time,
@@ -47,8 +46,8 @@ class HistoryAdapter(private val context: Context) :
             exercise.reps
         )
 
-        val weight: String? = exercise.weight
-        if (!weight.isNullOrBlank()) {
+        val weight: Float = exercise.weight
+        if (weight != 0.0f) {
             infoString += context.getString(R.string.history_exercise_opt_weight, weight)
         }
         holder.info.text = infoString
