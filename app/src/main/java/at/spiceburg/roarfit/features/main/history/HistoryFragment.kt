@@ -54,14 +54,14 @@ class HistoryFragment : Fragment() {
 
                             // to remove flickering animation
                             Handler().postDelayed({
-                                refresher_history.isRefreshing = false
+                                refresher_history?.isRefreshing = false
                             }, 750)
                         }
                         res.isLoading() -> {
-                            refresher_history.isRefreshing = true
+                            refresher_history?.isRefreshing = true
                         }
                         else -> {
-                            refresher_history.isRefreshing = false
+                            refresher_history?.isRefreshing = false
                             activity.handleNetworkError(res.error!!)
                         }
                     }
@@ -101,11 +101,11 @@ class HistoryFragment : Fragment() {
                     }, 750)
                 }
                 res.isLoading() -> {
-                    refresher_history.isRefreshing = true
+                    refresher_history?.isRefreshing = true
                 }
                 else -> {
                     list_history.visibility = View.INVISIBLE
-                    refresher_history.isRefreshing = false
+                    refresher_history?.isRefreshing = false
                     activity.handleNetworkError(res.error!!)
                 }
             }
