@@ -1,6 +1,7 @@
 package at.spiceburg.roarfit.features.main.exerciseinfo
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -101,6 +102,18 @@ class ExerciseInfoFragment : Fragment() {
             bodyPartsStr += if (i == 0) bodyParts[i] else ", ${bodyParts[i]}"
         }
         text_exerciseinfo_bodyparts.text = bodyPartsStr
+
+        template.videoUrl?.let {
+            button_exerciseinfo_video.visibility = View.VISIBLE
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(it)
+            }
+            button_exerciseinfo_video.setOnClickListener {
+                if (intent.resolveActivity(requireContext().packageManager) != null) {
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     private fun startExercise(intent: Intent) {
