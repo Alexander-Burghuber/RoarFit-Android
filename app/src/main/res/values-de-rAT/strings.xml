@@ -35,9 +35,9 @@
     <string name="exerciseinfo_no_equipment">Kein Trainingsgerät benötigt</string>
     <string name="exerciseinfo_header_bodyparts">Körperteile</string>
     <string name="exerciseinfo_header_trainerinfo">Persönliche Trainer Angaben</string>
-    <string name="exerciseinfo_sets">Sätze: %s</string>
-    <string name="exerciseinfo_reps">WH: %s</string>
-    <string name="exerciseinfo_weight">Gewicht: %s kg</string>
+    <string name="exerciseinfo_sets">Sätze: %d</string>
+    <string name="exerciseinfo_reps">WH: %d</string>
+    <string name="exerciseinfo_weight">Gewicht: %.1f kg</string>
     <string name="exercise_header_trainerinfo">Trainer Angaben</string>
     <string name="exercise_backpress_warning_title">Sind Sie sicher, dass Sie die Übung abbrechen wollen?</string>
     <string name="exercise_backpress_warning_msg">Der Fortschritt wird NICHT gespeichert.</string>
@@ -52,8 +52,13 @@
     <string name="finishexercise_desc">Bearbeite hier die Informationen über die abgeschlossene Übung.</string>
     <string name="finishexercise_inputs_invalid">Bitte fülle alle Felder korrekt aus</string>
     <string name="finishexercise_exercise_already_completed">Die Übung wurde bereits abgeschlossen</string>
-    <string name="finishexercise_exercise_helpertext_sets">*Trainer: %s Sätze</string>
-    <string name="finishexercise_exercise_helpertext_reps">*Trainer: %s WH</string>
-    <string name="finishexercise_exercise_helpertext_weight">*Trainer: %s kg</string>
+    <string name="finishexercise_exercise_helpertext_sets">*Trainer: %d Sätze</string>
+    <string name="finishexercise_exercise_helpertext_reps">*Trainer: %d WH</string>
+    <string name="finishexercise_exercise_helpertext_weight">*Trainer: %.1f kg</string>
     <string name="finishexercise_exercise_error">Ungültige Eingabe</string>
+    <string name="itemexercise_completed">Abgeschlossen</string>
+    <string name="history_exercise_info">"%1$s - %2$d Sätze - %3$d WH "</string>
+    <string name="history_exercise_empty_desc">Du hast bis jetzt keine Übungen abgeschlossen.</string>
+    <string name="finishexercise_weight_input">%.1f</string>
+    <string name="history_exercise_opt_weight">- %.1f kg</string>
 </resources>

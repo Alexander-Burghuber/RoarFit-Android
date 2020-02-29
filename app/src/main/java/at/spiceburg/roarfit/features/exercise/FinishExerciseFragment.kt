@@ -22,6 +22,7 @@ import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_finish_exercise.*
+import java.util.*
 
 class FinishExerciseFragment : Fragment() {
 
@@ -89,10 +90,20 @@ class FinishExerciseFragment : Fragment() {
             textinputlayout_finishexercise_reps.helperText =
                 getString(R.string.finishexercise_exercise_helpertext_reps, specification.reps)
 
-            if (specification.weight != null) {
+            input_finishexercise_sets.setText(specification.sets.toString())
+            input_finishexercise_reps.setText(specification.reps.toString())
+
+            val weight: Float = specification.weight
+            if (weight != 0.0f) {
                 textinputlayout_finishexercise_weight.helperText = getString(
                     R.string.finishexercise_exercise_helpertext_weight,
-                    specification.weight
+                    weight
+                )
+                input_finishexercise_weight.setText(
+                    getString(
+                        R.string.finishexercise_weight_input,
+                        weight
+                    )
                 )
             } else {
                 input_finishexercise_weight.visibility = View.GONE
@@ -112,71 +123,80 @@ class FinishExerciseFragment : Fragment() {
         button_finishexercise_complete.setOnClickListener {
             val sets: Int? = input_finishexercise_sets.text.toString().toIntOrNull()
             val reps: Int? = input_finishexercise_reps.text.toString().toIntOrNull()
-            val weight: String? = input_finishexercise_weight.text.toString()
+            val weight: Float? = input_finishexercise_weight.text.toString()
+                .replace(',', '.').toFloatOrNull()
             val min: Int? = input_finishexercise_min.text.toString().toIntOrNull()
             val secs: Int? = input_finishexercise_secs.text.toString().toIntOrNull()
 
-            if (sets != null) {
-                textinputlayout_finishexercise_sets.isErrorEnabled = false
-                textinputlayout_finishexercise_sets.isHelperTextEnabled = true
+            var isInputInvalid = false
 
-                if (reps != null) {
-                    textinputlayout_finishexercise_reps.isErrorEnabled = false
-                    textinputlayout_finishexercise_reps.isHelperTextEnabled = true
-
-                    if (input_finishexercise_weight.visibility == View.GONE ||
-                        activity.specification == null || !weight.isNullOrBlank()
-                    ) {
-                        textinputlayout_finishexercise_weight.isErrorEnabled = false
-                        textinputlayout_finishexercise_weight.isHelperTextEnabled = true
-
-                        if (min != null && validateMinOrSecs(min)) {
-                            val blackColor = resources.getColor(R.color.black, null)
-                            input_finishexercise_min.setTextColor(blackColor)
-
-                            if (secs != null && validateMinOrSecs(secs)) {
-                                input_finishexercise_secs.setTextColor(blackColor)
-
-                                if (activity.specification != null) {
-                                    // workout exercise
-                                    val specification: ExerciseSpecification =
-                                        activity.specification!!
-                                    addExercise(
-                                        sets, reps, weight,
-                                        min, secs, exerciseId = specification.exercise.id
-                                    )
-                                } else if (activity.template != null) {
-                                    // personal exercise
-                                    val template: ExerciseTemplate = activity.template!!
-                                    addExercise(
-                                        sets,
-                                        reps,
-                                        weight,
-                                        min,
-                                        secs,
-                                        templateId = template.id
-                                    )
-                                }
-                            } else {
-                                val errorColor = resources.getColor(R.color.error, null)
-                                input_finishexercise_secs.setTextColor(errorColor)
-                            }
-                        } else {
-                            val errorColor = resources.getColor(R.color.error, null)
-                            input_finishexercise_min.setTextColor(errorColor)
-                        }
-                    } else {
-                        textinputlayout_finishexercise_weight.error =
-                            getString(R.string.finishexercise_exercise_error)
-                    }
-                } else {
-                    textinputlayout_finishexercise_reps.error =
-                        getString(R.string.finishexercise_exercise_error)
-                }
-            } else {
+            if (sets == null) {
                 textinputlayout_finishexercise_sets.error =
                     getString(R.string.finishexercise_exercise_error)
+                isInputInvalid = true
+            } else {
+                textinputlayout_finishexercise_sets.isErrorEnabled = false
+                textinputlayout_finishexercise_sets.isHelperTextEnabled = true
             }
+
+            if (reps == null) {
+                textinputlayout_finishexercise_reps.error =
+                    getString(R.string.finishexercise_exercise_error)
+                isInputInvalid = true
+            } else {
+                textinputlayout_finishexercise_reps.isErrorEnabled = false
+                textinputlayout_finishexercise_reps.isHelperTextEnabled = true
+            }
+
+            // might be buggy
+            if (input_finishexercise_weight.visibility != View.GONE
+                && activity.specification != null && weight == null
+            ) {
+                textinputlayout_finishexercise_weight.error =
+                    getString(R.string.finishexercise_exercise_error)
+                isInputInvalid = true
+            } else {
+                textinputlayout_finishexercise_weight.isErrorEnabled = false
+                textinputlayout_finishexercise_weight.isHelperTextEnabled = true
+            }
+
+            if (min == null || !validateMinOrSecs(min)) {
+                val errorColor = resources.getColor(R.color.error, null)
+                input_finishexercise_min.setTextColor(errorColor)
+                isInputInvalid = true
+            } else {
+                val blackColor = resources.getColor(R.color.black, null)
+                input_finishexercise_min.setTextColor(blackColor)
+            }
+
+            if (secs == null || !validateMinOrSecs(secs)) {
+                val errorColor = resources.getColor(R.color.error, null)
+                input_finishexercise_secs.setTextColor(errorColor)
+                isInputInvalid = true
+            } else {
+                val blackColor = resources.getColor(R.color.black, null)
+                input_finishexercise_secs.setTextColor(blackColor)
+            }
+
+            if (!isInputInvalid) {
+                if (activity.specification != null) {
+                    // workout exercise
+                    val specification: ExerciseSpecification = activity.specification!!
+                    addExercise(
+                        sets!!,
+                        reps!!,
+                        weight,
+                        min!!,
+                        secs!!,
+                        exerciseId = specification.exercise.id
+                    )
+                } else if (activity.template != null) {
+                    // personal exercise
+                    val template: ExerciseTemplate = activity.template!!
+                    addExercise(sets!!, reps!!, weight, min!!, secs!!, templateId = template.id)
+                }
+            }
+
             hideKeyboard()
         }
     }
@@ -207,19 +227,19 @@ class FinishExerciseFragment : Fragment() {
     }
 
     private fun addExercise(
-        sets: Int, reps: Int, weight: String?, min: Int, secs: Int,
+        sets: Int, reps: Int, weight: Float?, min: Int, secs: Int,
         templateId: Int? = null, exerciseId: Int? = null
     ) {
         val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         val jwt: String = sp.getString(Constants.JWT, null)!!
 
         if (templateId != null) {
-            val dto = PersonalExerciseDTO(templateId, "$min:$secs", sets, reps, weight)
+            val dto = PersonalExerciseDTO(templateId, "$min:$secs", sets, reps, weight, Date().time)
 
             viewModel.addPersonalExercise(jwt, dto)
                 .observe(viewLifecycleOwner) { handleNetworkResponse(it) }
         } else if (exerciseId != null) {
-            val dto = WorkoutExerciseDTO(exerciseId, "$min:$secs", sets, reps, weight)
+            val dto = WorkoutExerciseDTO(exerciseId, "$min:$secs", sets, reps, weight, Date().time)
             viewModel.addWorkoutExercise(jwt, dto)
                 .observe(viewLifecycleOwner) { res -> handleNetworkResponse(res) }
         }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Result
 import at.spiceburg.roarfit.data.db.UserDB
+import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.data.repositories.UserRepository
@@ -56,7 +57,17 @@ class MainViewModel(
         return liveData
     }
 
-    private fun loadWorkoutPlans(jwt: String) {
+    fun getExerciseHistory(jwt: String, count: Int): LiveData<Result<Array<Exercise>>> {
+        val liveData = MutableLiveData<Result<Array<Exercise>>>(Result.loading())
+        val loadExerciseHistory = workoutRepo.getExerciseHistory(jwt, count).subscribeBy(
+            onSuccess = { liveData.value = it },
+            onError = { Log.e(TAG, "loadExerciseHistory network call error", it) }
+        )
+        disposables.add(loadExerciseHistory)
+        return liveData
+    }
+
+    fun loadWorkoutPlans(jwt: String) {
         workoutPlans.value = Result.loading()
         val loadWorkoutPlan = workoutRepo.getWorkoutPlan(jwt).subscribeBy(
             onSuccess = { workoutPlans.value = it },

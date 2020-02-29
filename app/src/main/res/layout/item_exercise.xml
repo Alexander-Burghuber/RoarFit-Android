@@ -37,7 +37,7 @@
             tools:text="Brust" />
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/icon_itemexerciseinfo_state"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="16dp"
@@ -45,7 +45,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
+            app:srcCompat="@drawable/ic_navigate_next_black_24dp"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/text_itemexerciseinfo_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/itemexercise_completed"
+            android:textColor="@color/secondaryLight"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

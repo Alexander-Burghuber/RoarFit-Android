@@ -256,7 +256,8 @@
             android:id="@+id/input_finishexercise_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:inputType="numberDecimal"
+            android:digits="0123456789.,"
             android:selectAllOnFocus="true"
             android:singleLine="true" />
 

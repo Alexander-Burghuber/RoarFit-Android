@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
 
         sp = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         progressMain = findViewById(R.id.progress_main)
+        progressMain.hide()
 
         // check if user id and jwt is available
         val userId = sp.getInt(Constants.USER_ID, -1)
@@ -111,6 +112,12 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
                 BottomSheetExerciseAction::class.java.simpleName
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val jwt: String = sp.getString(Constants.JWT, null)!!
+        viewModel.loadWorkoutPlans(jwt)
     }
 
     override fun onSupportNavigateUp(): Boolean {

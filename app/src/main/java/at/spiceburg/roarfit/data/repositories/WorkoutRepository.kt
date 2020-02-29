@@ -5,6 +5,7 @@ import at.spiceburg.roarfit.data.Result
 import at.spiceburg.roarfit.data.dto.EquipmentDTO
 import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
 import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
+import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.network.KeyFitApi
@@ -33,6 +34,12 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) : DefaultRepository() 
         equipment: String
     ): Single<Result<Array<ExerciseTemplate>>> {
         return keyFitApi.getExerciseTemplates(getJwtString(jwt), EquipmentDTO(equipment))
+            .toResult()
+            .onErrorResumeNext { Single.just(handleDefaultNetworkErrors(it)) }
+    }
+
+    fun getExerciseHistory(jwt: String, count: Int): Single<Result<Array<Exercise>>> {
+        return keyFitApi.getExerciseHistory(getJwtString(jwt), count)
             .toResult()
             .onErrorResumeNext { Single.just(handleDefaultNetworkErrors(it)) }
     }

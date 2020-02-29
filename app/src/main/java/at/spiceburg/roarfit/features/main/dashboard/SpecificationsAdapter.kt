@@ -4,13 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 
 class SpecificationsAdapter(
-    context: Context, private val onExerciseClicked: (ExerciseSpecification) -> Unit
+    private val context: Context, private val onExerciseClicked: (ExerciseSpecification) -> Unit
 ) : RecyclerView.Adapter<SpecificationsAdapter.ExerciseViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -49,6 +50,18 @@ class SpecificationsAdapter(
             bodyPartsStr += if (i == 0) bodyParts[i] else ", ${bodyParts[i]}"
         }
         holder.bodyPart.text = bodyPartsStr
+
+        if (specification.exercise.completedDate != null) {
+            val itemView = holder.itemView
+            itemView.setOnClickListener(null)
+
+            val imageView: ImageView = itemView.findViewById(R.id.icon_itemexerciseinfo_state)
+            imageView.visibility = View.GONE
+
+            val completedText: TextView =
+                itemView.findViewById(R.id.text_itemexerciseinfo_completed)
+            completedText.visibility = View.VISIBLE
+        }
     }
 
     fun setSpecifications(specifications: List<ExerciseSpecification>) {

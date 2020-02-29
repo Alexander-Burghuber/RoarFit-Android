@@ -55,7 +55,7 @@
                 android:layout_marginEnd="16dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textColor="@color/darkGrey"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_exerciseinfo_video"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout"
                 app:layout_constraintTop_toBottomOf="@+id/image_exerciseinfo_icon"
                 tools:text="Leg extension" />
@@ -71,16 +71,34 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <Button
+                android:id="@+id/button_exerciseinfo_video"
+                style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+                android:layout_width="75dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/darkGrey"
+                android:visibility="gone"
+                app:icon="@drawable/ic_play_circle_outline_black_24dp"
+                app:iconSize="40dp"
+                app:iconTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/text_exerciseinfo_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="19dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/exerciseinfo_header_exercise"
                 android:textColor="@color/darkGrey"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_exerciseinfo_video"
                 app:layout_constraintStart_toEndOf="@+id/image_exerciseinfo_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 

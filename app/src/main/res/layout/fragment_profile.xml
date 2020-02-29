@@ -16,7 +16,7 @@
         android:layout_marginEnd="16dp"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/icon_profile"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Maximilian" />
 
@@ -28,7 +28,7 @@
         android:layout_marginEnd="16dp"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/icon_profile"
         app:layout_constraintTop_toBottomOf="@+id/text_profile_firstname"
         tools:text="Mustermann" />
 
@@ -40,8 +40,19 @@
         android:layout_marginEnd="16dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/icon_profile"
         app:layout_constraintTop_toBottomOf="@+id/text_profile_lastname"
         tools:text="8387" />
+
+    <ImageView
+        android:id="@+id/icon_profile"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_account_circle_black_24dp"
+        android:tint="@color/darkGrey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,6 +41,8 @@
     <string name="dashboard_empty_desc">No workoutplan has been assigned to you. Please contact your trainer.</string>
     <string name="dashboard_workoutplan_day">Day %d</string>
 
+    <string name="itemexercise_completed">Completed</string>
+
     <!-- Bottom sheet -->
     <string name="main_bottomsheet_title">Choose equipment from</string>
     <string name="main_bottomsheet_qr" translatable="false">QR</string>
@@ -66,9 +68,9 @@
     <string name="exerciseinfo_no_equipment">No equipment needed</string>
     <string name="exerciseinfo_header_bodyparts">Body parts</string>
     <string name="exerciseinfo_header_trainerinfo">Personal Trainer specifications</string>
-    <string name="exerciseinfo_sets">Sets: %s</string>
-    <string name="exerciseinfo_reps">Reps: %s</string>
-    <string name="exerciseinfo_weight">Weight: %s kg</string>
+    <string name="exerciseinfo_sets">Sets: %d</string>
+    <string name="exerciseinfo_reps">Reps: %d</string>
+    <string name="exerciseinfo_weight">Weight: %.1f kg</string>
 
     <!-- Exercise -->
     <string name="exercise_time" translatable="false">00:00</string>
@@ -92,10 +94,16 @@
     <string name="finishexercise_inputs_invalid">At least one of the inputs is invalid</string>
     <string name="finishexercise_exercise_already_completed">The exercise has already been completed</string>
     <string name="finishexercise_exercise_bodyparts" translatable="false">\u0020- %s</string>
-    <string name="finishexercise_exercise_helpertext_sets">*Trainer: %s sets</string>
-    <string name="finishexercise_exercise_helpertext_reps">*Trainer: %s reps</string>
-    <string name="finishexercise_exercise_helpertext_weight">*Trainer: %s kg</string>
+    <string name="finishexercise_exercise_helpertext_sets">*Trainer: %d sets</string>
+    <string name="finishexercise_exercise_helpertext_reps">*Trainer: %d reps</string>
+    <string name="finishexercise_exercise_helpertext_weight">*Trainer: %.1f kg</string>
     <string name="finishexercise_exercise_error">Invalid input</string>
+    <string name="finishexercise_weight_input">%.1f</string>
+
+    <!-- Exercise History -->
+    <string name="history_exercise_info">%1$s - %2$d Sets - %3$d Reps </string>
+    <string name="history_exercise_opt_weight">- %.1f kg</string>
+    <string name="history_exercise_empty_desc">You haven\'t completed any exercises yet.</string>
 
     <!-- Notification -->
     <string name="exercise_notification_name">Exercise</string>
