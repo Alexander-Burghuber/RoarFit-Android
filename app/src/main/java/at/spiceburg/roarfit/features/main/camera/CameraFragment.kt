@@ -36,20 +36,6 @@ class CameraFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // change theme to fit camera
-        requireActivity().apply {
-            // allow the modification of system bar colors
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-            // backup the main theme colors
-            statusBarColor = window.statusBarColor
-            navigationBarColor = window.navigationBarColor
-
-            // set the camera theme colors
-            window.statusBarColor = resources.getColor(R.color.black, null)
-            window.navigationBarColor = resources.getColor(R.color.black, null)
-        }
-
         val activity = (requireActivity() as MainActivity)
 
         val mainHandler = Handler(Looper.getMainLooper())
@@ -102,6 +88,21 @@ class CameraFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // change theme to fit camera
+        requireActivity().apply {
+            // allow the modification of system bar colors
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+            // backup the main theme colors
+            statusBarColor = window.statusBarColor
+            navigationBarColor = window.navigationBarColor
+
+            // set the camera theme colors
+            window.statusBarColor = resources.getColor(R.color.black, null)
+            window.navigationBarColor = resources.getColor(R.color.black, null)
+        }
+
         qrReader.initAndStart(cameraView)
     }
 
@@ -123,6 +124,6 @@ class CameraFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = CameraFragment::class.java.simpleName
+        val TAG = CameraFragment::class.java.simpleName
     }
 }
