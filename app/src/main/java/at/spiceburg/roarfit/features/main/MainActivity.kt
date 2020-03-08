@@ -28,7 +28,6 @@ import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.NetworkError
 import at.spiceburg.roarfit.features.auth.AuthActivity
-import at.spiceburg.roarfit.features.settings.SettingsActivity
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -152,11 +151,6 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_app_bar_settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-                true
-            }
             R.id.menu_app_bar_logout -> {
                 logout()
                 true
