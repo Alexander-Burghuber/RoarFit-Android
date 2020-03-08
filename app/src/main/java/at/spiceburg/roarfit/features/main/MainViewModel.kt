@@ -67,6 +67,45 @@ class MainViewModel(
         return liveData
     }
 
+    /*fun getTimeSpentStatistic(jwt: String) {
+        val loadExerciseHistory = workoutRepo.getExerciseHistory(jwt, 0)
+            .map { res ->
+                if (res.isSuccess()) {
+                    res.data?.forEach { exercise ->
+                        exercise.completedDate?.let {
+                            val date = Date(it)
+                            val calendar = Calendar.getInstance()
+                            calendar.time = date
+                            val dayOfWeek = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                                Calendar.MONDAY -> {
+                                    "MO"
+                                }
+                                Calendar.TUESDAY -> {
+
+                                }
+                                Calendar.WEDNESDAY -> {
+
+                                }
+                                Calendar.THURSDAY -> {
+
+                                }
+                                Calendar.FRIDAY -> {
+
+                                }
+                                Calendar.SATURDAY -> {
+
+                                }
+                                Calendar.SUNDAY -> {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        disposables.add(loadExerciseHistory)
+    }*/
+
     fun loadWorkoutPlans(jwt: String) {
         workoutPlans.value = Result.loading()
         val loadWorkoutPlan = workoutRepo.getWorkoutPlan(jwt).subscribeBy(
