@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.camera
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import github.nisrulz.qreader.QRDataListener
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
@@ -53,14 +51,12 @@ class CameraFragment : Fragment() {
         }
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val mainHandler = Handler(Looper.getMainLooper())
         val qrListener = QRDataListener { data ->
             mainHandler.post {
                 // this@CameraFragment is required in this block
-                viewModel.getEquipment(jwt).observe(this@CameraFragment.viewLifecycleOwner) { res ->
+                viewModel.getEquipment().observe(this@CameraFragment.viewLifecycleOwner) { res ->
                     when {
                         res.isSuccess() -> {
                             activity.progressMain.hide()

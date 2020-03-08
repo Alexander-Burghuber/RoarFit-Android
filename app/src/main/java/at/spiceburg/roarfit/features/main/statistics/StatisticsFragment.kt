@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.statistics
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -33,8 +31,6 @@ class StatisticsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val barChart: BarChart = requireView().findViewById(R.id.statistics_timespent)
 

@@ -1,9 +1,7 @@
 package at.spiceburg.roarfit.features.main.dashboard
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +15,6 @@ import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : Fragment() {
@@ -35,11 +32,7 @@ class DashboardFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Log.d(TAG, "onActivityCreated called")
-
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val onExerciseClicked: (exercise: ExerciseSpecification) -> Unit = {
             val action = DashboardFragmentDirections.actionDashboardToExerciseInfo(null, it)
@@ -52,7 +45,7 @@ class DashboardFragment : Fragment() {
 
         refresher_dashboard.setColorSchemeColors(resources.getColor(R.color.primary, null))
 
-        viewModel.getWorkoutPlans(jwt).observe(viewLifecycleOwner) { res ->
+        viewModel.getWorkoutPlans().observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
                     val workoutPlans: Array<WorkoutPlan> = res.data!!
@@ -84,7 +77,7 @@ class DashboardFragment : Fragment() {
         }
 
         refresher_dashboard.setOnRefreshListener {
-            viewModel.loadWorkoutPlans(jwt)
+            viewModel.loadWorkoutPlans()
         }
     }
 

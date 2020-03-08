@@ -1,22 +1,15 @@
 package at.spiceburg.roarfit.data.repositories
 
-import androidx.lifecycle.LiveData
 import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.NetworkError
 import at.spiceburg.roarfit.data.Result
-import at.spiceburg.roarfit.data.db.Dao
-import at.spiceburg.roarfit.data.db.UserDB
 import at.spiceburg.roarfit.data.dto.LoginRequest
+import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.network.KeyFitApi
-import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 
-class UserRepository(private val keyFitApi: KeyFitApi, private val dao: Dao) : DefaultRepository() {
-
-    fun getUser(userId: Int): LiveData<UserDB> = dao.getUser(userId)
+class UserRepository(private val keyFitApi: KeyFitApi) : DefaultRepository() {
 
     fun login(username: String, password: String): Single<Result<LoginData>> {
         return keyFitApi.login(LoginRequest(username, password))
@@ -31,15 +24,10 @@ class UserRepository(private val keyFitApi: KeyFitApi, private val dao: Dao) : D
             }
     }
 
-    fun loadUser(jwt: String): Single<Result<UserDB>> {
+    fun loadUser(jwt: String): Single<Result<User>> {
         return keyFitApi.getUser(getJwtString(jwt))
             .toResult()
-    }
-
-    fun insertUser(user: UserDB): Completable {
-        return dao.insertUser(user)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .onErrorResumeNext { Single.just(handleDefaultNetworkErrors(it)) }
     }
 
     companion object {

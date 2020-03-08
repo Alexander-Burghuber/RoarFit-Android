@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.equipmentlist
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_equipment_list.*
 
 class EquipmentListFragment : Fragment() {
@@ -42,10 +40,8 @@ class EquipmentListFragment : Fragment() {
         recyclerview_equipmentlist_equipments.layoutManager = LinearLayoutManager(requireContext())
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
-        viewModel.getEquipment(jwt).observe(viewLifecycleOwner) { res ->
+        viewModel.getEquipment().observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
                     val equipment: Array<String> = res.data!!

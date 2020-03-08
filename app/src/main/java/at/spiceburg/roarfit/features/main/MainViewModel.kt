@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.spiceburg.roarfit.data.Result
-import at.spiceburg.roarfit.data.db.UserDB
 import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.data.repositories.UserRepository
 import at.spiceburg.roarfit.data.repositories.WorkoutRepository
@@ -16,37 +16,42 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 
 class MainViewModel(
-    userId: Int,
-    private val workoutRepo: WorkoutRepository,
-    userRepo: UserRepository
+    private val jwt: String,
+    private val userRepo: UserRepository,
+    private val workoutRepo: WorkoutRepository
 ) : ViewModel() {
 
-    val user: LiveData<UserDB> = userRepo.getUser(userId)
     private var workoutPlans = MutableLiveData<Result<Array<WorkoutPlan>>>()
     private var equipment = MutableLiveData<Result<Array<String>>>()
+    private var user = MutableLiveData<Result<User>>()
 
     private var disposables = CompositeDisposable()
 
-    fun getWorkoutPlans(jwt: String): LiveData<Result<Array<WorkoutPlan>>> {
+    fun getWorkoutPlans(): LiveData<Result<Array<WorkoutPlan>>> {
         val res = workoutPlans.value
         if (res == null || res.shouldReload()) {
-            loadWorkoutPlans(jwt)
+            loadWorkoutPlans()
         }
         return workoutPlans
     }
 
-    fun getEquipment(jwt: String): LiveData<Result<Array<String>>> {
+    fun getUser(): LiveData<Result<User>> {
+        val res = user.value
+        if (res == null || res.shouldReload()) {
+            loadUser()
+        }
+        return user
+    }
+
+    fun getEquipment(): LiveData<Result<Array<String>>> {
         val res = equipment.value
         if (res == null || res.shouldReload()) {
-            loadEquipment(jwt)
+            loadEquipment()
         }
         return equipment
     }
 
-    fun getExerciseTemplates(
-        jwt: String,
-        equipment: String
-    ): LiveData<Result<Array<ExerciseTemplate>>> {
+    fun getExerciseTemplates(equipment: String): LiveData<Result<Array<ExerciseTemplate>>> {
         val liveData = MutableLiveData<Result<Array<ExerciseTemplate>>>(Result.loading())
         val getExerciseTemplates = workoutRepo.getExerciseTemplates(jwt, equipment)
             .subscribeBy(
@@ -57,7 +62,7 @@ class MainViewModel(
         return liveData
     }
 
-    fun getExerciseHistory(jwt: String, count: Int): LiveData<Result<Array<Exercise>>> {
+    fun getExerciseHistory(count: Int): LiveData<Result<Array<Exercise>>> {
         val liveData = MutableLiveData<Result<Array<Exercise>>>(Result.loading())
         val loadExerciseHistory = workoutRepo.getExerciseHistory(jwt, count).subscribeBy(
             onSuccess = { liveData.value = it },
@@ -106,7 +111,7 @@ class MainViewModel(
         disposables.add(loadExerciseHistory)
     }*/
 
-    fun loadWorkoutPlans(jwt: String) {
+    fun loadWorkoutPlans() {
         workoutPlans.value = Result.loading()
         val loadWorkoutPlan = workoutRepo.getWorkoutPlan(jwt).subscribeBy(
             onSuccess = { workoutPlans.value = it },
@@ -115,7 +120,16 @@ class MainViewModel(
         disposables.add(loadWorkoutPlan)
     }
 
-    private fun loadEquipment(jwt: String) {
+    private fun loadUser() {
+        user.value = Result.loading()
+        val loadUser = userRepo.loadUser(jwt).subscribeBy(
+            onSuccess = { user.value = it },
+            onError = { Log.e(TAG, "loadUser network call error", it) }
+        )
+        disposables.add(loadUser)
+    }
+
+    private fun loadEquipment() {
         equipment.value = Result.loading()
         val loadEquipment = workoutRepo.getEquipment(jwt).subscribeBy(
             onSuccess = { equipment.value = it },
@@ -130,12 +144,12 @@ class MainViewModel(
 
     @Suppress("UNCHECKED_CAST")
     class Factory(
-        private val userId: Int,
+        private val jwt: String,
         private val userRepo: UserRepository,
         private val workoutRepo: WorkoutRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MainViewModel(userId, workoutRepo, userRepo) as T
+            return MainViewModel(jwt, userRepo, workoutRepo) as T
         }
     }
 

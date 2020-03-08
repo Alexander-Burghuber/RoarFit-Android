@@ -5,16 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import at.spiceburg.roarfit.R
+import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,23 +26,28 @@ class ProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         val activity = (requireActivity() as MainActivity)
-        viewModel = activity.viewModel
 
-        // query the user from the database
-        viewModel.user.observe(this) { user ->
-            text_profile_customernum.text = user.id.toString()
-            text_profile_firstname.text = user.firstName
-            text_profile_lastname.text = user.lastName
+        viewModel.getUser().observe(viewLifecycleOwner) { res ->
+            when {
+                res.isSuccess() -> {
+                    activity.progress_main?.hide()
+                    val user: User = res.data!!
+                    text_profile_customernum.text = user.id.toString()
+                    text_profile_firstname.text = user.firstName
+                    text_profile_lastname.text = user.lastName
+                }
+                res.isLoading() -> {
+                    activity.progress_main?.show()
+                }
+                else -> {
+                    activity.progress_main?.hide()
+                    activity.handleNetworkError(res.error!!)
+                }
+            }
         }
-    }
-
-    private fun displaySnackbar(text: String) {
-        Snackbar.make(constraintlayout_profile, text, Snackbar.LENGTH_SHORT)
-            .setAction("Dismiss") {} // empty callback dismisses the snackbar by default
-            .show()
     }
 }

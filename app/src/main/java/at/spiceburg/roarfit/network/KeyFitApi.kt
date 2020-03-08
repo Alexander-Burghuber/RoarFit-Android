@@ -1,13 +1,13 @@
 package at.spiceburg.roarfit.network
 
 import at.spiceburg.roarfit.data.LoginData
-import at.spiceburg.roarfit.data.db.UserDB
 import at.spiceburg.roarfit.data.dto.EquipmentDTO
 import at.spiceburg.roarfit.data.dto.LoginRequest
 import at.spiceburg.roarfit.data.dto.PersonalExerciseDTO
 import at.spiceburg.roarfit.data.dto.WorkoutExerciseDTO
 import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
+import at.spiceburg.roarfit.data.entities.User
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import io.reactivex.Single
 import retrofit2.http.*
@@ -27,7 +27,7 @@ interface KeyFitApi {
     fun login(@Body request: LoginRequest): Single<LoginData>
 
     @GET("user")
-    fun getUser(@Header("Authorization") token: String): Single<UserDB>
+    fun getUser(@Header("Authorization") token: String): Single<User>
 
     @GET("workoutplans")
     fun getWorkoutPlans(@Header("Authorization") token: String): Single<Array<WorkoutPlan>>
