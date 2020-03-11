@@ -46,4 +46,12 @@ interface KeyFitApi {
 
     @GET("exercise-history/{count}")
     fun getExerciseHistory(@Header("Authorization") token: String, @Path("count") count: Int): Single<Array<Exercise>>
+
+    /* Part of Medt-Android Project */
+
+    @GET("exercises/{date}")
+    fun getExerciseOfWeek(
+        @Header("Authorization") token: String,
+        @Path("date") dateStr: String
+    ): Single<Array<Exercise>>
 }

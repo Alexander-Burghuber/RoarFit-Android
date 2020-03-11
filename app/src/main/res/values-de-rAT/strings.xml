@@ -70,4 +70,6 @@
         <item>Sa</item>
         <item>So</item>
     </string-array>
+    <string name="statistics_tab_timespent">Zeitaufwand</string>
+    <string name="statistics_timespent_week_divider">%1$s - %2$s</string>
 </resources>

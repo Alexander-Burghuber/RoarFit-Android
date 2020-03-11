@@ -5,19 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager.widget.ViewPager
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.tabs.TabLayout
 
 class StatisticsFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
+    private lateinit var viewPager: ViewPager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,33 +29,29 @@ class StatisticsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val activity = (requireActivity() as MainActivity)
+        viewPager = requireView().findViewById(R.id.pager_statistics)
+        viewPager.adapter = PagerAdapter(childFragmentManager)
 
-        val barChart: BarChart = requireView().findViewById(R.id.statistics_timespent)
+        val tabs: TabLayout = requireView().findViewById(R.id.tabs_statistics)
+        tabs.setupWithViewPager(viewPager)
+    }
 
-        val entries: List<BarEntry> =
-            arrayListOf(BarEntry(0f, 1f), BarEntry(1f, 3f), BarEntry(2f, 2f))
-        val dataSet = BarDataSet(entries, "BarDataSet")
-        barChart.data = BarData(dataSet)
+    private inner class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
-        barChart.axisRight.isEnabled = false
-        barChart.legend.isEnabled = false
-        barChart.setFitBars(true)
-        barChart.setViewPortOffsets(60f, 0f, 50f, 150f)
+        override fun getCount(): Int = 2
 
-        val xAxis = barChart.xAxis
-        xAxis.setDrawLabels(true)
-        xAxis.granularity = 1f
-
-        val weekDays: Array<String> = resources.getStringArray(R.array.statistics_weekdays)
-        val formatter = object : ValueFormatter() {
-            override fun getBarLabel(barEntry: BarEntry?): String {
-                return weekDays[barEntry?.x?.toInt() ?: 0]
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> TimeSpentFragment()
+                else -> WeightFragment() // todo
             }
         }
-        xAxis.valueFormatter = formatter
 
-        barChart.invalidate()
-        //barChart.animateXY(250, 250)
+        override fun getPageTitle(position: Int): CharSequence? {
+            return when (position) {
+                0 -> getString(R.string.statistics_tab_timespent)
+                else -> "N/A"
+            }
+        }
     }
 }

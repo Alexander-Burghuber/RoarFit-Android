@@ -35,11 +35,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListener {
 
     lateinit var viewModel: MainViewModel
+    lateinit var sp: SharedPreferences
     lateinit var progressMain: ContentLoadingProgressBar
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,22 +68,34 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
             navController = findNavController(this, R.id.navhost_main)
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.dashboardFragment, R.id.statisticsFragment,
+                    R.id.dashboardFragment,
                     R.id.historyFragment, R.id.profileFragment -> {
                         toolbar_main.visibility = View.VISIBLE
+                        appbarlayout_main.elevation = 10.5f
                         bottomnav_main.visibility = View.VISIBLE
                         fab_main_exerciseaction.visibility = View.VISIBLE
                         toolbar_main.menu.forEach { menuItem ->
                             menuItem.isVisible = true
                         }
                     }
+                    R.id.statisticsFragment -> {
+                        toolbar_main.visibility = View.VISIBLE
+                        appbarlayout_main.elevation = 0f
+                        bottomnav_main.visibility = View.VISIBLE
+                        fab_main_exerciseaction.visibility = View.INVISIBLE
+                        toolbar_main.menu.forEach { menuItem ->
+                            menuItem.isVisible = true
+                        }
+                    }
                     R.id.cameraFragment -> {
                         toolbar_main.visibility = View.GONE
+                        appbarlayout_main.elevation = 10.5f
                         bottomnav_main.visibility = View.GONE
                         fab_main_exerciseaction.visibility = View.GONE
                     }
                     else -> {
                         toolbar_main.visibility = View.VISIBLE
+                        appbarlayout_main.elevation = 10.5f
                         bottomnav_main.visibility = View.GONE
                         fab_main_exerciseaction.visibility = View.GONE
                         toolbar_main.menu.forEach { menuItem ->
