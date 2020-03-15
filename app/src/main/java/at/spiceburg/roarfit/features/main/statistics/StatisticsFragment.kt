@@ -8,15 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.viewpager.widget.ViewPager
 import at.spiceburg.roarfit.R
-import at.spiceburg.roarfit.features.main.MainViewModel
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_statistics.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class StatisticsFragment : Fragment() {
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: StatisticsViewModel by activityViewModels()
     private lateinit var viewPager: ViewPager
+    private val dateFormatter = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +38,29 @@ class StatisticsFragment : Fragment() {
 
         val tabs: TabLayout = requireView().findViewById(R.id.tabs_statistics)
         tabs.setupWithViewPager(viewPager)
+
+        button_statistics_left.setOnClickListener {
+            viewModel.updateCalendarWeekOfYear(-1)
+        }
+
+        button_statistics_right.setOnClickListener {
+            viewModel.updateCalendarWeekOfYear(1)
+        }
+
+        viewModel.calendar.observe(viewLifecycleOwner) { calendar ->
+            setWeekLabel(calendar)
+        }
+    }
+
+    private fun setWeekLabel(calendar: Calendar) {
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        val monday: String = dateFormatter.format(calendar.time)
+
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+        val sunday: String = dateFormatter.format(calendar.time)
+
+        text_statistics_week.text =
+            getString(R.string.statistics_timespent_week_divider, monday, sunday)
     }
 
     private inner class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
@@ -42,14 +69,23 @@ class StatisticsFragment : Fragment() {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> TimeSpentFragment()
-                else -> WeightFragment() // todo
+                0 -> {
+                    tabs_statistics.getTabAt(position)
+                        ?.setIcon(R.drawable.ic_access_time_black_24dp)
+                    TimeSpentFragment()
+                }
+                else -> {
+                    tabs_statistics.getTabAt(position)
+                        ?.setIcon(R.drawable.ic_fitness_center_black_24dp)
+                    WeightFragment()
+                }
             }
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
             return when (position) {
                 0 -> getString(R.string.statistics_tab_timespent)
+                1 -> getString(R.string.statistics_tab_weightdev)
                 else -> "N/A"
             }
         }

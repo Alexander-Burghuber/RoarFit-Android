@@ -110,7 +110,9 @@
 
     <!-- Statistics -->
     <string name="statistics_tab_timespent">Time spent</string>
+    <string name="statistics_tab_weightdev">Weight</string>
     <string name="statistics_timespent_week_divider">%1$s - %2$s</string>
+    <string name="statististics_nodatatext">No exercises have been completed this week.</string>
     <string-array name="statistics_weekdays">
         <item>Mon</item>
         <item>Tue</item>

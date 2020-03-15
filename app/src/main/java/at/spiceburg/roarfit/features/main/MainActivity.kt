@@ -28,15 +28,17 @@ import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.NetworkError
 import at.spiceburg.roarfit.features.auth.AuthActivity
+import at.spiceburg.roarfit.features.main.statistics.StatisticsViewModel
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListener {
 
-    lateinit var viewModel: MainViewModel
     lateinit var sp: SharedPreferences
     lateinit var progressMain: ContentLoadingProgressBar
+    private lateinit var viewModel: MainViewModel
+    private lateinit var statisticsViewModel: StatisticsViewModel
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -54,14 +56,24 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
             displaySnackbar(getString(R.string.networkerror_jwt_expired))
             logout()
         } else {
-            // setup viewModel
+            // setup main viewModel
             val appContainer = (application as MyApplication).appContainer
-            val factory = MainViewModel.Factory(
+            val mainViewModelFactory = MainViewModel.Factory(
                 jwt,
                 appContainer.userRepository,
                 appContainer.workoutRepository
             )
-            viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+            viewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
+
+            // setup statistics viewModel
+            val statisticsViewModelFactory = StatisticsViewModel.Factory(
+                jwt,
+                appContainer.workoutRepository
+            )
+            statisticsViewModel = ViewModelProvider(
+                this,
+                statisticsViewModelFactory
+            ).get(StatisticsViewModel::class.java)
 
             // setup navigation
             setSupportActionBar(toolbar_main)

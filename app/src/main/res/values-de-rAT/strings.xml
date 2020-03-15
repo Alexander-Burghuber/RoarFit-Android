@@ -72,4 +72,6 @@
     </string-array>
     <string name="statistics_tab_timespent">Zeitaufwand</string>
     <string name="statistics_timespent_week_divider">%1$s - %2$s</string>
+    <string name="statistics_tab_weightdev">Gewicht</string>
+    <string name="statististics_nodatatext">In dieser Woche sind keine Übungen gemacht worden.</string>
 </resources>

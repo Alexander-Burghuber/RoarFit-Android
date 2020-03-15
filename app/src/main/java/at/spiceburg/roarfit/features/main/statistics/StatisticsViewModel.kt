@@ -1,7 +1,6 @@
 package at.spiceburg.roarfit.features.main.statistics
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,14 +17,11 @@ class StatisticsViewModel(
     private val workoutRepo: WorkoutRepository
 ) : ViewModel() {
 
-    private var exercises = MutableLiveData<Result<Array<Exercise>>>(Result.loading())
+    val calendar = MutableLiveData(Calendar.getInstance())
+    val exercises = MutableLiveData<Result<Array<Exercise>>>(Result.loading())
     private val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     private var disposables = CompositeDisposable()
-
-    fun getExercisesOfWeek(): LiveData<Result<Array<Exercise>>> {
-        return exercises
-    }
 
     fun loadExercisesOfWeek(date: Date) {
         exercises.value = Result.loading()
@@ -37,8 +33,13 @@ class StatisticsViewModel(
         disposables.add(loadWorkoutPlan)
     }
 
+    fun updateCalendarWeekOfYear(amount: Int) {
+        val calendar = this.calendar.value ?: return
+        calendar.add(Calendar.WEEK_OF_YEAR, amount)
+        this.calendar.value = calendar
+    }
+
     override fun onCleared() {
-        super.onCleared()
         disposables.clear()
     }
 

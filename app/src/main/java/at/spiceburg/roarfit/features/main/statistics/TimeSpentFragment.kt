@@ -6,13 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.features.main.MainActivity
-import at.spiceburg.roarfit.utils.Constants
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -20,15 +18,14 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
-import kotlinx.android.synthetic.main.fragment_time_spent.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TimeSpentFragment : Fragment() {
 
-    private lateinit var viewModel: StatisticsViewModel
-    private val dateFormatter = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)
+    private val viewModel: StatisticsViewModel by activityViewModels()
     private val timeFormatter = SimpleDateFormat("mm:ss", Locale.US)
 
     override fun onCreateView(
@@ -42,108 +39,75 @@ class TimeSpentFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val activity = (requireActivity() as MainActivity)
-
-        // setup viewModel
-        val jwt: String = activity.sp.getString(Constants.JWT, null)!!
-        val appContainer = (requireActivity().application as MyApplication).appContainer
-        val factory = StatisticsViewModel.Factory(
-            jwt,
-            appContainer.workoutRepository
-        )
-        viewModel = ViewModelProvider(this, factory).get(StatisticsViewModel::class.java)
-
         val barChart: BarChart = requireView().findViewById(R.id.barchart_statistics_timespent)
-
         configureChart(barChart)
 
-        val currentDate = Calendar.getInstance()
-
-        setWeekLabel(currentDate)
-        viewModel.loadExercisesOfWeek(currentDate.time)
-
-        button_statistics_timespent_left.setOnClickListener {
-            currentDate.add(Calendar.WEEK_OF_YEAR, -1)
-            setWeekLabel(currentDate)
+        viewModel.calendar.observe(viewLifecycleOwner) { calendar ->
             barChart.data = null
             barChart.invalidate()
-            viewModel.loadExercisesOfWeek(currentDate.time)
+            viewModel.loadExercisesOfWeek(calendar.time)
         }
 
-        button_statistics_timespent_right.setOnClickListener {
-            currentDate.add(Calendar.WEEK_OF_YEAR, 1)
-            setWeekLabel(currentDate)
-            barChart.data = null
-            barChart.invalidate()
-            viewModel.loadExercisesOfWeek(currentDate.time)
-        }
+        val activity = (requireActivity() as MainActivity)
 
-        viewModel.getExercisesOfWeek().observe(viewLifecycleOwner) { res ->
+        viewModel.exercises.observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
+                    activity.progress_main?.hide()
                     val exercises: Array<Exercise> = res.data!!
-
                     if (exercises.isNotEmpty()) {
-                        val secondsPerDay = IntArray(7)
-
-                        val calendar = Calendar.getInstance()
-
-                        exercises.forEach { exercise ->
-                            Log.d(TAG, exercise.toString())
-
-                            // get day of week and use as index
-                            calendar.timeInMillis = exercise.completedDate ?: return@forEach
-
-                            // -2 because arrays start with zero and the week starts on sunday with the calendar class
-                            val index: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2
-
-                            // get amount of seconds trained in this exercise
-                            val date: Date = try {
-                                timeFormatter.parse(exercise.time)
-                            } catch (e: ParseException) {
-                                return@forEach
-                            }
-                            calendar.time = date
-                            val seconds =
-                                calendar.get(Calendar.MINUTE) * 60 + calendar.get(Calendar.SECOND)
-
-                            secondsPerDay[index] += seconds
-                        }
-
-                        val entries: List<BarEntry> = secondsPerDay.mapIndexed { i, v ->
-                            return@mapIndexed BarEntry(i.toFloat(), v.toFloat())
-                        }
-
-                        val dataSet = BarDataSet(entries, "Entries")
-                        dataSet.color = resources.getColor(R.color.primaryLight, null)
-                        dataSet.setDrawValues(false)
-
-                        val barData = BarData(dataSet)
+                        val barData: BarData = createBarChartData(exercises)
                         barChart.data = barData
                         barChart.invalidate()
                     }
                 }
                 res.isLoading() -> {
-                    Log.d(TAG, "isLoading")
-                    // todo: show loading bar
+                    activity.progress_main?.show()
                 }
                 else -> {
-                    Log.d(TAG, "isError")
-                    // todo: handle error
+                    activity.progress_main?.hide()
+                    activity.handleNetworkError(res.error!!)
                 }
             }
         }
     }
 
-    private fun setWeekLabel(calendar: Calendar) {
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        val monday: String = dateFormatter.format(calendar.time)
+    private fun createBarChartData(exercises: Array<Exercise>): BarData {
+        val secondsPerDay = IntArray(7)
 
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-        val sunday: String = dateFormatter.format(calendar.time)
+        val calendar = Calendar.getInstance()
 
-        text_statistics_timespent_week.text =
-            getString(R.string.statistics_timespent_week_divider, monday, sunday)
+        exercises.forEach { exercise ->
+            Log.d(TAG, exercise.toString())
+
+            // get day of week and use as index
+            calendar.timeInMillis = exercise.completedDate ?: return@forEach
+
+            // -2 because arrays start with zero and the week starts on sunday with the calendar class
+            val index: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2
+
+            // get amount of seconds trained in this exercise
+            val date: Date = try {
+                timeFormatter.parse(exercise.time)
+            } catch (e: ParseException) {
+                return@forEach
+            }
+            calendar.time = date
+            val seconds =
+                calendar.get(Calendar.MINUTE) * 60 + calendar.get(Calendar.SECOND)
+
+            secondsPerDay[index] += seconds
+        }
+
+        val entries: List<BarEntry> = secondsPerDay.mapIndexed { i, v ->
+            return@mapIndexed BarEntry(i.toFloat(), v.toFloat())
+        }
+
+        val dataSet = BarDataSet(entries, "Time spent")
+        dataSet.color = resources.getColor(R.color.primaryLight, null)
+        dataSet.setDrawValues(false)
+
+        return BarData(dataSet)
     }
 
     private fun configureChart(barChart: BarChart) {
@@ -152,7 +116,8 @@ class TimeSpentFragment : Fragment() {
         barChart.description.isEnabled = false
         barChart.setFitBars(true)
         barChart.setExtraOffsets(16f, 0f, 16f, 16f)
-        //barChart.setVisibleXRangeMaximum(5f)
+        barChart.setNoDataText(getString(R.string.statististics_nodatatext))
+        barChart.setNoDataTextColor(resources.getColor(R.color.darkGrey, null))
 
         // interaction
         barChart.isDoubleTapToZoomEnabled = false
@@ -175,7 +140,6 @@ class TimeSpentFragment : Fragment() {
         xAxis.setDrawAxisLine(false)
         xAxis.setDrawGridLines(false)
         xAxis.valueFormatter = XValueFormatter()
-
         xAxis.textSize = 14f
     }
 
