@@ -52,6 +52,11 @@ class DashboardFragment : Fragment() {
                     if (workoutPlans.isNotEmpty()) {
                         val workoutPlan = workoutPlans[0]
                         text_dashboard_name.text = workoutPlan.name
+                        text_dashboard_warmup_cooldown.text = getString(
+                            R.string.dashboard_warmup_cooldown,
+                            workoutPlan.warmup,
+                            workoutPlan.cooldown
+                        )
                         adapter.addWorkouts(workoutPlan.workouts)
 
                         constraintlayout_dashboard.visibility = View.VISIBLE

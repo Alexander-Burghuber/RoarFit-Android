@@ -40,6 +40,7 @@
     <string name="dashboard_workoutplan_header">Workoutplan</string>
     <string name="dashboard_empty_desc">No workoutplan has been assigned to you. Please contact your trainer.</string>
     <string name="dashboard_workoutplan_day">Day %d</string>
+    <string name="dashboard_warmup_cooldown">Warmup: %1$smin \t Cooldown: %2$smin</string>
 
     <string name="itemexercise_completed">Completed</string>
 
