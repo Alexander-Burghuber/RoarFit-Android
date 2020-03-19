@@ -30,8 +30,8 @@ class StatisticsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_statistics, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewPager = requireView().findViewById(R.id.pager_statistics)
         viewPager.adapter = PagerAdapter(childFragmentManager)

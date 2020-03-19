@@ -7,6 +7,7 @@
     tools:context=".features.main.statistics.WeightFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:fadeScrollbars="false"
@@ -30,6 +31,10 @@
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/linechart_statistics_weight"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nestedScrollView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

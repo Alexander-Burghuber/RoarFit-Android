@@ -19,6 +19,7 @@ class StatisticsViewModel(
 
     val calendar = MutableLiveData(Calendar.getInstance())
     val exercises = MutableLiveData<Result<Array<Exercise>>>(Result.loading())
+
     private val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     private var disposables = CompositeDisposable()

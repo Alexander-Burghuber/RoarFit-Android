@@ -13,10 +13,12 @@ import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.features.main.MainActivity
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_weight.*
@@ -33,8 +35,8 @@ class WeightFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_weight, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val activity = (requireActivity() as MainActivity)
 
@@ -44,14 +46,16 @@ class WeightFragment : Fragment() {
         viewModel.exercises.observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
-                    val exercises: Array<Exercise> = res.data!!
-                    if (exercises.isNotEmpty()) {
-
+                    val rawExercises: Array<Exercise> = res.data!!
+                    if (rawExercises.isNotEmpty()) {
                         chipgroup_statisitics.removeAllViews()
 
+                        val exercises: List<Exercise> =
+                            rawExercises.filter { it.weight != 0f }.sortedBy { it.completedDate }
                         val distinctTemplates: List<ExerciseTemplate> =
-                            exercises.filter { it.weight != 0f }.map { it.template }.distinct()
+                            exercises.map { it.template }.distinct()
 
+                        // add the chips for template selection
                         val inflater = LayoutInflater.from(requireContext())
                         for (i in distinctTemplates.indices) {
                             inflater.inflate(R.layout.chip_weight, chipgroup_statisitics, true)
@@ -62,7 +66,13 @@ class WeightFragment : Fragment() {
                             (view as Chip).text = template.name
                         }
 
-                        val lineData: LineData = createLineChartData(exercises)
+                        val exerciseMap: MutableMap<ExerciseTemplate, List<Exercise>> = hashMapOf()
+                        distinctTemplates.forEach { template ->
+                            val foundExercises = exercises.filter { it.template == template }
+                            exerciseMap[template] = foundExercises
+                        }
+
+                        val lineData: LineData = createLineChartData(exerciseMap)
                         lineChart.data = lineData
                         lineChart.invalidate()
                     }
@@ -79,11 +89,13 @@ class WeightFragment : Fragment() {
         }
     }
 
-    private fun createLineChartData(exercises: Array<Exercise>): LineData {
+    private fun createLineChartData(exerciseMap: Map<ExerciseTemplate, List<Exercise>>): LineData {
+        /*val entries: List<Entry> = exerciseMap.map { mapEntry ->
 
-        val entry = Entry(5f, 5f)
+        }*/
 
-        val dataSet = LineDataSet(listOf(entry), "Time spent")
+
+        val dataSet = LineDataSet(listOf(Entry(5f, 5f)), "Weight development")
         dataSet.color = resources.getColor(R.color.primaryLight, null)
         dataSet.setDrawValues(false)
 
@@ -119,8 +131,16 @@ class WeightFragment : Fragment() {
         xAxis.granularity = 1f
         xAxis.setDrawAxisLine(false)
         xAxis.setDrawGridLines(false)
-        //xAxis.valueFormatter = XValueFormatter()
+        xAxis.valueFormatter = XValueFormatter()
         xAxis.textSize = 14f
+    }
+
+    inner class XValueFormatter : ValueFormatter() {
+        private val weekDays: Array<String> = resources.getStringArray(R.array.statistics_weekdays)
+
+        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+            return weekDays[value.toInt()]
+        }
     }
 
     companion object {
