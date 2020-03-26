@@ -1,7 +1,6 @@
 package at.spiceburg.roarfit.features.main.statistics
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +26,7 @@ class TimeSpentFragment : Fragment() {
 
     private val viewModel: StatisticsViewModel by activityViewModels()
     private val timeFormatter = SimpleDateFormat("mm:ss", Locale.US)
+    private val dateFormatter = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,13 +39,15 @@ class TimeSpentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val barChart: BarChart = requireView().findViewById(R.id.barchart_statistics_timespent)
-        configureChart(barChart)
+        // setup the bar chart
+        val barChart: BarChart = view.findViewById(R.id.barchart_statistics_timespent)
+        val xValueFormatter = XValueFormatter()
+        configureChart(barChart, xValueFormatter)
 
+        // observe if the week has been changed
         viewModel.calendar.observe(viewLifecycleOwner) { calendar ->
             barChart.data = null
             barChart.invalidate()
-            viewModel.loadExercisesOfWeek(calendar.time)
         }
 
         val activity = (requireActivity() as MainActivity)
@@ -54,11 +56,12 @@ class TimeSpentFragment : Fragment() {
             when {
                 res.isSuccess() -> {
                     activity.progress_main?.hide()
+
                     val exercises: Array<Exercise> = res.data!!
                     if (exercises.isNotEmpty()) {
-                        val barData: BarData = createBarChartData(exercises)
+                        val barData: BarData = createBarData(exercises)
                         barChart.data = barData
-                        barChart.invalidate()
+                        barChart.animateY(250)
                     }
                 }
                 res.isLoading() -> {
@@ -72,19 +75,15 @@ class TimeSpentFragment : Fragment() {
         }
     }
 
-    private fun createBarChartData(exercises: Array<Exercise>): BarData {
-        val secondsPerDay = IntArray(7)
-
+    private fun createBarData(exercises: Array<Exercise>): BarData {
+        val secondsPerWeek = IntArray(4)
         val calendar = Calendar.getInstance()
 
         exercises.forEach { exercise ->
-            Log.d(TAG, exercise.toString())
-
-            // get day of week and use as index
+            // get week of month and use as index
             calendar.timeInMillis = exercise.completedDate ?: return@forEach
 
-            // -2 because arrays start with zero and the week starts on sunday with the calendar class
-            val index: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2
+            val index: Int = calendar.get(Calendar.WEEK_OF_MONTH) - 1
 
             // get amount of seconds trained in this exercise
             val date: Date = try {
@@ -96,10 +95,10 @@ class TimeSpentFragment : Fragment() {
             val seconds =
                 calendar.get(Calendar.MINUTE) * 60 + calendar.get(Calendar.SECOND)
 
-            secondsPerDay[index] += seconds
+            secondsPerWeek[index] += seconds
         }
 
-        val entries: List<BarEntry> = secondsPerDay.mapIndexed { i, v ->
+        val entries: List<BarEntry> = secondsPerWeek.mapIndexed { i, v ->
             return@mapIndexed BarEntry(i.toFloat(), v.toFloat())
         }
 
@@ -110,7 +109,7 @@ class TimeSpentFragment : Fragment() {
         return BarData(dataSet)
     }
 
-    private fun configureChart(barChart: BarChart) {
+    private fun configureChart(barChart: BarChart, xValueFormatter: XValueFormatter) {
         // general configuration
         barChart.legend.isEnabled = false
         barChart.description.isEnabled = false
@@ -124,6 +123,7 @@ class TimeSpentFragment : Fragment() {
         barChart.setPinchZoom(false)
         barChart.setScaleEnabled(false)
 
+        // yAxis
         barChart.axisRight.isEnabled = false
         val axisLeft = barChart.axisLeft
         axisLeft.gridLineWidth = 0.8f
@@ -139,15 +139,15 @@ class TimeSpentFragment : Fragment() {
         xAxis.granularity = 1f
         xAxis.setDrawAxisLine(false)
         xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = XValueFormatter()
+        xAxis.valueFormatter = xValueFormatter
         xAxis.textSize = 14f
     }
 
     inner class XValueFormatter : ValueFormatter() {
-        private val weekDays: Array<String> = resources.getStringArray(R.array.statistics_weekdays)
+        private val weeks: Array<String> = resources.getStringArray(R.array.statistics_weeks)
 
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-            return weekDays[value.toInt()]
+            return weeks[value.toInt()]
         }
     }
 

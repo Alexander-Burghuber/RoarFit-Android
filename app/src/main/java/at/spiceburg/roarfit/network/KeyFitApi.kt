@@ -50,7 +50,7 @@ interface KeyFitApi {
     /* Part of Medt-Android Project */
 
     @GET("exercises/{date}")
-    fun getExerciseOfWeek(
+    fun getExercisesOfMonth(
         @Header("Authorization") token: String,
         @Path("date") dateStr: String
     ): Single<Array<Exercise>>

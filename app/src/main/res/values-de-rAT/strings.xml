@@ -61,18 +61,15 @@
     <string name="history_exercise_empty_desc">Du hast bis jetzt keine Übungen abgeschlossen.</string>
     <string name="finishexercise_weight_input">%.1f</string>
     <string name="history_exercise_opt_weight">- %.1f kg</string>
-    <string-array name="statistics_weekdays">
-        <item>Mo</item>
-        <item>Di</item>
-        <item>Mi</item>
-        <item>Do</item>
-        <item>Fr</item>
-        <item>Sa</item>
-        <item>So</item>
-    </string-array>
     <string name="statistics_tab_timespent">Zeitaufwand</string>
     <string name="statistics_timespent_week_divider">%1$s - %2$s</string>
     <string name="statistics_tab_weightdev">Gewicht</string>
-    <string name="statististics_nodatatext">In dieser Woche sind keine Übungen gemacht worden.</string>
+    <string name="statististics_nodatatext">In diesem Monat sind keine Übungen gemacht worden.</string>
     <string name="dashboard_warmup_cooldown">Aufwärmen: %1$smin \t Abwärmen: %2$smin</string>
+    <string-array name="statistics_weeks">
+        <item>Woche 1</item>
+        <item>Woche 2</item>
+        <item>Woche 3</item>
+        <item>Woche 4</item>
+    </string-array>
 </resources>

@@ -17,26 +17,37 @@ class StatisticsViewModel(
     private val workoutRepo: WorkoutRepository
 ) : ViewModel() {
 
-    val calendar = MutableLiveData(Calendar.getInstance())
+    val calendar: MutableLiveData<Calendar>
     val exercises = MutableLiveData<Result<Array<Exercise>>>(Result.loading())
 
-    private val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-
+    private val formatter = SimpleDateFormat("yyyy-MM", Locale.US)
     private var disposables = CompositeDisposable()
 
-    fun loadExercisesOfWeek(date: Date) {
+    init {
+        /* setup calendar with only year and month because simply using Calendar.getInstance()
+          causes problems when switching the month */
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        calendar.clear()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+        this.calendar = MutableLiveData(calendar)
+    }
+
+    fun loadExercisesOfMonth(date: Date) {
         exercises.value = Result.loading()
         val loadWorkoutPlan =
-            workoutRepo.getExercisesOfWeek(jwt, formatter.format(date)).subscribeBy(
+            workoutRepo.getExercisesOfMonth(jwt, formatter.format(date)).subscribeBy(
                 onSuccess = { exercises.value = it },
                 onError = { Log.e(TAG, "loadWorkoutPlans network call error", it) }
             )
         disposables.add(loadWorkoutPlan)
     }
 
-    fun updateCalendarWeekOfYear(amount: Int) {
-        val calendar = this.calendar.value ?: return
-        calendar.add(Calendar.WEEK_OF_YEAR, amount)
+    fun updateCalendarMonth(amount: Int) {
+        val calendar: Calendar? = this.calendar.value
+        calendar?.add(Calendar.MONTH, amount)
         this.calendar.value = calendar
     }
 

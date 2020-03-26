@@ -19,8 +19,8 @@ import java.util.*
 class StatisticsFragment : Fragment() {
 
     private val viewModel: StatisticsViewModel by activityViewModels()
+    private val dateFormatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
     private lateinit var viewPager: ViewPager
-    private val dateFormatter = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,34 +33,32 @@ class StatisticsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewPager = requireView().findViewById(R.id.pager_statistics)
+        // setup the tab bar
+        viewPager = view.findViewById(R.id.pager_statistics)
         viewPager.adapter = PagerAdapter(childFragmentManager)
 
-        val tabs: TabLayout = requireView().findViewById(R.id.tabs_statistics)
+        val tabs: TabLayout = view.findViewById(R.id.tabs_statistics)
         tabs.setupWithViewPager(viewPager)
 
+        // change month buttons
         button_statistics_left.setOnClickListener {
-            viewModel.updateCalendarWeekOfYear(-1)
+            viewModel.updateCalendarMonth(-1)
         }
 
         button_statistics_right.setOnClickListener {
-            viewModel.updateCalendarWeekOfYear(1)
+            viewModel.updateCalendarMonth(1)
         }
 
+        // observe if the month has been changed
         viewModel.calendar.observe(viewLifecycleOwner) { calendar ->
-            setWeekLabel(calendar)
+            // load the exercises of this week
+            viewModel.loadExercisesOfMonth(calendar.time)
+            setMonthLabel(calendar)
         }
     }
 
-    private fun setWeekLabel(calendar: Calendar) {
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        val monday: String = dateFormatter.format(calendar.time)
-
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-        val sunday: String = dateFormatter.format(calendar.time)
-
-        text_statistics_week.text =
-            getString(R.string.statistics_timespent_week_divider, monday, sunday)
+    private fun setMonthLabel(calendar: Calendar) {
+        text_statistics_month.text = dateFormatter.format(calendar.time)
     }
 
     private inner class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {

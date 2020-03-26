@@ -69,8 +69,8 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) : DefaultRepository() 
             }
     }
 
-    fun getExercisesOfWeek(jwt: String, dateStr: String): Single<Result<Array<Exercise>>> {
-        return keyFitApi.getExerciseOfWeek(getJwtString(jwt), dateStr)
+    fun getExercisesOfMonth(jwt: String, dateStr: String): Single<Result<Array<Exercise>>> {
+        return keyFitApi.getExercisesOfMonth(getJwtString(jwt), dateStr)
             .toResult()
             .onErrorResumeNext { Single.just(handleDefaultNetworkErrors(it)) }
     }

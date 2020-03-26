@@ -131,12 +131,12 @@ class WeightFragment : Fragment() {
         xAxis.granularity = 1f
         xAxis.setDrawAxisLine(false)
         xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = XValueFormatter()
+        //xAxis.valueFormatter = XValueFormatter()
         xAxis.textSize = 14f
     }
 
     inner class XValueFormatter : ValueFormatter() {
-        private val weekDays: Array<String> = resources.getStringArray(R.array.statistics_weekdays)
+        private val weekDays: Array<String> = resources.getStringArray(R.array.statistics_weeks)
 
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return weekDays[value.toInt()]
