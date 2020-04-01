@@ -30,12 +30,6 @@
     <string name="main_bottomnav_profile">Profile</string>
     <string name="main_appbar_logout" translatable="false">Logout</string>
 
-    <!-- Settings -->
-    <string name="settings">Settings</string>
-    <string name="settings_biometric_category" translatable="false">@string/auth_biometric_encrypt_title</string>
-    <string name="settings_biometric_title" translatable="false">@string/auth_biometric_encrypt_title</string>
-    <string name="settings_biometric_summary" translatable="false">@string/auth_biometric_encrypt_desc</string>
-
     <!-- Dashboard -->
     <string name="dashboard_workoutplan_header">Workoutplan</string>
     <string name="dashboard_empty_desc">No workoutplan has been assigned to you. Please contact your trainer.</string>
@@ -87,7 +81,6 @@
     <string name="finishexercise_sets">Sets</string>
     <string name="finishexercise_reps">Reps</string>
     <string name="finishexercise_weight">Weight</string>
-    <string name="finishexercise_time">Amount of time</string>
     <string name="finishexercise_desc">Update here the information about your completed exercise.</string>
     <string name="finishexercise_min_secs" translatable="false">00</string>
     <string name="finishexercise_time_divider" translatable="false">:</string>

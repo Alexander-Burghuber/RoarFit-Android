@@ -11,7 +11,7 @@ import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 
 class SpecificationsAdapter(
-    private val context: Context, private val onExerciseClicked: (ExerciseSpecification) -> Unit
+    context: Context, private val onExerciseClicked: (ExerciseSpecification) -> Unit
 ) : RecyclerView.Adapter<SpecificationsAdapter.ExerciseViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)

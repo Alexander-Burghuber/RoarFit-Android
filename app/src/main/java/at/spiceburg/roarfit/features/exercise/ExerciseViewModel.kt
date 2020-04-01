@@ -14,8 +14,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class ExerciseViewModel(private val workoutRepo: WorkoutRepository) : ViewModel() {
 
-    val stopWatch = MutableLiveData<String>("00:00")
-    val isStopWatchPaused = MutableLiveData<Boolean>(false)
+    val stopWatch = MutableLiveData("00:00")
+    val isStopWatchPaused = MutableLiveData(false)
 
     private val disposables = CompositeDisposable()
 

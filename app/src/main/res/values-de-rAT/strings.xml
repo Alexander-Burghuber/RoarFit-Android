@@ -10,7 +10,6 @@
     <string name="main_bottomnav_statistics">Statistiken</string>
     <string name="main_bottomnav_history">Verlauf</string>
     <string name="main_bottomnav_profile">Profil</string>
-    <string name="settings">Einstellungen</string>
     <string name="dashboard_workoutplan_header">Trainingsplan</string>
     <string name="dashboard_empty_desc">Es wurde kein Trainingsplan für Sie eingerichtet. Bitte kontaktieren Sie ihren Trainer.</string>
     <string name="dashboard_workoutplan_day">Tag %d</string>
@@ -48,7 +47,6 @@
     <string name="finishexercise_sets">Sätze</string>
     <string name="finishexercise_reps">WH</string>
     <string name="finishexercise_weight">Gewicht</string>
-    <string name="finishexercise_time">Zeitaufwand</string>
     <string name="finishexercise_desc">Bearbeite hier die Informationen über die abgeschlossene Übung.</string>
     <string name="finishexercise_inputs_invalid">Bitte fülle alle Felder korrekt aus</string>
     <string name="finishexercise_exercise_already_completed">Die Übung wurde bereits abgeschlossen</string>
