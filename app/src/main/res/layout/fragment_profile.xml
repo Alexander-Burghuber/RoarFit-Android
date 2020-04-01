@@ -53,6 +53,7 @@
         android:src="@drawable/ic_account_circle_black_24dp"
         android:tint="@color/darkGrey"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

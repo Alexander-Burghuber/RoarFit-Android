@@ -33,8 +33,8 @@ class CameraFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val activity = (requireActivity() as MainActivity)
 
@@ -71,7 +71,7 @@ class CameraFragment : Fragment() {
             }
         }
 
-        cameraView = requireView().findViewById(R.id.surfaceview_camera)
+        cameraView = view.findViewById(R.id.surfaceview_camera)
 
         // init QR-Reader
         qrReader = QREader.Builder(requireContext(), cameraView, qrListener)

@@ -37,15 +37,16 @@ class FinishExerciseFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_finish_exercise, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         progress_finishexercise.hide()
 
         activity = (requireActivity() as ExerciseActivity)
 
         // setup toolbar
-        val toolbar = view?.findViewById<Toolbar>(R.id.toolbar_exercise)
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar_exercise)
         activity.setSupportActionBar(toolbar)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar?.setNavigationOnClickListener {
