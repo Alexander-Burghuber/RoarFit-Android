@@ -28,19 +28,19 @@ import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.NetworkError
 import at.spiceburg.roarfit.features.auth.AuthActivity
-import at.spiceburg.roarfit.features.settings.SettingsActivity
+import at.spiceburg.roarfit.features.main.statistics.StatisticsViewModel
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListener {
 
-    lateinit var viewModel: MainViewModel
+    lateinit var sp: SharedPreferences
     lateinit var progressMain: ContentLoadingProgressBar
+    private lateinit var viewModel: MainViewModel
+    private lateinit var statisticsViewModel: StatisticsViewModel
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,74 +50,94 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         progressMain = findViewById(R.id.progress_main)
         progressMain.hide()
 
-        // check if user id and jwt is available
-        val userId = sp.getInt(Constants.USER_ID, -1)
+        // check if jwt is available
         val jwt: String? = sp.getString(Constants.JWT, null)
-        if (userId == -1 || jwt == null) {
+        if (jwt == null) {
             displaySnackbar(getString(R.string.networkerror_jwt_expired))
             logout()
-        }
+        } else {
+            // setup main viewModel
+            val appContainer = (application as MyApplication).appContainer
+            val mainViewModelFactory = MainViewModel.Factory(
+                jwt,
+                appContainer.userRepository,
+                appContainer.workoutRepository
+            )
+            viewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
 
-        // setup viewModel
-        val appContainer = (application as MyApplication).appContainer
-        val factory = MainViewModel.Factory(
-            userId,
-            appContainer.userRepository,
-            appContainer.workoutRepository
-        )
-        viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+            // setup statistics viewModel
+            val statisticsViewModelFactory = StatisticsViewModel.Factory(
+                jwt,
+                appContainer.workoutRepository
+            )
+            statisticsViewModel = ViewModelProvider(
+                this,
+                statisticsViewModelFactory
+            ).get(StatisticsViewModel::class.java)
 
-        // setup navigation
-        setSupportActionBar(toolbar_main)
-        navController = findNavController(this, R.id.navhost_main)
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.dashboardFragment, R.id.statisticsFragment,
-                R.id.historyFragment, R.id.profileFragment -> {
-                    toolbar_main.visibility = View.VISIBLE
-                    bottomnav_main.visibility = View.VISIBLE
-                    fab_main_exerciseaction.visibility = View.VISIBLE
-                    toolbar_main.menu.forEach { menuItem ->
-                        menuItem.isVisible = true
+            // setup navigation
+            setSupportActionBar(toolbar_main)
+            navController = findNavController(this, R.id.navhost_main)
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.dashboardFragment,
+                    R.id.historyFragment, R.id.profileFragment -> {
+                        toolbar_main.visibility = View.VISIBLE
+                        appbarlayout_main.elevation = 10.5f
+                        bottomnav_main.visibility = View.VISIBLE
+                        fab_main_exerciseaction.visibility = View.VISIBLE
+                        toolbar_main.menu.forEach { menuItem ->
+                            menuItem.isVisible = true
+                        }
                     }
-                }
-                R.id.cameraFragment -> {
-                    toolbar_main.visibility = View.GONE
-                    bottomnav_main.visibility = View.GONE
-                    fab_main_exerciseaction.visibility = View.GONE
-                }
-                else -> {
-                    toolbar_main.visibility = View.VISIBLE
-                    bottomnav_main.visibility = View.GONE
-                    fab_main_exerciseaction.visibility = View.GONE
-                    toolbar_main.menu.forEach { menuItem ->
-                        menuItem.isVisible = false
+                    R.id.statisticsFragment -> {
+                        toolbar_main.visibility = View.VISIBLE
+                        appbarlayout_main.elevation = 0f
+                        bottomnav_main.visibility = View.VISIBLE
+                        fab_main_exerciseaction.visibility = View.INVISIBLE
+                        toolbar_main.menu.forEach { menuItem ->
+                            menuItem.isVisible = true
+                        }
+                    }
+                    R.id.cameraFragment -> {
+                        toolbar_main.visibility = View.GONE
+                        appbarlayout_main.elevation = 10.5f
+                        bottomnav_main.visibility = View.GONE
+                        fab_main_exerciseaction.visibility = View.GONE
+                    }
+                    else -> {
+                        toolbar_main.visibility = View.VISIBLE
+                        appbarlayout_main.elevation = 10.5f
+                        bottomnav_main.visibility = View.GONE
+                        fab_main_exerciseaction.visibility = View.GONE
+                        toolbar_main.menu.forEach { menuItem ->
+                            menuItem.isVisible = false
+                        }
                     }
                 }
             }
-        }
-        val topLevelDestinations = setOf(
-            R.id.dashboardFragment,
-            R.id.statisticsFragment,
-            R.id.historyFragment,
-            R.id.profileFragment
-        )
-        appBarConfiguration = AppBarConfiguration(topLevelDestinations)
-        bottomnav_main.setupWithNavController(navController)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        fab_main_exerciseaction.setOnClickListener {
-            BottomSheetExerciseAction().show(
-                supportFragmentManager,
-                BottomSheetExerciseAction::class.java.simpleName
+            val topLevelDestinations = setOf(
+                R.id.dashboardFragment,
+                R.id.statisticsFragment,
+                R.id.historyFragment,
+                R.id.profileFragment
             )
+            appBarConfiguration = AppBarConfiguration(topLevelDestinations)
+            bottomnav_main.setupWithNavController(navController)
+            setupActionBarWithNavController(navController, appBarConfiguration)
+
+            fab_main_exerciseaction.setOnClickListener {
+                BottomSheetExerciseAction().show(
+                    supportFragmentManager,
+                    BottomSheetExerciseAction::class.java.simpleName
+                )
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val jwt: String = sp.getString(Constants.JWT, null)!!
-        viewModel.loadWorkoutPlans(jwt)
+        viewModel.loadWorkoutPlans()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -152,11 +172,6 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_app_bar_settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-                true
-            }
             R.id.menu_app_bar_logout -> {
                 logout()
                 true
@@ -204,9 +219,9 @@ class MainActivity : AppCompatActivity(), BottomSheetExerciseAction.ClickListene
         sp.edit()
             .remove(Constants.USERNAME)
             .remove(Constants.JWT)
-            .remove(Constants.USER_ID)
             .remove(Constants.ENCRYPTED_PWD)
             .remove(Constants.INITIALIZATION_VECTOR)
+            .remove(Constants.DONT_REMIND_BIOMETRIC)
             .apply()
         startAuthActivity()
     }

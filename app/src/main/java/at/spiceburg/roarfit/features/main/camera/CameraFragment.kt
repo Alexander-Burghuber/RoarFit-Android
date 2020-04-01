@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.camera
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import github.nisrulz.qreader.QRDataListener
 import github.nisrulz.qreader.QREader
 import kotlinx.android.synthetic.main.fragment_camera.*
@@ -35,32 +33,16 @@ class CameraFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        // change theme to fit camera
-        requireActivity().apply {
-            // allow the modification of system bar colors
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-            // backup the main theme colors
-            statusBarColor = window.statusBarColor
-            navigationBarColor = window.navigationBarColor
-
-            // set the camera theme colors
-            window.statusBarColor = resources.getColor(R.color.black, null)
-            window.navigationBarColor = resources.getColor(R.color.black, null)
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val mainHandler = Handler(Looper.getMainLooper())
         val qrListener = QRDataListener { data ->
             mainHandler.post {
                 // this@CameraFragment is required in this block
-                viewModel.getEquipment(jwt).observe(this@CameraFragment.viewLifecycleOwner) { res ->
+                viewModel.getEquipment().observe(this@CameraFragment.viewLifecycleOwner) { res ->
                     when {
                         res.isSuccess() -> {
                             activity.progressMain.hide()
@@ -89,7 +71,7 @@ class CameraFragment : Fragment() {
             }
         }
 
-        cameraView = requireView().findViewById(R.id.surfaceview_camera)
+        cameraView = view.findViewById(R.id.surfaceview_camera)
 
         // init QR-Reader
         qrReader = QREader.Builder(requireContext(), cameraView, qrListener)
@@ -106,6 +88,21 @@ class CameraFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // change theme to fit camera
+        requireActivity().apply {
+            // allow the modification of system bar colors
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+            // backup the main theme colors
+            statusBarColor = window.statusBarColor
+            navigationBarColor = window.navigationBarColor
+
+            // set the camera theme colors
+            window.statusBarColor = resources.getColor(R.color.black, null)
+            window.navigationBarColor = resources.getColor(R.color.black, null)
+        }
+
         qrReader.initAndStart(cameraView)
     }
 
@@ -127,6 +124,6 @@ class CameraFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = CameraFragment::class.java.simpleName
+        val TAG = CameraFragment::class.java.simpleName
     }
 }

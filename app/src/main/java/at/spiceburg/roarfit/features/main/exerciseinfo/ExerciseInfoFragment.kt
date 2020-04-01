@@ -27,8 +27,9 @@ class ExerciseInfoFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_exercise_info, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val args = ExerciseInfoFragmentArgs.fromBundle(requireArguments())
         when {
             args.specification != null -> specificationIsSet(args.specification!!)

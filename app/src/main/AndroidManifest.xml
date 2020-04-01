@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <!-- TODO: Remove usesCleartextTraffic -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -17,8 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/AppTheme">
 
         <service
             android:name=".features.exercise.ExerciseService"
@@ -41,11 +39,6 @@
             android:theme="@style/AppTheme" />
 
         <activity
-            android:name=".features.settings.SettingsActivity"
-            android:label="@string/settings"
-            android:parentActivityName=".features.main.MainActivity" />
-
-        <activity
             android:name=".features.exercise.ExerciseActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -56,5 +49,4 @@
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
     </application>
-
 </manifest>

@@ -69,6 +69,12 @@ class WorkoutRepository(private val keyFitApi: KeyFitApi) : DefaultRepository() 
             }
     }
 
+    fun getExercisesOfMonth(jwt: String, dateStr: String): Single<Result<Array<Exercise>>> {
+        return keyFitApi.getExercisesOfMonth(getJwtString(jwt), dateStr)
+            .toResult()
+            .onErrorResumeNext { Single.just(handleDefaultNetworkErrors(it)) }
+    }
+
     companion object {
         private val TAG = WorkoutRepository::class.java.simpleName
     }

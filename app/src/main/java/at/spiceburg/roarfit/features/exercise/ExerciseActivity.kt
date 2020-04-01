@@ -172,7 +172,6 @@ class ExerciseActivity : AppCompatActivity() {
         getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE).edit()
             .remove(Constants.USERNAME)
             .remove(Constants.JWT)
-            .remove(Constants.USER_ID)
             .remove(Constants.ENCRYPTED_PWD)
             .remove(Constants.INITIALIZATION_VECTOR)
             .apply()

@@ -10,7 +10,6 @@
     <string name="main_bottomnav_statistics">Statistiken</string>
     <string name="main_bottomnav_history">Verlauf</string>
     <string name="main_bottomnav_profile">Profil</string>
-    <string name="settings">Einstellungen</string>
     <string name="dashboard_workoutplan_header">Trainingsplan</string>
     <string name="dashboard_empty_desc">Es wurde kein Trainingsplan für Sie eingerichtet. Bitte kontaktieren Sie ihren Trainer.</string>
     <string name="dashboard_workoutplan_day">Tag %d</string>
@@ -48,7 +47,6 @@
     <string name="finishexercise_sets">Sätze</string>
     <string name="finishexercise_reps">WH</string>
     <string name="finishexercise_weight">Gewicht</string>
-    <string name="finishexercise_time">Zeitaufwand</string>
     <string name="finishexercise_desc">Bearbeite hier die Informationen über die abgeschlossene Übung.</string>
     <string name="finishexercise_inputs_invalid">Bitte fülle alle Felder korrekt aus</string>
     <string name="finishexercise_exercise_already_completed">Die Übung wurde bereits abgeschlossen</string>
@@ -61,4 +59,15 @@
     <string name="history_exercise_empty_desc">Du hast bis jetzt keine Übungen abgeschlossen.</string>
     <string name="finishexercise_weight_input">%.1f</string>
     <string name="history_exercise_opt_weight">- %.1f kg</string>
+    <string name="statistics_tab_timespent">Zeitaufwand</string>
+    <string name="statistics_timespent_week_divider">%1$s - %2$s</string>
+    <string name="statistics_tab_weightdev">Gewicht</string>
+    <string name="statististics_nodatatext">In diesem Monat sind keine Übungen gemacht worden.</string>
+    <string name="dashboard_warmup_cooldown">Aufwärmen: %1$smin \t Abwärmen: %2$smin</string>
+    <string-array name="statistics_weeks">
+        <item>Woche 1</item>
+        <item>Woche 2</item>
+        <item>Woche 3</item>
+        <item>Woche 4</item>
+    </string-array>
 </resources>

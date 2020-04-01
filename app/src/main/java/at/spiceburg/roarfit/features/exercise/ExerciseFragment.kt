@@ -1,7 +1,6 @@
 package at.spiceburg.roarfit.features.exercise
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,10 +25,8 @@ class ExerciseFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_exercise, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        Log.d(TAG, "onActivityCreated called")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         activity = requireActivity() as ExerciseActivity
 

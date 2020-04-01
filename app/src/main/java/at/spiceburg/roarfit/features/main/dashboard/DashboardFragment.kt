@@ -1,9 +1,7 @@
 package at.spiceburg.roarfit.features.main.dashboard
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +15,6 @@ import at.spiceburg.roarfit.data.entities.ExerciseSpecification
 import at.spiceburg.roarfit.data.entities.WorkoutPlan
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : Fragment() {
@@ -32,14 +29,11 @@ class DashboardFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_dashboard, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        Log.d(TAG, "onActivityCreated called")
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val onExerciseClicked: (exercise: ExerciseSpecification) -> Unit = {
             val action = DashboardFragmentDirections.actionDashboardToExerciseInfo(null, it)
@@ -52,13 +46,18 @@ class DashboardFragment : Fragment() {
 
         refresher_dashboard.setColorSchemeColors(resources.getColor(R.color.primary, null))
 
-        viewModel.getWorkoutPlans(jwt).observe(viewLifecycleOwner) { res ->
+        viewModel.getWorkoutPlans().observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
                     val workoutPlans: Array<WorkoutPlan> = res.data!!
                     if (workoutPlans.isNotEmpty()) {
                         val workoutPlan = workoutPlans[0]
                         text_dashboard_name.text = workoutPlan.name
+                        text_dashboard_warmup_cooldown.text = getString(
+                            R.string.dashboard_warmup_cooldown,
+                            workoutPlan.warmup,
+                            workoutPlan.cooldown
+                        )
                         adapter.addWorkouts(workoutPlan.workouts)
 
                         constraintlayout_dashboard.visibility = View.VISIBLE
@@ -84,7 +83,7 @@ class DashboardFragment : Fragment() {
         }
 
         refresher_dashboard.setOnRefreshListener {
-            viewModel.loadWorkoutPlans(jwt)
+            viewModel.loadWorkoutPlans()
         }
     }
 

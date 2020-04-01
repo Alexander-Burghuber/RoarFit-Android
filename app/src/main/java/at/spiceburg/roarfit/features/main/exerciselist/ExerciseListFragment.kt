@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.exerciselist
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,6 @@ import at.spiceburg.roarfit.data.entities.ExerciseTemplate
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
 import at.spiceburg.roarfit.features.main.exerciseinfo.ExerciseInfoFragment
-import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_exercise_list.*
 
 class ExerciseListFragment : Fragment() {
@@ -30,8 +28,9 @@ class ExerciseListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_exercise_list, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         val args = ExerciseListFragmentArgs.fromBundle(requireArguments())
         val equipment: String = args.equipment
@@ -51,10 +50,8 @@ class ExerciseListFragment : Fragment() {
         recyclerview_exerciselist_exercises.layoutManager = LinearLayoutManager(requireContext())
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
-        viewModel.getExerciseTemplates(jwt, equipment).observe(viewLifecycleOwner) { res ->
+        viewModel.getExerciseTemplates(equipment).observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
                     val templates: Array<ExerciseTemplate> = res.data!!

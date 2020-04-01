@@ -1,6 +1,5 @@
 package at.spiceburg.roarfit.features.main.history
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -16,7 +15,6 @@ import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.entities.Exercise
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.features.main.MainViewModel
-import at.spiceburg.roarfit.utils.Constants
 import kotlinx.android.synthetic.main.fragment_history.*
 
 class HistoryFragment : Fragment() {
@@ -31,12 +29,11 @@ class HistoryFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_history, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         val activity = (requireActivity() as MainActivity)
-        val sp = activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val jwt: String = sp.getString(Constants.JWT, null)!!
 
         val adapter = HistoryAdapter(activity)
         list_history.adapter = adapter
@@ -47,7 +44,7 @@ class HistoryFragment : Fragment() {
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 Log.d(TAG, "page: $page, totalItem: $totalItemsCount")
-                viewModel.getExerciseHistory(jwt, page).observe(viewLifecycleOwner) { res ->
+                viewModel.getExerciseHistory(page).observe(viewLifecycleOwner) { res ->
                     when {
                         res.isSuccess() -> {
                             adapter.addMoreExercise(res.data!!, view)
@@ -71,15 +68,15 @@ class HistoryFragment : Fragment() {
 
         refresher_history.setColorSchemeColors(resources.getColor(R.color.primary, null))
 
-        getExerciseHistory(activity, adapter, jwt)
+        getExerciseHistory(activity, adapter)
 
         refresher_history.setOnRefreshListener {
-            getExerciseHistory(activity, adapter, jwt)
+            getExerciseHistory(activity, adapter)
         }
     }
 
-    private fun getExerciseHistory(activity: MainActivity, adapter: HistoryAdapter, jwt: String) {
-        viewModel.getExerciseHistory(jwt, 0).observe(viewLifecycleOwner) { res ->
+    private fun getExerciseHistory(activity: MainActivity, adapter: HistoryAdapter) {
+        viewModel.getExerciseHistory(0).observe(viewLifecycleOwner) { res ->
             when {
                 res.isSuccess() -> {
                     adapter.clearExercises()

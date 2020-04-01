@@ -24,7 +24,6 @@ import at.spiceburg.roarfit.MyApplication
 import at.spiceburg.roarfit.R
 import at.spiceburg.roarfit.data.LoginData
 import at.spiceburg.roarfit.data.NetworkError
-import at.spiceburg.roarfit.data.db.UserDB
 import at.spiceburg.roarfit.features.main.MainActivity
 import at.spiceburg.roarfit.utils.Constants
 import com.google.android.material.snackbar.Snackbar
@@ -54,8 +53,6 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        // deleteDatabase(Constants.DB_NAME)
-
         // create notification channel
         createNotificationChannel()
 
@@ -84,8 +81,6 @@ class AuthActivity : AppCompatActivity() {
                     when {
                         res.isSuccess() -> {
                             val data: LoginData = res.data!!
-                            data.username = username
-                            data.password = password
 
                             // check if biometric authentication can be set up
                             val remindBiometric =
@@ -172,44 +167,19 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private fun finishLogin(data: LoginData, callFromEncrypt: Boolean = false) {
+    private fun finishLogin(data: LoginData) {
         val jwt: String = data.token
 
-        viewModel.loadUser(jwt).observe(this) { res ->
-            when {
-                res.isSuccess() -> {
-                    val user: UserDB = res.data!!
-                    sp.edit()
-                        .putInt(Constants.USER_ID, user.id)
-                        .putString(Constants.JWT, jwt)
-                        .putString(Constants.USERNAME, data.username)
-                        .apply()
+        sp.edit()
+            .putString(Constants.JWT, jwt)
+            .putString(Constants.USERNAME, data.username)
+            .apply()
 
-                    setLoading(false)
-                    startMainActivity()
-                }
-                res.isLoading() -> {
-                    setLoading(true)
-                }
-                else -> {
-                    // if the error occurred directly after setup of biometric login reset it
-                    if (callFromEncrypt) {
-                        sp.edit()
-                            .remove(Constants.ENCRYPTED_PWD)
-                            .remove(Constants.INITIALIZATION_VECTOR)
-                            .apply()
-                    }
-                    val msg: String = when (res.error!!) {
-                        NetworkError.SERVER_UNREACHABLE -> getString(R.string.networkerror_server_unreachable)
-                        NetworkError.USERNAME_PASSWORD_WRONG -> getString(R.string.networkerror_username_pwd_wrong)
-                        NetworkError.TIMEOUT -> getString(R.string.networkerror_timeout)
-                        else -> getString(R.string.networkerror_unexpected)
-                    }
-                    displaySnackbar(msg)
-                    setLoading(false)
-                }
-            }
-        }
+        setLoading(false)
+
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun checkBiometricRequirements(): Boolean {
@@ -259,12 +229,6 @@ class AuthActivity : AppCompatActivity() {
                     + KeyProperties.BLOCK_MODE_CBC + "/"
                     + KeyProperties.ENCRYPTION_PADDING_PKCS7
         )
-    }
-
-    private fun startMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     private fun hideKeyboard() {
@@ -332,7 +296,7 @@ class AuthActivity : AppCompatActivity() {
                     .putString(Constants.INITIALIZATION_VECTOR, iv)
                     .apply()
 
-                finishLogin(data, true)
+                finishLogin(data)
             } else {
                 throw RuntimeException("CryptoObject or Cipher is null")
             }
@@ -380,8 +344,6 @@ class AuthActivity : AppCompatActivity() {
                             when {
                                 res.isSuccess() -> {
                                     val data: LoginData = res.data!!
-                                    data.username = username
-                                    data.password = password
                                     finishLogin(data)
                                 }
                                 res.isLoading() -> {
